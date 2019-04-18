@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28809.33
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.WebApi", "Amnesia.WebApi\Amnesia.WebApi.csproj", "{633E4ECA-FBD6-4429-B31D-E48E28486F2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.WebApi", "Amnesia.WebApi\Amnesia.WebApi.csproj", "{633E4ECA-FBD6-4429-B31D-E48E28486F2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Application", "Amnesia.Application\Amnesia.Application.csproj", "{27916761-4719-4884-8C2C-7CB2B3570E8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Application", "Amnesia.Application\Amnesia.Application.csproj", "{27916761-4719-4884-8C2C-7CB2B3570E8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Domain", "Amnesia.Domain\Amnesia.Domain.csproj", "{15BAFA28-6540-4577-8C8B-FDD70DF215F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{27916761-4719-4884-8C2C-7CB2B3570E8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27916761-4719-4884-8C2C-7CB2B3570E8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27916761-4719-4884-8C2C-7CB2B3570E8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
