@@ -2,6 +2,7 @@
 using System.Linq;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Amnesia.Application.Services
 {
@@ -15,7 +16,7 @@ namespace Amnesia.Application.Services
             lazyState = new Lazy<State>(() =>
             {
                 Ensure();
-                return blockchainContext.State.Single();
+                return FetchState(blockchainContext);
             });
         }
 
@@ -26,6 +27,13 @@ namespace Amnesia.Application.Services
         public void SaveChanges()
         {
             blockchainContext.SaveChanges();
+        }
+
+        private static State FetchState(BlockchainContext blockchainContext)
+        {
+            return blockchainContext.State
+                .Include(s => s.CurrentBlock)
+                .Single();
         }
 
         private void Ensure()

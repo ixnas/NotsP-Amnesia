@@ -33,7 +33,7 @@ namespace Amnesia.WebApi
                 .AddNewtonsoftJson();
 
             services.UseApplication();
-            services.UseDomain(options => options.UseSqlServer(Configuration.GetConnectionString("")));
+            services.UseDomain(options => options.UseSqlServer(Configuration.GetConnectionString("BlockchainDatabase")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
