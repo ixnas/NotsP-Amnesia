@@ -16,8 +16,13 @@ namespace Amnesia.Application.Services
 
         public Task<Definition> GetDefinition(byte[] hash, bool includeData = false)
         {
+            if (includeData)
+            {
+                return blockchainContext.Definitions
+                    .Include(d => d.Data)
+                    .SingleOrDefaultAsync(d => d.Hash == hash);
+            }
             return blockchainContext.Definitions
-                .Include(d => d.Data)
                 .SingleOrDefaultAsync(d => d.Hash == hash);
         }
 
