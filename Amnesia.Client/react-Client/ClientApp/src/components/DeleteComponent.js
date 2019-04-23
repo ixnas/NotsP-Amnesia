@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
-import { log } from 'util';
+import Select from 'react-select'
+
+
 
 export class DeleteComponent extends Component {
     static displayName = DeleteComponent.name;
@@ -24,8 +26,13 @@ export class DeleteComponent extends Component {
         alert('Your favorite flavor is: ' + this.state.value);
         event.preventDefault();
     }
-
+    // stuurt objecten terug
     render() {
+        const options = [
+            { value: 'chocolate', label: 'Chocolate' },
+            { value: 'strawberry', label: 'Strawberry' },
+            { value: 'vanilla', label: 'Vanilla' }
+        ];
 
         let dataDropdown = this.state.data.map(result => {
             console.log(result);
@@ -41,9 +48,7 @@ export class DeleteComponent extends Component {
                     </div>
 
                     <div className="col-md-4">
-                        <select onChange={this.handleChange}>
-                            <option> {JSON.stringify(dataDropdown[0].name)} </option>
-                        </select>
+                        <Select options={options} />
                     </div>
 
 
