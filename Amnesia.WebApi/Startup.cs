@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amnesia.Application;
+using Amnesia.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +31,9 @@ namespace Amnesia.WebApi
         {
             services.AddMvc()
                 .AddNewtonsoftJson();
+
+            services.UseApplication();
+            services.UseDomain(options => options.UseSqlServer(Configuration.GetConnectionString("")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
