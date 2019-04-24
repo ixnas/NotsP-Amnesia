@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Domain", "Amnesia.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Tests", "Amnesia.Tests\Amnesia.Tests.csproj", "{579B73A0-5424-4897-9D35-495D8CE1D2DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Cryptography", "Amnesia.Cryptography\Amnesia.Cryptography.csproj", "{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
