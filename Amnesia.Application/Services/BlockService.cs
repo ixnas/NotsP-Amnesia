@@ -21,9 +21,21 @@ namespace Amnesia.Application.Services
             return context.Blocks.SingleOrDefaultAsync(b => b.Hash == hash);
         }
 
-        public Task<IQueryable<Block>> GetBlocks(int depth)
+        public async Task<List<Block>> GetBlocks(int depth)
         {
-            return Task.FromResult(context.Blocks.Take(depth));
+            List<Block> blocks = new List<Block>();
+
+            var block = await context.Blocks.LastOrDefaultAsync();
+            blocks.Add(block);
+            
+            for (int i = 0; i < depth - 1; i++)
+            {
+                var previousBlock = await context.Blocks.SingleOrDefaultAsync(
+                    b => b.Hash == blocks.Last().PreviousBlockHash);
+                blocks.Add(previousBlock);
+            }
+
+            return blocks;
         }
 
         public async Task<Block> AddBlock(Block block)

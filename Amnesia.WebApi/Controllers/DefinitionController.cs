@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using Amnesia.Application.Services;
 using Amnesia.Domain.Model;
+using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -8,62 +10,35 @@ namespace Amnesia.WebApi.Controllers
 {
     [Route("definitions/")]
     [ApiController]
-    public class DefinitionController: ControllerBase, IController
+    public class DefinitionController: ControllerBase
     {
-        private DefinitionService _service;
+        private DefinitionService service;
 
         public DefinitionController(DefinitionService service)
         {
-            _service = service;
+            this.service = service;
         }
         
         [HttpGet("{hash}")]
-        public ActionResult<string> Get(string hash)
+        public async Task<ActionResult> Get(string hash)
         {
-            try
-            {
-                var bytes = new Hash(hash).Bytes;
-                var content = _service.GetDefinition(bytes).Result;
-                var json = JsonConvert.SerializeObject(content);
-                return json;
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-                return error.Message;
-            }
+            var definition = await service.GetDefinition(new Hash(hash).Bytes);
+            return Ok(new DefinitionViewModel(definition));
         }
         
         [HttpGet("{hash}/data")]
-        public ActionResult<string> GetData(string hash)
+        public async Task<ActionResult> GetData(string hash)
         {
-            try
-            {
-                var bytes = new Hash(hash).Bytes;
-                var content = _service.GetDefinition(bytes, true).Result;
-                var json = JsonConvert.SerializeObject(content);
-                return json;
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-                return error.Message;
-            }
+            var content = await service.GetDefinition(new Hash(hash).Bytes, true);
+            return Ok(Hash.ByteArrayToString(content.Data.Blob));
         }
 
         [HttpPost]
         public void Post([FromBody] string value)
         {
-            try
-            {
-                var deserialized = JsonConvert.DeserializeObject(value);
-                Console.WriteLine(deserialized);
-                //TODO: send to chain
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-            } 
+            var deserialized = JsonConvert.DeserializeObject(value);
+            Console.WriteLine(deserialized);
+            //TODO: send to chain
         }
     }
 }

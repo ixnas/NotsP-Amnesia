@@ -1,74 +1,47 @@
-using System;
-using System.Text;
+using System.Threading.Tasks;
 using Amnesia.Application.Peers;
 using Amnesia.Application.Services;
-using Amnesia.Domain.Context;
-using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
+using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace Amnesia.WebApi.Controllers
 {
     [Route("blocks/")]
     [ApiController]
-    public class BlockController: IController
+    public class BlockController : ControllerBase
     {
-        private readonly BlockService _service;
-        private readonly PeerManager _manager;
+        private readonly BlockService service;
+        private readonly PeerManager manager;
+        private readonly Application.Amnesia amnesia;
 
-        public BlockController(BlockService service, PeerManager manager)
+        public BlockController(BlockService service, PeerManager manager, Application.Amnesia amnesia)
         {
-            _service = service;
-            _manager = manager;
+            this.service = service;
+            this.manager = manager;
+            this.amnesia = amnesia;
         }
-         
+
         [HttpGet("{hash}")]
-        public ActionResult<string> Get(string hash)
+        public async Task<ActionResult> Get(string hash)
         {
-            try
-            {
-                var bytes = new Hash(hash).Bytes;
-                var block = _service.GetBlock(bytes);
-                var json = JsonConvert.SerializeObject(block);
-                return json;
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-                return error.Message;
-            }
+            var block = await service.GetBlock(new Hash(hash).Bytes);
+            return Ok(new BlockViewModel(block));
         }
 
         [HttpGet]
-        public ActionResult<string> Get([FromQueryAttribute(Name = "depth")] int depth)
+        public async Task<ActionResult> Get([FromQuery(Name = "depth")] int depth)
         {
-            try
-            {
-                var blocks = _service.GetBlocks(depth).Result;
-                var json = JsonConvert.SerializeObject(blocks);
-                return json;
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-                return error.Message;
-            }
+            var blocks = await service.GetBlocks(depth);
+            return Ok(new BlockchainViewModel(blocks));
         }
 
         [HttpPost]
-        public void Post([FromQueryAttribute(Name = "id")] string id, [FromBody] string value)
+        public async Task Post([FromQuery(Name = "id")] string id, [FromBody] string value)
         {
-            try
-            {
-                _manager.Inform(id, value);
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-            }
+            var block = await service.GetBlock(new Hash(value).Bytes);
+            var peer = manager.GetPeer(id);
+            amnesia.ReceiveBlock(block, peer);
         }
     }
 }

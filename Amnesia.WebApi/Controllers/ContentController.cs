@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Amnesia.Application.Services;
 using Amnesia.Domain.Model;
+using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,30 +11,20 @@ namespace Amnesia.WebApi.Controllers
 {
     [Route("contents/")]
     [ApiController]
-    public class ContentController : IController
+    public class ContentController : ControllerBase
     {
-        private ContentService _service;
+        private ContentService service;
 
         public ContentController(ContentService service)
         {
-            _service = service;
+            this.service = service;
         }
 
-        [HttpGet("hash")]
-        public ActionResult<string> Get(string hash)
+        [HttpGet("{hash}")]
+        public async Task<ActionResult> Get(string hash)
         {
-            try
-            {
-                var bytes = new Hash(hash).Bytes;
-                var content = _service.GetContent(bytes);
-                var json = JsonConvert.SerializeObject(content);
-                return json;
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("{0} : {1}", error.Message, error.StackTrace);
-                return error.Message;
-            }
+            var content = await service.GetContent(new Hash(hash).Bytes);
+            return Ok(new ContentViewModel(content));
         }
         
         

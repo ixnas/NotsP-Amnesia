@@ -20,11 +20,6 @@ namespace Amnesia.Application.Peers
             return peers[key];
         }
 
-        public Peer Inform(string key, string hash)
-        {
-            throw new NotImplementedException();
-        }
-
         public Block GetBlock(string key, string hash)
         {
             throw new NotImplementedException();
