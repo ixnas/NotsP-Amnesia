@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.WebApi", "Amnesia.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Application", "Amnesia.Application\Amnesia.Application.csproj", "{27916761-4719-4884-8C2C-7CB2B3570E8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Domain", "Amnesia.Domain\Amnesia.Domain.csproj", "{15BAFA28-6540-4577-8C8B-FDD70DF215F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Domain", "Amnesia.Domain\Amnesia.Domain.csproj", "{15BAFA28-6540-4577-8C8B-FDD70DF215F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Tests", "Amnesia.Tests\Amnesia.Tests.csproj", "{579B73A0-5424-4897-9D35-495D8CE1D2DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

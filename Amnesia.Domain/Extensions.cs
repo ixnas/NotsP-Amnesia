@@ -8,9 +8,9 @@ namespace Amnesia.Domain
     public static class Extensions
     {
         public static void UseDomain(this IServiceCollection services,
-            Action<DbContextOptionsBuilder> optionsAction)
+            Action<DbContextOptionsBuilder> dbOptions)
         {
-            services.AddDbContext<BlockchainContext>(optionsAction);
+            services.AddDbContext<BlockchainContext>(dbOptions);
         }
     }
 }

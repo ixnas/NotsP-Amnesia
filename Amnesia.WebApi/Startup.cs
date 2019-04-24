@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amnesia.Application;
+using Amnesia.Application.Peers;
 using Amnesia.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,8 +33,13 @@ namespace Amnesia.WebApi
             services.AddMvc()
                 .AddNewtonsoftJson();
 
-            services.UseApplication();
-            services.UseDomain(options => options.UseSqlServer(Configuration.GetConnectionString("BlockchainDatabase")));
+            services.UseApplication(
+                peerConfiguration: Configuration.GetSection("Peers")
+            );
+
+            services.UseDomain(
+                dbOptions: options => options.UseSqlServer(Configuration.GetConnectionString("BlockchainDatabase"))
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
