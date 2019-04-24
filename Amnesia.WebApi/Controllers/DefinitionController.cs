@@ -30,7 +30,7 @@ namespace Amnesia.WebApi.Controllers
         public async Task<ActionResult> GetData(string hash)
         {
             var content = await service.GetDefinition(new Hash(hash).Bytes, true);
-            return Ok(Hash.ByteArrayToString(content.Data.Blob));
+            return Ok(content.Data.Blob);
         }
 
         [HttpPost]
