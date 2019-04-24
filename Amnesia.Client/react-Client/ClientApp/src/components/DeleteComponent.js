@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'reactstrap';
 import Select from 'react-select'
 
-
-
 export class DeleteComponent extends Component {
     static displayName = DeleteComponent.name;
 
