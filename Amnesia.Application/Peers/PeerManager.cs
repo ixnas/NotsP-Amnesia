@@ -40,6 +40,11 @@ namespace Amnesia.Application.Peers
             // TODO viewmodel
             return GetData<Definition>(url);
         }
+        
+        public List<Definition> GetDefinitions(string key, int limit)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Maybe<Content>> GetContent(Peer peer, string hash)
         {
