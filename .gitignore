@@ -340,3 +340,4 @@ ASALocalRun/
 healthchecksdb
 
 /.vscode/settings.json
+.DS_Store
