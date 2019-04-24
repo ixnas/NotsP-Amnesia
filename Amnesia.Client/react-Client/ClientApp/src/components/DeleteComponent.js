@@ -11,32 +11,26 @@ export class DeleteComponent extends Component {
         super(props);
 
         this.state = {
-            data: [{ id: 0, name: "test", data: "test" }, { id: 1, name: "test2", data: "test2" }],
+            data: [{ id: 0, name: "test", data: "test" },
+                { id: 1, name: "test2", data: "test2" },
+                { id: 2, name: "test3", data: "test3"}
+            ],
             selectedBlock: {}
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) {
-        this.setState({ value: event.target.value });
-    }
-
-    handleSubmit(event) {
-        alert('Your favorite flavor is: ' + this.state.value);
-        event.preventDefault();
-    }
     // stuurt objecten terug
     render() {
-        const options = [
-            { value: 'chocolate', label: 'Chocolate' },
-            { value: 'strawberry', label: 'Strawberry' },
-            { value: 'vanilla', label: 'Vanilla' }
-        ];
+
+        const options = ((this.state.data));
+
+        function logChange(val) {
+            console.log("Selected: " + JSON.stringify(val));
+        }
 
         let dataDropdown = this.state.data.map(result => {
-            console.log(result);
-            return result
+            return { label: result.name, value: result.data };
+
         })
 
         return (
@@ -44,11 +38,12 @@ export class DeleteComponent extends Component {
                 <div className="row">
                     <div className="col-md-4">
                         <p> Gebruik de dropdown om data te selecteren en te verwijderen </p>
-                        {console.log({ dataDropdown })}
                     </div>
 
                     <div className="col-md-4">
-                        <Select options={options} />
+
+                        <Select options={dataDropdown} onChange={logChange}
+ />
                     </div>
 
 
