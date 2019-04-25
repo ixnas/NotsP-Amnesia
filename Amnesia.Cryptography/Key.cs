@@ -5,7 +5,7 @@ using PemUtils;
 
 namespace Amnesia.Cryptography
 {
-	abstract class Key
+	public abstract class Key
 	{
 		protected RSACryptoServiceProvider rsaCryptoServiceProvider;
 
@@ -21,25 +21,23 @@ namespace Amnesia.Cryptography
 		}
 
 		/// <summary>
+		/// Write RSA parameters to a PEM writer
+		/// </summary>
+		protected abstract void WriteKey(PemWriter writer, RSAParameters rsaParameters);
+
+		/// <summary>
 		/// Create PEM string using RSAParameters
 		/// </summary>
-		protected string ToPEMString(RSAParameters rsaParameters, bool isPrivate = false)
+		protected string ToPEMString(RSAParameters rsaParameters)
 		{
 			var stream = new MemoryStream();
 			var writer = new PemWriter(stream);
 
-			if (isPrivate)
-			{
-				writer.WritePrivateKey(rsaParameters);
-			}
-			else
-			{
-				writer.WritePublicKey(rsaParameters);
-			}
+			WriteKey(writer, rsaParameters);
 
 			if (!stream.TryGetBuffer(out var bytes))
 			{
-				return null;
+				throw new PEMConversionException("Could not convert RSAParameters to PEM string");
 			}
 
 			return Encoding.UTF8.GetString(bytes);

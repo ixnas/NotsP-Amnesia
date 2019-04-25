@@ -6,7 +6,7 @@ using PemUtils;
 
 namespace Amnesia.Cryptography
 {
-	class KeyPair
+	public class KeyPair
 	{
 		public PublicKey PublicKey { get; private set; }
 		public PrivateKey PrivateKey { get; private set; }

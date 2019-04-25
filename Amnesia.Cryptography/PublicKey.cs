@@ -1,9 +1,18 @@
 using System.Security.Cryptography;
+using PemUtils;
 
 namespace Amnesia.Cryptography
 {
-	class PublicKey : Key
+	public class PublicKey : Key
 	{
+		/// <summary>
+		/// Write RSA parameters to a PEM writer
+		/// </summary>
+		override protected void WriteKey(PemWriter writer, RSAParameters rsaParameters)
+		{
+			writer.WritePublicKey(rsaParameters);
+		}
+
 		/// <summary>
 		/// Create a public key using RSAParameters
 		/// </summary>
@@ -22,7 +31,7 @@ namespace Amnesia.Cryptography
 		/// Create PEM string using RSAParameters
 		/// </summary>
 		override public string ToPEMString() {
-			return base.ToPEMString(rsaCryptoServiceProvider.ExportParameters(false), false);
+			return base.ToPEMString(rsaCryptoServiceProvider.ExportParameters(false));
 		}
 
 		/// <summary>
