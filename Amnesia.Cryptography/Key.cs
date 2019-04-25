@@ -15,9 +15,11 @@ namespace Amnesia.Cryptography
 		RSAParameters ReadRSAParametersFromPEM(string pem)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(pem);
-			MemoryStream stream = new MemoryStream(bytes);
-			var reader = new PemReader(stream);
-			return reader.ReadRsaKey();
+			using (var stream = new MemoryStream(bytes))
+			using (var reader = new PemReader(stream))
+			{
+				return reader.ReadRsaKey();
+			}
 		}
 
 		/// <summary>
@@ -30,17 +32,18 @@ namespace Amnesia.Cryptography
 		/// </summary>
 		protected string ToPEMString(RSAParameters rsaParameters)
 		{
-			var stream = new MemoryStream();
-			var writer = new PemWriter(stream);
-
-			WriteKey(writer, rsaParameters);
-
-			if (!stream.TryGetBuffer(out var bytes))
+			using (var stream = new MemoryStream())
+			using (var writer = new PemWriter(stream))
 			{
-				throw new PEMConversionException("Could not convert RSAParameters to PEM string");
-			}
+				WriteKey(writer, rsaParameters);
 
-			return Encoding.UTF8.GetString(bytes);
+				if (!stream.TryGetBuffer(out var bytes))
+				{
+					throw new PEMConversionException("Could not convert RSAParameters to PEM string");
+				}
+
+				return Encoding.UTF8.GetString(bytes);
+			}
 		}
 
 		/// <summary>
