@@ -339,6 +339,8 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
+/.vscode/settings.json
+.DS_Store
 
 # Created by https://www.gitignore.io/api/node
 # Edit at https://www.gitignore.io/?templates=node
@@ -430,5 +432,3 @@ typings/
 .dynamodb/
 
 # End of https://www.gitignore.io/api/node
-
-/.vscode/settings.json
