@@ -17,6 +17,7 @@ namespace Amnesia.Application.Mining
 
         public void Start()
         {
+            
             throw new NotImplementedException();
         }
 
