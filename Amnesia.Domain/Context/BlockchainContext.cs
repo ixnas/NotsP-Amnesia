@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
