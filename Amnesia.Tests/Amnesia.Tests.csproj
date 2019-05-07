@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Amnesia.Application\Amnesia.Application.csproj" />
+    <ProjectReference Include="..\Amnesia.Cryptography\Amnesia.Cryptography.csproj" />
   </ItemGroup>
 
 </Project>
