@@ -27,6 +27,8 @@ namespace Amnesia.Tests.Cryptography
         {
             var keyPair = new KeyPair(1024);
             var newKeyPair = new KeyPair(keyPair.PrivateKey, keyPair.PublicKey);
+            Assert.IsNotNull(keyPair.PrivateKey);
+            Assert.IsNotNull(keyPair.PublicKey);
         }
 
         [Test]
