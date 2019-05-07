@@ -12,9 +12,9 @@ namespace Amnesia.Cryptography
         {
             using (var ms = new MemoryStream())
             {
-				var binaryFormatter = new BinaryFormatter();
-				binaryFormatter.Serialize(ms, obj);
-				return ms.ToArray();
+                var binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(ms, obj);
+                return ms.ToArray();
             }
         }
 
