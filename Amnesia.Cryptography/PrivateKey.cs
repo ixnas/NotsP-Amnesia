@@ -3,7 +3,7 @@ using PemUtils;
 
 namespace Amnesia.Cryptography
 {
-	public class PrivateKey : Key
+    public class PrivateKey : Key
 	{
 		/// <summary>
 		/// Write RSA parameters to a PEM writer
@@ -40,6 +40,14 @@ namespace Amnesia.Cryptography
 		public byte[] SignData(byte[] data)
 		{
 			return rsaCryptoServiceProvider.SignData(data, new SHA256CryptoServiceProvider());
+		}
+
+		/// <summary>
+		/// Sign an object using a SHA256 signature
+		/// </summary>
+		public byte[] SignObject(object obj)
+		{
+			return SignData(serializer.Serialize(obj));
 		}
 	}
 }

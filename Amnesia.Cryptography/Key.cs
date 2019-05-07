@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using PemUtils;
@@ -8,6 +9,7 @@ namespace Amnesia.Cryptography
 	public abstract class Key
 	{
 		protected RSACryptoServiceProvider rsaCryptoServiceProvider;
+		protected Serializer serializer;
 
 		/// <summary>
 		/// Create RSAParameters using a PEM string
@@ -51,6 +53,7 @@ namespace Amnesia.Cryptography
 		/// </summary>
 		public Key(RSAParameters rsaParameters)
 		{
+			this.serializer = new Serializer();
 			this.rsaCryptoServiceProvider = new RSACryptoServiceProvider();
 			rsaCryptoServiceProvider.ImportParameters(rsaParameters);
 		}
@@ -60,6 +63,7 @@ namespace Amnesia.Cryptography
 		/// </summary>
 		public Key(string keyPEM)
 		{
+			this.serializer = new Serializer();
 			this.rsaCryptoServiceProvider = new RSACryptoServiceProvider();
 			var rsaParameters = ReadRSAParametersFromPEM(keyPEM);
 			rsaCryptoServiceProvider.ImportParameters(rsaParameters);

@@ -41,5 +41,13 @@ namespace Amnesia.Cryptography
 		{
 			return rsaCryptoServiceProvider.VerifyData(data, new SHA256CryptoServiceProvider(), signature);
 		}
+
+		/// <summary>
+		/// Verify object using a SHA256 signature
+		/// </summary>
+		public bool VerifyObject(object obj, byte[] signature)
+		{
+			return VerifyData(serializer.Serialize(obj), signature);
+		}
 	}
 }
