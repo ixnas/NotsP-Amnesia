@@ -1,31 +1,34 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+using Amnesia.Cryptography;
 
 namespace Amnesia.Domain.Model
 {
+    [Serializable]
     public abstract class HashableObject
     {
-        private Lazy<byte[]> hash;
-
-        public byte[] Hash
+        public byte[] Hash { get; set; }
+        
+        protected byte[] CalculateSha256Hash()
         {
-            get => hash.Value;
-            set => hash = new Lazy<byte[]>(value);
+            var serializer = new Serializer();
+            
+            using (SHA256 sha256Hash = SHA256.Create())  
+            {  
+                byte[] bytes = sha256Hash.ComputeHash(serializer.Serialize(this));
+                return bytes;
+            }  
         }
-
-        protected HashableObject()
+        
+        public string Calculate256HashString()
         {
-            hash = new Lazy<byte[]>(HashObject);
-        }
-
-        protected byte[] HashObject()
-        {
-            // TODO implement real hash coding
-            var bytes = BitConverter.GetBytes(GetHashCode());
-
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-
-            return bytes;
+            StringBuilder builder = new StringBuilder();  
+            for (int i = 0; i < Hash.Length; i++)  
+            {  
+                builder.Append(Hash[i].ToString("x2"));  
+            }  
+            return builder.ToString();
         }
     }
 }

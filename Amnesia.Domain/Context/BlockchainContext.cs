@@ -22,7 +22,7 @@ namespace Amnesia.Domain.Context
             modelBuilder.Entity<Block>     ().HasKey(b => b.Hash);
             modelBuilder.Entity<Content>   ().HasKey(c => c.Hash);
             modelBuilder.Entity<Definition>().HasKey(d => d.Hash);
-            modelBuilder.Entity<Data>      ().HasKey(d => d.Hash);
+            modelBuilder.Entity<Data>();
             modelBuilder.Entity<State>     ().HasKey(s => s.CurrentBlockHash);
 
             modelBuilder.Entity<Block>(block =>

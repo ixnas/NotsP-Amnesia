@@ -12,6 +12,7 @@ namespace Amnesia.Domain.ViewModels
 
         public ContentViewModel(Content content)
         {
+            
             Hash = Model.Hash.ByteArrayToString(content.Hash);
             Definitions = MapHashes(content.Definitions);
             Mutations = MapHashes(content.Mutations);
@@ -19,7 +20,7 @@ namespace Amnesia.Domain.ViewModels
 
         private List<string> MapHashes(IList<Definition> list)
         {
-            return list.Select(item => Model.Hash.ByteArrayToString(item.Hash)).ToList();
+            return list.Select(item => Model.Hash.ByteArrayToString(item.DataHash)).ToList();
         }
     }
 }
