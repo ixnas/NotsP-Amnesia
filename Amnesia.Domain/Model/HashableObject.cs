@@ -24,7 +24,7 @@ namespace Amnesia.Domain.Model
 
         public byte[] HashObject()
         {
-            using var sha256 = SHA256.Create();
+            var sha256 = SHA256.Create();
             return sha256.ComputeHash(ToByteArray());
         }
 
