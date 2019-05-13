@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Amnesia.Domain.Entity;
 
 namespace Amnesia.Application.Mining
@@ -8,16 +7,15 @@ namespace Amnesia.Application.Mining
     {
         private readonly int difficulty;
 
+        public event Action<Block> Mined;
+
         public Miner(int difficulty)
         {
             this.difficulty = difficulty;
         }
 
-        public ICollection<Definition> Payload { get; private set; } = new List<Definition>();
-
-        public void Start()
-        {
-            
+        public void Start(Block payload)
+        {   
             throw new NotImplementedException();
         }
 
