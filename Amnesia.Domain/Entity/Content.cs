@@ -4,25 +4,13 @@ using Amnesia.Domain.Model;
 
 namespace Amnesia.Domain.Entity
 {
-    [Serializable]
     public class Content : HashableObject
     {
-        public IList<Definition> Definitions { get; set; }
-        public IList<Definition> Mutations { get; set; }
+        public IList<byte[]> Definitions { get; set; }
+        public IList<byte[]> Mutations { get; set; }
         public Block Block { get; set; }
-
-        public Content()
-        {
-            
-        }
-
-        [Obsolete("Useless constructor is useless, remove asap, use Object Initialization")]
-        public Content(IList<Definition> definitions, IList<Definition> mutations, Block block)
-        {
-            Definitions = definitions;
-            Mutations = mutations;
-            Block = block;
-
-        }
+        public override CompositeHash PrimaryHash => new CompositeHash(this)
+            .Add(nameof(Definitions))
+            .Add(nameof(Mutations));
     }
 }

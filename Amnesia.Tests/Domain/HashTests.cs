@@ -1,4 +1,5 @@
-﻿using Amnesia.Domain.Entity;
+﻿using System;
+using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using NUnit.Framework;
 
@@ -18,7 +19,7 @@ namespace Amnesia.Tests.Domain
 
             var hash = block.Hash;
             var hashString = Hash.ByteArrayToString(hash);
-
+            
             Assert.AreEqual("20c96b6e607263caa63828b4eae68c0f935f394218c485ff0580a8781b1d28f4", hashString);
         }
 
@@ -91,6 +92,25 @@ namespace Amnesia.Tests.Domain
             var hashB = Hash.ByteArrayToString(b.Hash);
 
             Assert.AreEqual(hashA, hashB);
+        }
+
+        [Test]
+        public void SignatureHashShouldBeDifferentFromPrimaryHash()
+        {
+            var data = new Data
+            {
+                Blob = Hash.StringToByteArray("abcde0"),
+                PreviousDefinitionHash = Hash.StringToByteArray("123456"),
+                Signature = Hash.StringToByteArray("123412341234"),
+                Key = Hash.StringToByteArray("0987654321")
+            };
+
+            var hash = Hash.ByteArrayToString(data.Hash);
+            var primaryHash = Hash.ByteArrayToString(data.PrimaryHash.Hash);
+            var signatureHash = Hash.ByteArrayToString(data.SignatureHash.Hash);
+
+            Assert.AreEqual(hash, primaryHash);
+            Assert.AreNotEqual(hash, signatureHash);
         }
     }
 }
