@@ -17,17 +17,15 @@ export class DeleteComponent extends Component {
         };
     }
 
-    // stuurt objecten terug
     render() {
-
         const options = ((this.state.data));
 
         function logChange(val) {
             console.log("Selected: " + JSON.stringify(val));
         }
 
-        let dataDropdown = this.state.data.map(result => {
-            return { label: result.name, value: result.data };
+        let dataDropdown = options.map(option => {
+            return { label: option.name, value: option.data };
 
         })
 
@@ -39,12 +37,8 @@ export class DeleteComponent extends Component {
                     </div>
 
                     <div className="col-md-4">
-
-                        <Select options={dataDropdown} onChange={logChange}
- />
+                        <Select options={dataDropdown} onChange={logChange}/>
                     </div>
-
-
 
                     <div className="col-md-4">
                         <Button> Verwijder data </Button>
