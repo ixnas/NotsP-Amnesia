@@ -49,12 +49,22 @@ namespace Amnesia.WebApi.Controllers
             return Ok(new DefinitionViewModel(definition));
         }
 
+        /*
+         * Creates a new definition to add to the chain.
+         * Receives a definition signed by the client via a POST request.
+         * 
+         * @params: string (POST body)
+         * @returns: Task<ActionResult>
+         */
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateDefinition([FromBody] string value)
         {
             var deserialized = JsonConvert.DeserializeObject(value);
             Console.WriteLine(deserialized);
-            //TODO: send to chain
+            //var definition = new Definition();
+            //await service.AddDefinition(definition);
+
+            return Ok();
         }
     }
 }
