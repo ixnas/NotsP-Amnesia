@@ -57,10 +57,7 @@ namespace Amnesia.WebApi
 
             app.UseHttpsRedirection();
 
-            app.UseRouting(routes =>
-            {
-                routes.MapControllers();
-            });
+            app.UseRouting();
 
             app.UseAuthorization();
         }

@@ -17,15 +17,11 @@ namespace Amnesia.Domain.Model
             hash = new Lazy<byte[]>(HashObject);
         }
 
-        protected byte[] HashObject()
+        public byte[] HashObject()
         {
-            // TODO implement real hash coding
-            var bytes = BitConverter.GetBytes(GetHashCode());
-
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-
-            return bytes;
+            return PrimaryHash.Hash;
         }
+
+        public abstract CompositeHash PrimaryHash { get; }
     }
 }

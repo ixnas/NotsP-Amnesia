@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -17,13 +18,22 @@ namespace Amnesia.Domain.Context
         {
         }
 
+        private static void SetupHashable<T>(ModelBuilder modelBuilder) where T : HashableObject
+        {
+            modelBuilder.Entity<T>(hashable =>
+            {
+                hashable.HasKey(h => h.Hash);
+                hashable.Ignore(h => h.PrimaryHash);
+            });
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Block>     ().HasKey(b => b.Hash);
-            modelBuilder.Entity<Content>   ().HasKey(c => c.Hash);
-            modelBuilder.Entity<Definition>().HasKey(d => d.Hash);
-            modelBuilder.Entity<Data>      ().HasKey(d => d.Hash);
-            modelBuilder.Entity<State>     ().HasKey(s => s.CurrentBlockHash);
+            SetupHashable<Block>(modelBuilder);
+            SetupHashable<Content>(modelBuilder);
+            SetupHashable<Definition>(modelBuilder);
+            SetupHashable<Data>(modelBuilder);
+            modelBuilder.Entity<State>().HasKey(s => s.CurrentBlockHash);
 
             modelBuilder.Entity<Block>(block =>
             {
@@ -40,15 +50,13 @@ namespace Amnesia.Domain.Context
 
             modelBuilder.Entity<Content>(content =>
             {
-                content
-                    .HasMany(c => c.Definitions)
-                    .WithOne()
-                    .HasForeignKey(d => d.ContentDefinitionHash);
+                content.Property(c => c.Definitions).HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<IList<byte[]>>(v));
 
-                content
-                    .HasMany(c => c.Mutations)
-                    .WithOne()
-                    .HasForeignKey(m => m.ContentMutationHash);
+                content.Property(c => c.Mutations).HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<IList<byte[]>>(v));
             });
 
             modelBuilder.Entity<Definition>(definition =>
@@ -69,6 +77,8 @@ namespace Amnesia.Domain.Context
                     .HasOne(d => d.PreviousDefinition)
                     .WithOne()
                     .HasForeignKey<Definition>(d => d.PreviousDefinitionHash);
+
+                definition.Ignore(d => d.SignatureHash);
             });
 
             modelBuilder.Entity<Data>(data =>
@@ -77,6 +87,8 @@ namespace Amnesia.Domain.Context
                     .HasOne<Definition>()
                     .WithOne()
                     .HasForeignKey<Data>(d => d.PreviousDefinitionHash);
+
+                data.Ignore((d) => d.SignatureHash);
             });
 
             modelBuilder.Entity<State>(state =>
