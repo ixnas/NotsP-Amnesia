@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Amnesia.Application.Mining;
 using Amnesia.Domain.Entity;
@@ -9,7 +11,7 @@ namespace Amnesia.Tests.Mining
     public class MiningTest
     {
         [Test]
-        public async Task TestMiningWithDifficultyOfTen()
+        public void TestMiningWithDifficultyOfTen()
         {
             var miner = new Miner(10);
             var block = new Block();
@@ -19,16 +21,18 @@ namespace Amnesia.Tests.Mining
                 Assert.AreEqual(b.Nonce, block.Nonce);
             };
             
-            await miner.Start(block);
+             miner.Start(block);
         }
 
-        [Test]
+        //Does not cancel the test, timeout not implemented in .net standard
+        [Test, MaxTime(1000)]
         public void TestStopMining()
         {
             var miner = new Miner(30);
             var block = new Block();
-            miner.Start(block);
+            var task = miner.Start(block);
             miner.Stop();
+            Assert.ThrowsAsync<OperationCanceledException>(() => task);
             Assert.True(miner.cancellationTokenSource.IsCancellationRequested);
         }
     }

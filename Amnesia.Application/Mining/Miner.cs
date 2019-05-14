@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
+using Amnesia.Domain.ViewModels;
 
 namespace Amnesia.Application.Mining
 {
@@ -20,32 +21,34 @@ namespace Amnesia.Application.Mining
             this.difficulty = difficulty;
         }
 
-        public async Task Start(Block payload)
+        public Task Start(Block payload)
         {
             cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
             
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var hash = payload.Hash;
-
-                while (!CheckHash(hash))
-                {
-                    payload.Nonce++;
-                    hash = payload.HashObject();
-
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                }
-
-                Console.WriteLine("Nonce: {0}", payload.Nonce);
-                Console.WriteLine("Hash: {0}", Sha256HashToString(hash));
-                
-                Mined?.Invoke(payload);
+                Mine(payload);
             }, cancellationTokenSource.Token);
-            
+        }
+
+        private void Mine(Block payload)
+        {
+            var hash = payload.Hash;
+
+            while (!CheckHash(hash))
+            {
+                if (cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                }
+                payload.Nonce++;
+                hash = payload.HashObject();
+            }
+
+            Console.WriteLine("Nonce: {0}", payload.Nonce);
+            Console.WriteLine("Hash: {0}", Hash.ByteArrayToString(hash));
+                
+            Mined?.Invoke(payload);
         }
 
         public void Stop()
@@ -57,16 +60,6 @@ namespace Amnesia.Application.Mining
         {
             var bigInteger = new BigInteger(hash);
             return (bigInteger & ((1 << difficulty) - 1)) == 0;
-        }
-        
-        private string Sha256HashToString(byte[] sha256)
-        {
-            var builder = new StringBuilder();
-            for (int i = 0; i < sha256.Length; i++)
-            {
-                builder.Append(sha256[i].ToString("x2"));
-            }
-            return builder.ToString();
         }
     }
 }
