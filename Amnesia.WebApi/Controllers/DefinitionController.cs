@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
+using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,21 @@ namespace Amnesia.WebApi.Controllers
         {
             var content = await service.GetDefinition(new Hash(hash).Bytes, true);
             return Ok(content.Data.Blob);
+        }
+
+
+        /*
+         * Gets the latest definition that was added to the chain.
+         * This is an API request for the client to get a PreviousHashDefinition.
+         * 
+         * @params: null
+         * @returns: Task<ActionResult>
+         */
+        [HttpGet("/last")]
+        public async Task<ActionResult> GetLastDefinition()
+        {
+            var definition = await service.GetLastDefinition();
+            return Ok(new DefinitionViewModel(definition));
         }
 
         [HttpPost]
