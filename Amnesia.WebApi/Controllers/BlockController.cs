@@ -41,7 +41,7 @@ namespace Amnesia.WebApi.Controllers
         {
             var block = await service.GetBlock(new Hash(value).Bytes);
             var peer = manager.GetPeer(id);
-            amnesia.ReceiveBlock(block, peer);
+            //amnesia.ReceiveBlock(block, peer);
         }
     }
 }

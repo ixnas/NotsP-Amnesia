@@ -9,7 +9,7 @@ namespace Amnesia.Application
     {
         public static void UseApplication(this IServiceCollection services, IConfiguration peerConfiguration)
         {
-            services.AddSingleton<Amnesia>();
+            services.AddTransient<Amnesia>();
 
             services.AddSingleton<PeerManager>();
 
