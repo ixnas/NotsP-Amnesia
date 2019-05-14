@@ -1,4 +1,6 @@
-﻿namespace Amnesia.Domain.Entity
+﻿using System;
+
+namespace Amnesia.Domain.Entity
 {
     public class State
     {

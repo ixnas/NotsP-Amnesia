@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amnesia.Application\Amnesia.Application.csproj" />
     <ProjectReference Include="..\Amnesia.Cryptography\Amnesia.Cryptography.csproj" />
+    <ProjectReference Include="..\Amnesia.Domain\Amnesia.Domain.csproj" />
   </ItemGroup>
 
 </Project>

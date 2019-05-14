@@ -12,14 +12,15 @@ namespace Amnesia.Domain.ViewModels
 
         public ContentViewModel(Content content)
         {
+            
             Hash = Model.Hash.ByteArrayToString(content.Hash);
             Definitions = MapHashes(content.Definitions);
             Mutations = MapHashes(content.Mutations);
         }
 
-        private List<string> MapHashes(IList<Definition> list)
+        private static List<string> MapHashes(IEnumerable<byte[]> list)
         {
-            return list.Select(item => Model.Hash.ByteArrayToString(item.Hash)).ToList();
+            return list.Select(Model.Hash.ByteArrayToString).ToList();
         }
     }
 }
