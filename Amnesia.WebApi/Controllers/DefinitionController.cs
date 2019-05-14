@@ -34,28 +34,28 @@ namespace Amnesia.WebApi.Controllers
             return Ok(content.Data.Blob);
         }
 
-
-        /*
-         * Gets the latest definition that was added to the chain.
-         * This is an API request for the client to get a PreviousHashDefinition.
-         * 
-         * @params: null
-         * @returns: Task<ActionResult>
-         */
-        [HttpGet("/last")]
+        /// <summary>
+        /// Gets the latest definition that was added to the chain. This is an API request for the client to get a PreviousHashDefinition.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("last")]
         public async Task<ActionResult> GetLastDefinition()
         {
             var definition = await service.GetLastDefinition();
+
+            if (definition == null)
+            {
+                return NotFound();
+            }
+
             return Ok(new DefinitionViewModel(definition));
         }
 
-        /*
-         * Creates a new definition to add to the chain.
-         * Receives a definition signed by the client via a POST request.
-         * 
-         * @params: string (POST body)
-         * @returns: Task<ActionResult>
-         */
+        /// <summary>
+        /// Creates a new definition to add to the chain. Receives a definition signed by the client via a POST request.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] string value)
         {
