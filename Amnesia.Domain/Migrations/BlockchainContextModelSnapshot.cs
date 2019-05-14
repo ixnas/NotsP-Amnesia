@@ -46,6 +46,10 @@ namespace Amnesia.Domain.Migrations
                     b.Property<byte[]>("Hash")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Definitions");
+
+                    b.Property<string>("Mutations");
+
                     b.HasKey("Hash");
 
                     b.ToTable("Contents");
@@ -57,6 +61,8 @@ namespace Amnesia.Domain.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<byte[]>("Blob");
+
+                    b.Property<byte[]>("Key");
 
                     b.Property<byte[]>("PreviousDefinitionHash");
 
@@ -76,13 +82,11 @@ namespace Amnesia.Domain.Migrations
                     b.Property<byte[]>("Hash")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<byte[]>("ContentDefinitionHash");
-
-                    b.Property<byte[]>("ContentMutationHash");
-
                     b.Property<byte[]>("DataHash");
 
                     b.Property<bool>("IsMutation");
+
+                    b.Property<byte[]>("Key");
 
                     b.Property<string>("Meta");
 
@@ -91,10 +95,6 @@ namespace Amnesia.Domain.Migrations
                     b.Property<byte[]>("Signature");
 
                     b.HasKey("Hash");
-
-                    b.HasIndex("ContentDefinitionHash");
-
-                    b.HasIndex("ContentMutationHash");
 
                     b.HasIndex("DataHash")
                         .IsUnique()
@@ -136,14 +136,6 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Definition", b =>
                 {
-                    b.HasOne("Amnesia.Domain.Entity.Content")
-                        .WithMany("Definitions")
-                        .HasForeignKey("ContentDefinitionHash");
-
-                    b.HasOne("Amnesia.Domain.Entity.Content")
-                        .WithMany("Mutations")
-                        .HasForeignKey("ContentMutationHash");
-
                     b.HasOne("Amnesia.Domain.Entity.Data", "Data")
                         .WithOne()
                         .HasForeignKey("Amnesia.Domain.Entity.Definition", "DataHash");
