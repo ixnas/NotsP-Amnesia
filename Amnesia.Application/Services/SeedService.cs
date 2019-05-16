@@ -1,19 +1,17 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
-using Amnesia.Domain.Model;
 
-namespace Amnesia.Domain.Seed
+namespace Amnesia.Application.Services
 {
-    public class Seed
+    public class SeedService
     {
         private readonly BlockchainContext context;
 
-        public Seed(BlockchainContext context)
+        public SeedService(BlockchainContext context)
         {
             this.context = context;
         }
@@ -58,17 +56,18 @@ namespace Amnesia.Domain.Seed
                 CurrentBlock = block,
                 CurrentBlockHash = block.Hash
             };
-                
-            context.Blocks.Add(block);
-            context.Contents.Add(content);
-            context.Data.Add(data);
-            context.Definitions.Add(definition);
-            context.State.Add(state);
 
-
-
-
-//            Console.WriteLine(context.Database.EnsureCreated());
+            var b = context.Blocks.FirstOrDefault();
+            if (b == null)
+            {
+                context.Blocks.Add(block);
+                context.Contents.Add(content);
+                context.Data.Add(data);
+                context.Definitions.Add(definition);
+                context.State.Add(state);
+            }
+            context.SaveChanges();
+//            context.Database.EnsureCreated();
 //
 //            var b = context.Blocks.FirstOrDefault();
 //            if (b == null)
@@ -98,11 +97,8 @@ namespace Amnesia.Domain.Seed
 //            if (s == null)
 //            {
 //                context.State.Add(state);
-//            }
-
-            context.SaveChanges();
+           // }
         }
+        
     }
-    
-    
 }
