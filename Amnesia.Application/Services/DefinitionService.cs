@@ -31,5 +31,11 @@ namespace Amnesia.Application.Services
             var result = await blockchainContext.Definitions.AddAsync(definition);
             return result.Entity;
         }
+
+        public Task<bool> DataExists(byte[] definitionHash)
+        {
+            return Task.Run(() => true);
+            //return blockchainContext.Definitions.ContainsAsync();
+        }
     }
 }
