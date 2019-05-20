@@ -30,11 +30,19 @@ namespace Amnesia.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get([FromQuery(Name = "depth")] int depth)
+        public ActionResult GetAll()
         {
-            var blocks = await service.GetBlocks(depth);
-            return Ok(new BlockchainViewModel(blocks));
+            var blocks = service.GetBlocks();
+            return Ok(blocks);
         }
+        
+//         TODO: Refactor function and viewmodel
+//        [HttpGet]
+//        public async Task<ActionResult> GetWithDepth([FromQuery(Name = "depth")] int depth)
+//        {
+//            var blocks = await service.GetBlocks(depth);
+//            return Ok(new BlockchainViewModel(blocks));
+//        }
 
         [HttpPost]
         public async Task Post([FromQuery(Name = "id")] string id, [FromBody] string value)

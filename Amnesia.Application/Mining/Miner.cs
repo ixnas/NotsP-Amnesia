@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
-using Amnesia.Domain.ViewModels;
 
 namespace Amnesia.Application.Mining
 {
@@ -13,7 +11,7 @@ namespace Amnesia.Application.Mining
     {
         private readonly int difficulty;
         public CancellationTokenSource cancellationTokenSource { get; private set; }
-
+        
         public event Action<Block> Mined;
 
         public Miner(int difficulty)
