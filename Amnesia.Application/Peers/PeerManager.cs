@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
-using Amnesia.Domain.Entity;
+using Amnesia.Domain.ViewModels;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace Amnesia.Application.Peers
@@ -27,30 +24,28 @@ namespace Amnesia.Application.Peers
                 : null;
         }
 
-        public Task<Maybe<Block>> GetBlock(Peer peer, string hash)
+        public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
             var url = peer.Url + string.Format(configuration.Api.Blocks, hash);
-            // TODO viewmodel
-            return GetData<Block>(url);
+            return GetData<BlockViewModel>(url);
         }
 
-        public Task<Maybe<Definition>> GetDefinition(Peer peer, string hash)
+        public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
         {
             var url = peer.Url + string.Format(configuration.Api.Definitions, hash);
-            // TODO viewmodel
-            return GetData<Definition>(url);
+            return GetData<DefinitionViewModel>(url);
         }
         
-        public List<Definition> GetDefinitions(string key, int limit)
+        public Task<Maybe<IEnumerable<string>>> GetDefinitions(Peer peer, string key, int limit)
         {
-            throw new NotImplementedException();
+            var url = peer.Url + string.Format(configuration.Api.Keys, key, limit);
+            return GetData<IEnumerable<string>>(url);
         }
 
-        public Task<Maybe<Content>> GetContent(Peer peer, string hash)
+        public Task<Maybe<ContentViewModel>> GetContent(Peer peer, string hash)
         {
             var url = peer.Url + string.Format(configuration.Api.Contents, hash);
-            // TODO viewmodel
-            return GetData<Content>(url);
+            return GetData<ContentViewModel>(url);
         }
 
         private static async Task<Maybe<T>> GetData<T>(string url)

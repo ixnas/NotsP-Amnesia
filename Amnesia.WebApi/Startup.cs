@@ -39,8 +39,17 @@ namespace Amnesia.WebApi
             );
 
             services.UseDomain(
-                dbOptions: options => options.UseSqlServer(Configuration.GetConnectionString("BlockchainDatabase"))
-            );
+                dbOptions: options =>
+                {
+                    if (Configuration.GetValue("UseSqlite", false))
+                    {
+                        options.UseSqlite(Configuration.GetConnectionString("Sqlite"));
+                    }
+                    else
+                    {
+                        options.UseSqlServer(Configuration.GetConnectionString("Sql"));
+                    }
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

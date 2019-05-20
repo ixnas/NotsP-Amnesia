@@ -28,7 +28,7 @@ namespace Amnesia.Application.Mining
             return Task.Run(() =>
             {
                 Mine(payload);
-            }, cancellationTokenSource.Token);
+            });
         }
 
         private void Mine(Block payload)
