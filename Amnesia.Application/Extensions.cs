@@ -9,7 +9,7 @@ namespace Amnesia.Application
     {
         public static void UseApplication(this IServiceCollection services, IConfiguration peerConfiguration)
         {
-            services.AddSingleton<Amnesia>();
+            services.AddTransient<Amnesia>();
 
             services.AddSingleton<PeerManager>();
 
@@ -17,6 +17,7 @@ namespace Amnesia.Application
             services.AddTransient<ContentService>();
             services.AddTransient<DefinitionService>();
             services.AddTransient<StateService>();
+            services.AddTransient<SeedService>();
 
             services.Configure<PeerConfiguration>(peerConfiguration);
             services.PostConfigure<PeerConfiguration>(config => config.Validate());
