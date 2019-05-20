@@ -15,7 +15,7 @@ namespace Amnesia.WebApi.Controllers
         }
         
         [HttpGet]
-        public IActionResult Get(string hash)
+        public IActionResult Get()
         {
             seedService.SeedData();
             return Ok("init data zit in de db");
