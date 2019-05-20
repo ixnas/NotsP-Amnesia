@@ -14,7 +14,6 @@ export class KeyHelper {
         localStorage.setItem('keySaveState', 'true');
         localStorage.setItem('pemStringPublic', keyPair.exportKey("public"));
         localStorage.setItem('pemStringPrivate', keyPair.exportKey("private"));
-
     }
 
     /**
@@ -41,4 +40,12 @@ export class KeyHelper {
         return decryptedMessage;
     }
 
+    getKeys = () => {
+        let keyObject = {
+            privateKey: new NodeRSA(localStorage.getItem('pemStringPrivate')),
+            publicKey: new NodeRSA(localStorage.getItem('pemStringPublic'))
+        }
+
+        return keyObject;
+    }
 }
