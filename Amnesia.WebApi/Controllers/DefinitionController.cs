@@ -31,19 +31,6 @@ namespace Amnesia.WebApi.Controllers
 
             return Ok(new DefinitionViewModel(definition));
         }
-        
-        [HttpGet("{hash}/data")]
-        public async Task<ActionResult> GetData(string hash)
-        {
-            var definition = await service.GetDefinition(new Hash(hash).Bytes, true);
-
-            if (definition == null || definition.Data == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(definition.Data.Blob);
-        }
 
         /// <summary>
         /// Gets the latest definition that was added to the chain. This is an API request for the client to get a PreviousHashDefinition.
@@ -60,19 +47,6 @@ namespace Amnesia.WebApi.Controllers
             }
 
             return Ok(new DefinitionViewModel(definition));
-        }
-
-        [HttpGet("last/data")]
-        public async Task<ActionResult> GetLastDefinitionData()
-        {
-            var definition = await service.GetLastDefinition(true);
-
-            if (definition == null) 
-            {
-                return NotFound();
-            }
-
-            return Ok(definition.Data.Blob);
         }
 
         /// <summary>
