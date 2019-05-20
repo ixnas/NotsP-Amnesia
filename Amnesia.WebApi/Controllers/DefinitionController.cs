@@ -23,14 +23,26 @@ namespace Amnesia.WebApi.Controllers
         public async Task<ActionResult> Get(string hash)
         {
             var definition = await service.GetDefinition(new Hash(hash).Bytes);
+
+            if (definition == null)
+            {
+                return NotFound();
+            }
+
             return Ok(new DefinitionViewModel(definition));
         }
         
         [HttpGet("{hash}/data")]
         public async Task<ActionResult> GetData(string hash)
         {
-            var content = await service.GetDefinition(new Hash(hash).Bytes, true);
-            return Ok(content.Data.Blob);
+            var definition = await service.GetDefinition(new Hash(hash).Bytes, true);
+
+            if (definition == null || definition.Data == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(definition.Data.Blob);
         }
 
         /// <summary>
