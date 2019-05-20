@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
-using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +48,19 @@ namespace Amnesia.WebApi.Controllers
             }
 
             return Ok(new DefinitionViewModel(definition));
+        }
+
+        [HttpGet("last/data")]
+        public async Task<ActionResult> GetLastDefinitionData()
+        {
+            var definition = await service.GetLastDefinition(true);
+
+            if (definition == null) 
+            {
+                return NotFound();
+            }
+
+            return Ok(definition.Data.Blob);
         }
 
         /// <summary>
