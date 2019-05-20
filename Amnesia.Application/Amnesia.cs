@@ -18,7 +18,7 @@ namespace Amnesia.Application
 
         public Block CurrentBlock => stateService.State.CurrentBlock;
 
-        public void ReceiveBlock(Block block, Peer sendingPeer)
+        public void ReceiveBlock(byte[] blockHash, string sendingPeer)
         {
             throw new NotImplementedException();
         }

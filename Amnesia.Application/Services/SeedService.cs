@@ -56,6 +56,7 @@ namespace Amnesia.Application.Services
             };
             var state = new State
             {
+                PeerId = "peer1",
                 CurrentBlock = block,
                 CurrentBlockHash = block.Hash
             };
