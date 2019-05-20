@@ -16,8 +16,11 @@ namespace Amnesia.Application.Services
             this.context = context;
         }
 
+        //TODO: Add correct signatures
         public void SeedData()
         {
+            context.Database.EnsureCreated();
+            
             var data = new Data
             {
                 PreviousDefinitionHash = null,
@@ -56,48 +59,34 @@ namespace Amnesia.Application.Services
                 CurrentBlock = block,
                 CurrentBlockHash = block.Hash
             };
-
+            
+            var d = context.Data.FirstOrDefault();
+            if (d == null)
+            {
+                context.Data.Add(data);
+            }
+            var de = context.Definitions.FirstOrDefault();
+            if (de == null)
+            {
+                context.Definitions.Add(definition);
+            }
+            var c = context.Contents.FirstOrDefault();
+            if (c == null)
+            {
+                context.Contents.Add(content);
+            }
             var b = context.Blocks.FirstOrDefault();
             if (b == null)
             {
                 context.Blocks.Add(block);
-                context.Contents.Add(content);
-                context.Data.Add(data);
-                context.Definitions.Add(definition);
+            }
+            var s = context.State.FirstOrDefault();
+            if (s == null)
+            {
                 context.State.Add(state);
             }
+            
             context.SaveChanges();
-//            context.Database.EnsureCreated();
-//
-//            var b = context.Blocks.FirstOrDefault();
-//            if (b == null)
-//            {
-//                context.Blocks.Add(block);
-//            }
-//
-//            var c = context.Contents.FirstOrDefault();
-//            if (c == null)
-//            {
-//                context.Contents.Add(content);
-//            }
-//
-//            var d = context.Data.FirstOrDefault();
-//            if (d == null)
-//            {
-//                context.Data.Add(data);
-//            }
-//
-//            var de = context.Definitions.FirstOrDefault();
-//            if (de == null)
-//            {
-//                context.Definitions.Add(definition);
-//            }
-//
-//            var s = context.State.FirstOrDefault();
-//            if (s == null)
-//            {
-//                context.State.Add(state);
-           // }
         }
         
     }

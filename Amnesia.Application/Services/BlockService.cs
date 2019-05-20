@@ -25,7 +25,7 @@ namespace Amnesia.Application.Services
         {
             List<Block> blocks = new List<Block>();
 
-            var block = await context.Blocks.LastOrDefaultAsync();
+            var block = await context.Blocks.FirstOrDefaultAsync();
             blocks.Add(block);
             
             for (int i = 0; i < depth - 1; i++)
@@ -36,6 +36,11 @@ namespace Amnesia.Application.Services
             }
 
             return blocks;
+        }
+        
+        public List<Block> GetBlocks()
+        {
+            return context.Blocks.ToList();
         }
 
         public async Task<Block> AddBlock(Block block)
