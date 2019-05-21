@@ -35,9 +35,10 @@ namespace Amnesia.WebApi.Controllers
         /// <summary>
         /// Gets the latest definition that was added to the chain. This is an API request for the client to get a PreviousHashDefinition.
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns
+        
         [HttpGet("last")]
-        public async Task<ActionResult> GetLastDefinition()
+        public async Task<ActionResult> GetLast()
         {
             var definition = await service.GetLastDefinition();
 
@@ -54,6 +55,7 @@ namespace Amnesia.WebApi.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] string value)
         {

@@ -16,7 +16,6 @@ export class AddComponent extends Component {
         var value = document.getElementById("definitionInput").value;
         
         this.state.controller.SetDataToDefinition(value);
-        this.state.controller.SendDefinition()
     }
 
     render() {

@@ -6,7 +6,7 @@ var cbor = require('cbor');
 export class Definition {
     constructor() {
         this.DataHash = "";
-        this.PreviousDefinitionHash = ""; // Ophalen met API
+        this.PreviousDefinitionHash = "";
         this.Signature = ""; // Lokaal aangemaakt met private key (RSA)
         this.Data = new Data();
     }
@@ -16,18 +16,49 @@ export class Definition {
         // Also sign data attribute
     }
 
-    SetPreviousDefinitionHash() {
-        // TODO: get Previous definition hash with API
-        // Also set for data attribute
+    SetPreviousDefinitionHash(hash) {
+        this.PreviousDefinitionHash = hash;
     }
 
-    HashTheData(input) {
-        this.Data.SetBlob(input);
+    SetDefinition(input) {
+        fetch("https://localhost:5001/definitions/last")
+            .then(response => response.json())
+            .then(definition => this.SetDefinitionAndSend(definition, input))
+            .catch((err) => console.error(err));
+    }
+
+    SetHashData(input) {
         var map = new Map();
-    
+
+        this.Data.SetBlob(input);
         this.Sign();
 
         map.set("Blob", input).set("Signature", this.Signature);
         this.DataHash = base64EncArr(cbor.encode(map));
+    }
+
+    SetDefinitionAndSend(definition, input) {
+        this.Data.SetPreviousDefinitionHash(definition.hash);
+        this.SetPreviousDefinitionHash(definition.hash);
+        this.SetHashData(input);
+
+        console.log(JSON.stringify({
+            definition: this
+        }));
+        // Send();
+    }
+
+    Send() {
+        fetch('https://localhost:5001/definitions', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                definition: this
+            })
+        })
+        .catch(err => console.error(err));
     }
 }
