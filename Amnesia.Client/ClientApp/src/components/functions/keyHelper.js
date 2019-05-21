@@ -6,7 +6,9 @@ export class KeyHelper {
      * param key = the NodeRSA key that gets generated when app.js mounts
     **/
 
-    keySaver = (key) => {
+    keySaver = () => {
+        const key = new NodeRSA({ b: 512 });
+        
         const keyPair = key.generateKeyPair();
         localStorage.setItem('keySaveState', 'true');
         localStorage.setItem('pemStringPublic', keyPair.exportKey("public"));
