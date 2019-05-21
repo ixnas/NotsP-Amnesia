@@ -102,7 +102,7 @@ namespace Amnesia.Tests.Domain
                 Blob = Hash.StringToByteArray("abcde0"),
                 PreviousDefinitionHash = Hash.StringToByteArray("123456"),
                 Signature = Hash.StringToByteArray("123412341234"),
-                Key = Hash.StringToByteArray("0987654321")
+                Key = "0987654321"
             };
 
             var hash = Hash.ByteArrayToString(data.Hash);

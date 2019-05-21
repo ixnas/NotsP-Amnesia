@@ -33,7 +33,7 @@ namespace Amnesia.Domain.Context
             SetupHashable<Content>(modelBuilder);
             SetupHashable<Definition>(modelBuilder);
             SetupHashable<Data>(modelBuilder);
-            modelBuilder.Entity<State>().HasKey(s => s.CurrentBlockHash);
+            modelBuilder.Entity<State>().HasKey(s => s.PeerId);
 
             modelBuilder.Entity<Block>(block =>
             {

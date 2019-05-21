@@ -16,8 +16,15 @@ namespace Amnesia.Application.Services
             this.context = context;
         }
 
-        public Task<Block> GetBlock(byte[] hash)
+        public Task<Block> GetBlock(byte[] hash, bool includeContent = false)
         {
+            if (includeContent)
+            {
+                return context.Blocks
+                    .Include(b => b.Content)
+                    .SingleOrDefaultAsync(b => b.Hash == hash);
+            }
+
             return context.Blocks.SingleOrDefaultAsync(b => b.Hash == hash);
         }
 

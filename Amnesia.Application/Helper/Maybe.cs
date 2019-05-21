@@ -4,40 +4,46 @@ namespace Amnesia.Application.Helper
 {
     public class Maybe<T>
     {
-        private readonly T value;
-        private readonly bool hasItem;
+        public T Value { get; }
+        public bool HasValue { get; }
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public Maybe()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            hasItem = false;
-        }
-
-        static Maybe()
-        {
-            if (typeof(T) == typeof(Maybe<T>))
-            {
-                throw new ArgumentException("T cannot be a maybe!");
-            }
+            Value = default;
+            HasValue = false;
         }
 
         public Maybe(T value)
         {
-            this.value = value;
-            hasItem = true;
+            Value = value;
+            HasValue = true;
         }
 
         public Maybe<TResult> Select<TResult>(Func<T, TResult> selector)
         {
-            return hasItem 
-                ? new Maybe<TResult>(selector(value!)) 
+            return HasValue 
+                ? new Maybe<TResult>(selector(Value!)) 
                 : new Maybe<TResult>();
         }
 
         public static implicit operator Maybe<T>(T value)
         {
+            return value == null 
+                ? new Maybe<T>() 
+                : new Maybe<T>(value);
+        }
+    }
+
+    public class Maybe
+    {
+        public static Maybe<T> Some<T>(T value)
+        {
             return new Maybe<T>(value);
+        }
+
+        public static Maybe<T> None<T>()
+        {
+            return new Maybe<T>();
         }
     }
 }

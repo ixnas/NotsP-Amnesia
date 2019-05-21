@@ -7,8 +7,8 @@ namespace Amnesia.Application.Validation
 {
     public class DataValidator
     {
-        readonly DefinitionService definitionService;
-        readonly DefinitionValidator definitionValidator;
+        private readonly DefinitionService definitionService;
+        private readonly DefinitionValidator definitionValidator;
 
         public DataValidator(DefinitionService definitionService, DefinitionValidator definitionValidator)
         {
@@ -16,7 +16,7 @@ namespace Amnesia.Application.Validation
             this.definitionValidator = definitionValidator;
         }
 
-        async Task<bool> PreviousDefinitionValid(Data data)
+        private async Task<bool> PreviousDefinitionValid(Data data)
         {
             if (data.PreviousDefinitionHash == null)
             {
@@ -33,7 +33,7 @@ namespace Amnesia.Application.Validation
             return definitionValidator.Validate(definition);
         }
 
-        bool SignatureIsValid(Data data)
+        private static bool SignatureIsValid(Data data)
         {
             var key = new PublicKey(data.Key);
             return key.VerifyData(data.SignatureHash.EncodeToBytes(), data.Signature);
