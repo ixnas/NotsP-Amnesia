@@ -2,18 +2,11 @@ export class Data {
     constructor() {
         this.PreviousDefinitionHash = "";
         this.Signature = "";
-        this.Blob = {};
+        this.Blob = "";
     }
 
-    SetPreviousDefinitionHash(hash) {
-        this.PreviousDefinitionHash = hash;
-    }
-
-    SetSignature(signature) {
-        this.Signature = signature;
-    }
-
-    SetBlob(blob) {
-        this.Blob = blob;
+    Sign() {
+        var message = new Map();
+        message.set("PreviousDefinitionHash", this.PreviousDefinitionHash).set("Blob", this.Blob);
     }
 }

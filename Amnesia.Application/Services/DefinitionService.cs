@@ -18,7 +18,7 @@ namespace Amnesia.Application.Services
         {
             return blockchainContext.Definitions
                 .Include(d => d.Data)
-                .SingleOrDefaultAsync(d => d.Hash == hash);   
+                .SingleOrDefaultAsync(d => d.Hash == hash);
         }
 
          /// <summary>
@@ -26,11 +26,11 @@ namespace Amnesia.Application.Services
          /// This function can get used for finding out the latest definition hash if you wanna calculate the PreviousDefinitionHash.
          /// </summary>
          /// <returns></returns>
-        public Task<Definition> GetLastDefinition()
+        public Task<Definition> GetLastDefinition(byte[] key)
         {
             return blockchainContext.Definitions
                 .Include(d => d.Data)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(d => d.Key == key);
         }
 
         /// <summary>

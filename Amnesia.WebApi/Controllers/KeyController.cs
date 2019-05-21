@@ -1,21 +1,34 @@
-using System;
+using Amnesia.Application.Services;
+using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace Amnesia.WebApi.Controllers
 {
+    [Route("keys/")]
+    [ApiController]
     public class KeyController : ControllerBase
-
     {
-        [HttpGet("/keys/{publicKey}/definitions")]
-        public ActionResult Get(string publicKey, [FromQuery(Name = "limit")] int limit)
+        private DefinitionService service;
+
+        public KeyController(DefinitionService service)
         {
-            if (limit < 1 || limit > 100)
+            this.service = service;
+        }
+
+        [HttpGet("{publicKey}/definitions")]
+        public async Task<ActionResult> GetAsync(string publicKey)
+        {
+            byte[] key = Encoding.ASCII.GetBytes(publicKey);
+            var definition = await service.GetLastDefinition(key);
+
+            if (definition == null)
             {
-                return Conflict("Limit must be between 1 and 100.");
+                return NotFound();
             }
-    
-            throw new NotImplementedException();
+
+            return Ok(new DefinitionViewModel(definition));
         }
     }
 }

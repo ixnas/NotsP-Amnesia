@@ -1,5 +1,6 @@
 import { Data } from "./Data";
-import { base64EncArr } from "../components/functions/Hashing";
+import { KeyHelper } from "../components/functions/keyHelper";
+const NodeRSA = require('node-rsa');
 
 var cbor = require('cbor');
 
@@ -7,22 +8,29 @@ export class Definition {
     constructor() {
         this.DataHash = "";
         this.PreviousDefinitionHash = "";
-        this.Signature = ""; // Lokaal aangemaakt met private key (RSA)
+        this.Signature = "";
         this.Data = new Data();
+        this.Meta = {};
+        this.KeyPair = new KeyHelper().getKeys();
     }
 
     Sign() {
-        // TODO: create signature to send.
-        // Also sign data attribute
-    }
+        var message = new Map();
 
-    SetPreviousDefinitionHash(hash) {
-        this.PreviousDefinitionHash = hash;
+        message.set("DataHash", this.DataHash).set("PreviousDefinitionHash", this.PreviousDefinitionHash).set("Meta", this.Meta);
+        const encodedMessage = new cbor().encode(message);
+
+        const privateKey = this.KeyPair.privateKey;
+        this.Signature = privateKey.sign(encodedMessage);
     }
 
     SetDefinition(input) {
-        fetch("https://localhost:5001/definitions/last")
-            .then(response => response.json())
+        const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
+        fetch(`https://localhost:5001/keys/${publicKey}/definitions`)
+            .then(response => {
+                console.log(response)
+                return response.json();
+            })
             .then(definition => this.SetDefinitionAndSend(definition, input))
             .catch((err) => console.error(err));
     }
@@ -30,21 +38,24 @@ export class Definition {
     SetHashData(input) {
         var map = new Map();
 
-        this.Data.SetBlob(input);
-        this.Sign();
+        this.Data.Blob = input;
+        // this.Sign();
 
-        map.set("Blob", input).set("Signature", this.Signature);
-        this.DataHash = base64EncArr(cbor.encode(map));
+        map
+        .set("PreviousDefinitionHash", this.PreviousDefinitionHash)
+        .set("Blob", this.Data.Blob)
+        .set("Signature", this.Signature)
+        .set("Key", this.KeyPair.publicKey);
+
+        this.DataHash = cbor.encode(map);
     }
 
     SetDefinitionAndSend(definition, input) {
-        this.Data.SetPreviousDefinitionHash(definition.hash);
-        this.SetPreviousDefinitionHash(definition.hash);
+        this.Data.PreviousDefinitionHash = definition.hash;
+        this.PreviousDefinitionHash = definition.hash;
         this.SetHashData(input);
+        console.log(this);
 
-        console.log(JSON.stringify({
-            definition: this
-        }));
         // Send();
     }
 
@@ -56,7 +67,8 @@ export class Definition {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                definition: this
+                definition: this,
+                key: this.KeyPair.publicKey
             })
         })
         .catch(err => console.error(err));
