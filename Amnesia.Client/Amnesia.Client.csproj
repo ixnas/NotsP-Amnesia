@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <RootNamespace>react_Client</RootNamespace>
+    <RootNamespace>Amnesia_Client</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
