@@ -6,9 +6,13 @@ namespace Amnesia.Application.Validation
 {
     public interface IValidationContext
     {
+        bool HasBlock(byte[] hash);
+
         Block GetBlockAndContent(byte[] hash);
 
         Definition GetDefinition(byte[] hash);
+
+        bool HasDefinition(byte[] hash);
 
         IList<Definition> GetDefinitions(byte[] blockHash);
 

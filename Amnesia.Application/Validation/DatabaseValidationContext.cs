@@ -15,6 +15,12 @@ namespace Amnesia.Application.Validation
             this.context = context;
         }
 
+        public bool HasBlock(byte[] hash)
+        {
+            return context.Blocks
+                .Any(b => b.Hash == hash);
+        }
+
         public Block GetBlockAndContent(byte[] hash)
         {
             return context.Blocks
@@ -25,6 +31,12 @@ namespace Amnesia.Application.Validation
         public Definition GetDefinition(byte[] hash)
         {
             return context.Definitions.FirstOrDefault(d => d.Hash == hash);
+        }
+
+        public bool HasDefinition(byte[] hash)
+        {
+            return context.Definitions
+                .Any(d => d.Hash == hash);
         }
 
         public IList<Definition> GetDefinitions(byte[] blockHash)

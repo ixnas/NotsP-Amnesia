@@ -31,6 +31,11 @@ namespace Amnesia.Application.Validation
             Data.Add(data.Hash, data);
         }
 
+        public bool HasBlock(byte[] hash)
+        {
+            return Blocks.ContainsKey(hash);
+        }
+
         public Block GetBlockAndContent(byte[] hash)
         {
             var block = Blocks[hash];
@@ -44,6 +49,11 @@ namespace Amnesia.Application.Validation
         public Definition GetDefinition(byte[] hash)
         {
             return Definitions[hash];
+        }
+
+        public bool HasDefinition(byte[] hash)
+        {
+            return Definitions.ContainsKey(hash);
         }
 
         public IList<Definition> GetDefinitions(byte[] blockHash)
