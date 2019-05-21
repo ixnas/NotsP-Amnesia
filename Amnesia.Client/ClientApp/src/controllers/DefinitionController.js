@@ -1,31 +1,23 @@
 import { Definition } from "../objects/Definition";
 
 export class DefinitionController {
-
-    constructor(inputValue) {
-        this.inputValue = inputValue;
-        this.Definition = new Definition();
-        this.isValidated = false;
-    }
-
+    
     Validate() {
         // Validate the inputValue
-        this.isValidated = true;
-        return true;
     }
 
-    SetDataToDefinition() {
-        if (this.isValidated) {
-            this.Definition.SetPreviousDefinitionHash();
-            this.Definition.HashTheData(this.inputValue);
-        }
+    SetDataToDefinition(value) {
+        this.Definition = new Definition();
+        
+        this.Definition.SetPreviousDefinitionHash();
+        this.Definition.HashTheData(value);
     }
 
     SendDefinition() {
 
         if (this.isValidated) {
             // Post new definition to Web API
-            fetch('', { // FIX: undertermined URL
+            fetch('https://localhost:5001/definitions', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

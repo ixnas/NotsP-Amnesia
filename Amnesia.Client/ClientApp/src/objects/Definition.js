@@ -5,7 +5,7 @@ var cbor = require('cbor');
 
 export class Definition {
     constructor() {
-        this.DataHash = ""; // Gebruik test script
+        this.DataHash = "";
         this.PreviousDefinitionHash = ""; // Ophalen met API
         this.Signature = ""; // Lokaal aangemaakt met private key (RSA)
         this.Data = new Data();
