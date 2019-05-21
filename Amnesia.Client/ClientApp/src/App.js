@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './Layout';
 import { Home } from './components/Pages/Home';
-import { KeyHelper } from './keyHelper.js'
+import { KeyHelper } from './components/functions/keyHelper.js/index.js'
 const NodeRSA = require('node-rsa');
 
 export default class App extends Component {
@@ -12,7 +12,6 @@ export default class App extends Component {
         privateKey: '',
         publicKey: ''
     }
-
 
     componentDidMount() {
         const key = new NodeRSA({ b: 512 });
@@ -25,9 +24,7 @@ export default class App extends Component {
         } 
     }
 
-
     render() {
-       
         return (
             <Layout>
                 <Route exact path='/' component={Home} />

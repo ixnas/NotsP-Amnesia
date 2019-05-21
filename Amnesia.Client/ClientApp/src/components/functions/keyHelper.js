@@ -1,9 +1,6 @@
 ﻿const NodeRSA = require('node-rsa');
 
-
 export class KeyHelper {
-
-
     /**
      * This function saves the keys into localstorage
      * param key = the NodeRSA key that gets generated when app.js mounts
