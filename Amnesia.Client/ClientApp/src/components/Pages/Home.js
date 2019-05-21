@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { DeleteComponent } from './DeleteComponent';
-import { InformationComponent } from './InformationComponent';
+import { DeleteComponent } from '../DeleteComponent';
+
 export class Home extends Component {
     static displayName = Home.name;
 
