@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using Amnesia.Application.Services;
 using Amnesia.Domain.Entity;
 
-namespace Amnesia.Application.Validation
+namespace Amnesia.Application.Validation.Context
 {
     public interface IValidationContext
     {
         bool HasBlock(byte[] hash);
 
         Block GetBlockAndContent(byte[] hash);
+
+        byte[] GetPreviousBlock(byte[] hash);
 
         Definition GetDefinition(byte[] hash);
 
@@ -23,5 +24,7 @@ namespace Amnesia.Application.Validation
         IEnumerable<byte[]> GetBlockGraph(byte[] startHash);
 
         IList<Definition> MissingData { get; set; }
+
+        bool ShouldAssumeValid(byte[] blockHash);
     }
 }

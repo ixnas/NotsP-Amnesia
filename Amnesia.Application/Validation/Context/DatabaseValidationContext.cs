@@ -4,7 +4,7 @@ using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Amnesia.Application.Validation
+namespace Amnesia.Application.Validation.Context
 {
     public class DatabaseValidationContext : IValidationContext
     {
@@ -43,16 +43,16 @@ namespace Amnesia.Application.Validation
         {
             var block = GetBlockAndContent(blockHash);
 
-            var definitions = block.Content.Definitions;
-            return definitions.Select(hash => context.Definitions.Find(hash)).ToList();
+            var definitions = block?.Content.Definitions;
+            return definitions?.Select(hash => context.Definitions.Find(hash)).ToList();
         }
 
         public IList<Definition> GetMutations(byte[] blockHash)
         {
             var block = GetBlockAndContent(blockHash);
 
-            var mutations = block.Content.Mutations;
-            return mutations.Select(hash => context.Definitions.Find(hash)).ToList();
+            var mutations = block?.Content.Mutations;
+            return mutations?.Select(hash => context.Definitions.Find(hash)).ToList();
         }
 
         public Data GetData(byte[] definitionHash)
@@ -71,13 +71,23 @@ namespace Amnesia.Application.Validation
             do
             {
                 yield return hash;
-                hash = context.Blocks
-                    .Where(b => b.Hash == hash)
-                    .Select(b => b.PreviousBlockHash)
-                    .SingleOrDefault();
+                hash = GetPreviousBlock(hash);
             } while (hash != null);
         }
 
+        public byte[] GetPreviousBlock(byte[] hash)
+        {
+            return context.Blocks
+                .Where(b => b.Hash == hash)
+                .Select(b => b.PreviousBlockHash)
+                .SingleOrDefault();
+        }
+
         public IList<Definition> MissingData { get; set; } = new List<Definition>();
+
+        public bool ShouldAssumeValid(byte[] blockHash)
+        {
+            return HasBlock(blockHash);
+        }
     }
 }

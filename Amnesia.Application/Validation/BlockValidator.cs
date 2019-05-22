@@ -1,23 +1,51 @@
-﻿using System;
+﻿using Amnesia.Application.Validation.Context;
 
 namespace Amnesia.Application.Validation
 {
     public class BlockValidator
     {
-        private readonly MemoryValidationContext memory;
-        private readonly DatabaseValidationContext database;
+        private readonly IValidationContext context;
 
-        public BlockValidator(MemoryValidationContext memory, DatabaseValidationContext database)
+        public BlockValidator(IValidationContext context)
         {
-            this.memory = memory;
-            this.database = database;
+            this.context = context;
         }
 
-        public bool ValidateBlock(byte[] hash)
+        public IValidationResult ValidateBlock(byte[] hash)
         {
-            var block = memory.GetBlockAndContent(hash);
+            if (context.ShouldAssumeValid(hash))
+            {
+                return Result.Success();
+            }
 
-            throw new NotImplementedException();
+            var block = context.GetBlockAndContent(hash);
+            var prevBlockResult = ValidateBlock(block.PreviousBlockHash);
+
+            if (!prevBlockResult.IsAcceptable)
+            {
+                return Result.Failure();
+            }
+
+            
+
+            if (!ValidateProofOfWork(block.Hash))
+            {
+                return Result.Failure();
+            }
+
+            foreach (var definition in block.Content.Definitions)
+            {
+                
+            }
+
+
+            return Result.Success();
+        }
+
+        public bool ValidateProofOfWork(byte[] hash)
+        {
+            // TODO
+            return true;
         }
     }
 }

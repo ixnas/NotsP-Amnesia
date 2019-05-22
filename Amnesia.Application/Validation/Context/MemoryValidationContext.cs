@@ -2,7 +2,7 @@
 using System.Linq;
 using Amnesia.Domain.Entity;
 
-namespace Amnesia.Application.Validation
+namespace Amnesia.Application.Validation.Context
 {
     public class MemoryValidationContext : IValidationContext
     {
@@ -90,10 +90,20 @@ namespace Amnesia.Application.Validation
             do
             {
                 yield return hash;
-                hash = Blocks[hash].PreviousBlockHash;
+                hash = GetPreviousBlock(hash);
             } while (hash != null);
         }
 
+        public byte[] GetPreviousBlock(byte[] hash)
+        {
+            return Blocks[hash].PreviousBlockHash;
+        }
+
         public IList<Definition> MissingData { get; set; }
+
+        public bool ShouldAssumeValid(byte[] blockHash)
+        {
+            return false;
+        }
     }
 }
