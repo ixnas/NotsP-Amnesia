@@ -1,5 +1,5 @@
 {
-  "name": "react_Client",
+  "name": "AmnesiaClient",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,6 +7,7 @@
     "cbor": "^4.1.5",
     "flatted": "^2.0.0",
     "jquery": "^3.4.1",
+    "js-sha256": "^0.9.0",
     "merge": "^1.2.1",
     "node-rsa": "^1.0.5",
     "oidc-client": "^1.6.1",

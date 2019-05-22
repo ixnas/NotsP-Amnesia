@@ -22,8 +22,8 @@ namespace Amnesia.Application.Services
         }
 
          /// <summary>
-         /// Returns te last definition that was added to the chain. 
-         /// This function can get used for finding out the latest definition hash if you wanna calculate the PreviousDefinitionHash.
+         /// Returns te last definition that was added to the chain with a public key.
+         /// This function can get used for finding out the latest definition hash if you wanna get the PreviousDefinitionHash.
          /// </summary>
          /// <returns></returns>
         public Task<Definition> GetLastDefinition(byte[] key)
@@ -31,6 +31,17 @@ namespace Amnesia.Application.Services
             return blockchainContext.Definitions
                 .Include(d => d.Data)
                 .FirstOrDefaultAsync(d => d.Key == key);
+        }
+        /// <summary>
+        /// Returns te last definition that was added to the chain.
+        /// This function can get used for finding out the latest definition hash if you wanna get the PreviousDefinitionHash.
+        /// </summary>
+        /// <returns></returns>
+        public Task<Definition> GetLastDefinition()
+        {
+            return blockchainContext.Definitions
+                .Include(d => d.Data)
+                .FirstOrDefaultAsync();
         }
 
         /// <summary>
