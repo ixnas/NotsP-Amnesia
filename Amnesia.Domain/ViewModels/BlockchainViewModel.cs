@@ -20,7 +20,7 @@ namespace Amnesia.Domain.ViewModels
         {
             foreach (var block in blocks)
             {
-                Blocks.Add(new BlockViewModel(block));
+                Blocks.Add(BlockViewModel.FromBlock(block));
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
@@ -17,16 +18,17 @@ namespace Amnesia.Application.Peers
             this.configuration = configuration.Value;
         }
 
-        public Peer? GetPeer(string key)
+        public Peer GetPeer(string key)
         {
             return configuration.Peers.ContainsKey(key) 
-                ? new Peer(key, configuration.Peers[key]) 
+                ? new Peer(configuration.Peers[key], key ) 
                 : null;
         }
 
         public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Blocks, hash);
+            var url = (peer.Url + configuration.Api.Blocks + hash).Trim();
+            Console.WriteLine(url);
             return GetData<BlockViewModel>(url);
         }
 
@@ -53,9 +55,18 @@ namespace Amnesia.Application.Peers
             var client = new HttpClient();
             var result = await client.GetAsync(url);
 
+            Console.WriteLine(result.IsSuccessStatusCode);
             return result.IsSuccessStatusCode 
-                ? new Maybe<T>(JsonConvert.DeserializeObject<T>(result.Content.ToString()))
+                ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
         }
+    }
+
+    public class ViewModel
+    {
+        public string Hash;
+        public string Previous;
+        public string Content;
+        public int Nonce; 
     }
 }

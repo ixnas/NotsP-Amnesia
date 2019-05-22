@@ -2,6 +2,8 @@
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Amnesia.Domain.Context
