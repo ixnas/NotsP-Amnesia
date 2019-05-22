@@ -20,19 +20,12 @@ namespace Amnesia.WebApi.Controllers
         }
         
         [HttpGet("{hash}")]
-        public async Task<ActionResult> Get(string hash)
+        public async Task<IActionResult> Get(string hash)
         {
-            var definition = await service.GetDefinition(new Hash(hash).Bytes);
-            return Ok(new DefinitionViewModel(definition));
+            var definition = await service.GetDefinition(Hash.StringToByteArray(hash));
+            return Ok(DefinitionViewModel.FromDefinition(definition));
         }
         
-        [HttpGet("{hash}/data")]
-        public async Task<ActionResult> GetData(string hash)
-        {
-            var content = await service.GetDefinition(new Hash(hash).Bytes, true);
-            return Ok(content.Data.Blob);
-        }
-
         [HttpPost]
         public void Post([FromBody] string value)
         {

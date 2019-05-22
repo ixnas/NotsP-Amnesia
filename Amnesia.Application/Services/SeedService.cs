@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.Model;
 
 namespace Amnesia.Application.Services
 {
@@ -20,18 +21,20 @@ namespace Amnesia.Application.Services
         public void SeedData()
         {
             context.Database.EnsureCreated();
+
+            var signature = new CompositeHash(Encoding.ASCII.GetBytes("Handtekening")).Hash;
             
             var data = new Data
             {
                 PreviousDefinitionHash = null,
-                Signature = Encoding.ASCII.GetBytes("Handtekening"),
+                Signature = signature,
                 Blob = Encoding.ASCII.GetBytes("Dit is test data.")
             };
             var definition = new Definition
             {
                 DataHash = data.Hash,
                 PreviousDefinitionHash = null,
-                Signature = Encoding.ASCII.GetBytes("Handtekening"),
+                Signature = signature,
                 Key = null,
                 IsMutation = false,
                 Meta = null,

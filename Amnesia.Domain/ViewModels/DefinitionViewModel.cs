@@ -10,16 +10,21 @@ namespace Amnesia.Domain.ViewModels
         public IDictionary<string, string> Meta { get; set; }
         public string PreviousDefinition { get; set; }
         public string Signature { get; set; }
-        public DataViewModel Data { get; set; }
 
-        public DefinitionViewModel(Definition definition)
+        public DefinitionViewModel(){}
+        public static DefinitionViewModel FromDefinition(Definition definition)
         {
-            Hash = Model.Hash.ByteArrayToString(definition.Hash);
-            DataHash = Model.Hash.ByteArrayToString(definition.DataHash);
-            Meta = definition.Meta;
-            PreviousDefinition = Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash);
-            Signature = Model.Hash.ByteArrayToString(definition.Signature);
-            Data = new DataViewModel(definition.Data);
+            var vm = new DefinitionViewModel
+            {
+                Hash = Model.Hash.ByteArrayToString(definition.Hash),
+                DataHash = Model.Hash.ByteArrayToString(definition.DataHash),
+                Meta = definition.Meta,
+                PreviousDefinition = definition.PreviousDefinitionHash == null
+                                     ? null
+                                     : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
+                Signature = Model.Hash.ByteArrayToString(definition.Signature)
+            };
+            return vm;
         }
     }
 }

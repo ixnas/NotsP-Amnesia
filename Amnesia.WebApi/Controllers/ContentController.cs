@@ -14,19 +14,16 @@ namespace Amnesia.WebApi.Controllers
     public class ContentController : ControllerBase
     {
         private ContentService service;
-
         public ContentController(ContentService service)
         {
             this.service = service;
         }
-
+        
         [HttpGet("{hash}")]
-        public async Task<ActionResult> Get(string hash)
+        public async Task<IActionResult> Get(string hash)
         {
-            var content = await service.GetContent(new Hash(hash).Bytes);
-            return Ok(new ContentViewModel(content));
+            var content = await service.GetContent(Hash.StringToByteArray(hash));
+            return Ok(ContentViewModel.FromContent(content));
         }
-        
-        
     }
 }

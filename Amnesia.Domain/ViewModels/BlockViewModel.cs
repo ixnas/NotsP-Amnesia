@@ -11,6 +11,7 @@ namespace Amnesia.Domain.ViewModels
         public string Previous { get; set; }
         public string Content { get; set; }
         public int Nonce { get; set; }
+        public BlockViewModel() {}
         public static BlockViewModel FromBlock(Block block)
         {
             var vm = new BlockViewModel
@@ -23,10 +24,6 @@ namespace Amnesia.Domain.ViewModels
                 Nonce = block.Nonce
             };
             return vm;
-        }
-        
-        public BlockViewModel()
-        {
         }
     }
 }
