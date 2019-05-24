@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace Amnesia.WebApi.Models
 {
-    public class GetByKeyModel
+    public class JSONData
     {
-        public string PublicKey { get; set; }
+        public string PreviousDefinitionHash;
+        public string Signature;
+        public string Blob;
     }
 }

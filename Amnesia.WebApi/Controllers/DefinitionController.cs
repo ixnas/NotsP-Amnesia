@@ -7,6 +7,7 @@ using Amnesia.Domain.ViewModels;
 using Amnesia.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using PeterO.Cbor;
 
 namespace Amnesia.WebApi.Controllers
 {
@@ -42,7 +43,7 @@ namespace Amnesia.WebApi.Controllers
         [HttpPost("last")]
         public async Task<ActionResult> GetByKey([FromBody] GetByKeyModel model)
         {
-            byte[] key = Encoding.ASCII.GetBytes(model.publicKey);
+            byte[] key = Encoding.ASCII.GetBytes(model.PublicKey);
             var definition = await service.GetLastDefinition(); //REMINDER: add in key after debugging (to search for definition by key)
 
             if (definition == null)
@@ -60,10 +61,15 @@ namespace Amnesia.WebApi.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public async Task<ActionResult> CreateDefinition([FromBody] string value)
+        public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
-            var deserialized = JsonConvert.DeserializeObject(value);
-            Console.WriteLine(deserialized);
+            byte[] signBytes = Convert.FromBase64String(model.Definition.Signature);
+            byte[] dataSignBytes = Convert.FromBase64String(model.Definition.Data.Signature);
+            var signature = CBORObject.DecodeFromBytes(signBytes);
+            var datasignature = CBORObject.DecodeFromBytes(dataSignBytes);
+
+            Console.WriteLine(signature);
+            Console.WriteLine(datasignature);
             //var definition = new Definition();
             //await service.AddDefinition(definition);
 
