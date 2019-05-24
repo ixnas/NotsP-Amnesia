@@ -25,8 +25,10 @@ function uint6ToB64 (nUint6) {
       /*
       if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n"; }
       */
+      // eslint-disable-next-line
       nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
       if (nMod3 === 2 || aBytes.length - nIdx === 1) {
+        // eslint-disable-next-line
         sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
         nUint24 = 0;
       }
