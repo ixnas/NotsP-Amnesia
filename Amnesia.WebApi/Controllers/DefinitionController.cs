@@ -42,8 +42,7 @@ namespace Amnesia.WebApi.Controllers
         [HttpPost("last")]
         public async Task<ActionResult> GetLastByKey([FromBody] GetByKeyModel model)
         {
-            byte[] key = Encoding.ASCII.GetBytes(model.PublicKey);
-            var definition = await service.GetLastDefinition(key);
+            var definition = await service.GetLastDefinition(model.PublicKey);
 
             if (definition == null)
             {
@@ -64,19 +63,20 @@ namespace Amnesia.WebApi.Controllers
         {
             var data = new Data
             {
-                PreviousDefinitionHash  = Encoding.ASCII.GetBytes(model.Definition.PreviousDefinitionHash),
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash,
                 Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
-                Blob                    = Encoding.ASCII.GetBytes(model.Definition.Data.Blob)
+                Blob                    = model.Definition.Data.Blob,
+                Key                     = model.Key
             };
 
             var definition = new Definition
             {
-                DataHash                = Encoding.ASCII.GetBytes(model.Definition.Hash),
-                PreviousDefinitionHash  = Encoding.ASCII.GetBytes((model.Definition.PreviousDefinitionHash)),
+                DataHash                = model.Definition.Hash,
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash,
                 Signature               = Convert.FromBase64String(model.Definition.Signature),
-                Key                     = Encoding.ASCII.GetBytes(model.Key),
-                IsMutation              = model.Definition.Meta.isMutation,
-                IsMutable               = model.Definition.Meta.isMutable,
+                Key                     = model.Key,
+                IsMutation              = model.Definition.IsMutation,
+                IsMutable               = model.Definition.IsMutable,
                 Data                    = data,
                 PreviousDefinition      = null
             };

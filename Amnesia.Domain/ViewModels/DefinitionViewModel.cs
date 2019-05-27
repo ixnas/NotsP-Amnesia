@@ -18,10 +18,10 @@ namespace Amnesia.Domain.ViewModels
             var vm = new DefinitionViewModel
             {
                 Hash = Model.Hash.ByteArrayToString(definition.Hash),
-                DataHash = Model.Hash.ByteArrayToString(definition.DataHash),
+                DataHash = definition.DataHash,
                 PreviousDefinition = definition.PreviousDefinitionHash == null
                                      ? null
-                                     : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
+                                     : definition.PreviousDefinitionHash,
                 Signature = Model.Hash.ByteArrayToString(definition.Signature)
             };
             return vm;

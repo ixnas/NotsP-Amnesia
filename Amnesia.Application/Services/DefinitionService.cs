@@ -26,7 +26,7 @@ namespace Amnesia.Application.Services
          /// This function can get used for finding out the latest definition hash if you wanna get the PreviousDefinitionHash.
          /// </summary>
          /// <returns></returns>
-        public Task<Definition> GetLastDefinition(byte[] key)
+        public Task<Definition> GetLastDefinition(string key)
         {
             return blockchainContext.Definitions
                 .Include(d => d.Data)

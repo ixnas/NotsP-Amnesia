@@ -12,7 +12,6 @@ function uint6ToB64 (nUint6) {
         47
       :
         65;
-  
   }
   
   export function base64EncArr (aBytes) {

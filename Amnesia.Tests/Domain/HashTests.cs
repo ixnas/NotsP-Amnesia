@@ -99,10 +99,10 @@ namespace Amnesia.Tests.Domain
         {
             var data = new Data
             {
-                Blob = Hash.StringToByteArray("abcde0"),
-                PreviousDefinitionHash = Hash.StringToByteArray("123456"),
+                Blob = "abcde0",
+                PreviousDefinitionHash = "123456",
                 Signature = Hash.StringToByteArray("123412341234"),
-                Key = Hash.StringToByteArray("0987654321")
+                Key = "0987654321"
             };
 
             var hash = Hash.ByteArrayToString(data.Hash);

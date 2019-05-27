@@ -30,12 +30,12 @@ namespace Amnesia.Application.Services
             {
                 PreviousDefinitionHash = null,
                 Signature = signature,
-                Blob = Encoding.ASCII.GetBytes("Dit is test data.")
+                Blob = "Dit is test data."
             };
             
             var definition = new Definition
             {
-                DataHash = data.Hash,
+                DataHash = Encoding.Default.GetString(data.Hash),
                 PreviousDefinitionHash = null,
                 Signature = signature,
                 Key = null,

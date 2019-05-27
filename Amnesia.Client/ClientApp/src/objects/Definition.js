@@ -6,6 +6,7 @@ export class Definition {
         this.PreviousDefinitionHash = "";
         this.Signature = null;
         this.Data = new Data();
-        this.Meta = { isMutable: true, isMutation: false };
+        this.IsMutable = true; 
+        this.IsMutation = false;
     }
 }

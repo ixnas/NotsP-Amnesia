@@ -8,14 +8,7 @@ var SHA256 = require('js-sha256').sha256;
 
 export class DefinitionController {
 
-    Validate() {
-        // Validate the inputValue
-    }
-
     SetDataToDefinition(value) {
-
-        this.Validate(value);
-        
         this.Definition = new Definition();
         this.KeyPair = new KeyHelper().getKeys();
         this.Input = value;
@@ -70,7 +63,7 @@ export class DefinitionController {
     SetHashData() {
         var map = new Map();
 
-        this.Definition.Data.Blob = this.Input;
+        this.Definition.Data.Blob = btoa(this.Input);
         this.SignDefinition();
 
         map
