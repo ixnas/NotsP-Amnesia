@@ -17,11 +17,13 @@ export class DefinitionController {
         this.Validate(value);
         
         this.Definition = new Definition();
-        this.SetDefinition(value, new KeyHelper().getKeys());
+        this.KeyPair = new KeyHelper().getKeys();
+        this.Input = value;
+        this.SetDefinition(value);
     }
 
-    SetDefinition(input, keyPair) {
-        const publicKey = keyPair.publicKey.exportKey("pkcs8-public-pem");
+    SetDefinition() {
+        const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
 
         fetch(`https://localhost:5001/definitions/last`, {
             method: "POST",
@@ -35,22 +37,22 @@ export class DefinitionController {
         })
             .then(response => response.json())
             .then(definition => {
-                this.SetDefinitionAndSend(definition, input, keyPair)
+                this.SetDefinitionAndSend(definition.hash)
             })
             .catch((err) => console.log(err));
     }
 
-    SetDefinitionAndSend(definition, input, keyPair) {
+    SetDefinitionAndSend(hash) {
 
-        this.Definition.Data.PreviousDefinitionHash = definition.hash;
-        this.Definition.PreviousDefinitionHash = definition.hash;
+        this.Definition.Data.PreviousDefinitionHash = hash;
+        this.Definition.PreviousDefinitionHash = hash;
 
-        this.SetHashData(input, keyPair);
+        this.SetHashData();
 
-        this.Send(keyPair);
+        this.Send();
     }
 
-    Sign(keyPair) {
+    SignDefinition() {
         var message = new Map();
 
         message
@@ -60,34 +62,29 @@ export class DefinitionController {
 
         const encodedMessage = CBOR.encode(message);
 
-        const privateKey = keyPair.privateKey;
+        const privateKey = this.KeyPair.privateKey;
         this.Definition.Signature = privateKey.sign(encodedMessage);
-        this.Definition.Data.Sign(privateKey);
+        this.SignData(privateKey);
     }
 
-    SetHashData(input, keyPair) {
+    SetHashData() {
         var map = new Map();
 
-        this.Definition.Data.Blob = input;
-        this.Sign(keyPair);
+        this.Definition.Data.Blob = this.Input;
+        this.SignDefinition();
 
         map
             .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
             .set("Blob", this.Definition.Data.Blob)
             .set("Signature", this.Definition.Signature)
-            .set("Key", keyPair.publicKey.exportKey("pkcs8-public-pem"));
+            .set("Key", this.KeyPair.publicKey.exportKey("pkcs8-public-pem"));
 
         this.Definition.Hash = SHA256(CBOR.encode(map));
     }
 
-    Send(keyPair) {
+    Send() {
         this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
         this.Definition.Signature = base64EncArr(this.Definition.Signature);
-
-        const payload = {
-            Definition: this.Definition,
-            Key: keyPair.publicKey.exportKey("pkcs8-public-pem")
-        };
 
         fetch('https://localhost:5001/definitions', {
             method: 'POST',
@@ -95,8 +92,18 @@ export class DefinitionController {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                Definition: this.Definition,
+                Key: this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
+            })
         })
             .catch(err => console.error(err));
+    }
+
+    SignData(privateKey) {
+        var message = new Map();
+        message.set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash).set("Blob", this.Definition.Data.Blob);
+        const encodedMessage = CBOR.encode(message);
+        this.Definition.Data.Signature = privateKey.sign(encodedMessage);
     }
 }

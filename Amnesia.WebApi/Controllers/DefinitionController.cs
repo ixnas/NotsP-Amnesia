@@ -31,7 +31,7 @@ namespace Amnesia.WebApi.Controllers
                 return NotFound();
             }
 
-            return Ok(new DefinitionViewModel(definition));
+            return Ok(DefinitionViewModel.FromDefinition(definition));
         }
 
         /// <summary>
@@ -40,17 +40,17 @@ namespace Amnesia.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("last")]
-        public async Task<ActionResult> GetByKey([FromBody] GetByKeyModel model)
+        public async Task<ActionResult> GetLastByKey([FromBody] GetByKeyModel model)
         {
             byte[] key = Encoding.ASCII.GetBytes(model.PublicKey);
-            var definition = await service.GetLastDefinition(); //REMINDER: add in key after debugging (to search for definition by key)
+            var definition = await service.GetLastDefinition(key);
 
             if (definition == null)
             {
                 return NotFound();
             }
 
-            return Ok(new DefinitionViewModel(definition));
+            return Ok(DefinitionViewModel.FromDefinition(definition));
         }
 
         /// <summary>
