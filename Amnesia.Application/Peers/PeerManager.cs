@@ -28,13 +28,12 @@ namespace Amnesia.Application.Peers
         public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
             var url = (peer.Url + configuration.Api.Blocks + hash).Trim();
-            Console.WriteLine(url);
             return GetData<BlockViewModel>(url);
         }
 
         public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Definitions, hash);
+            var url = (peer.Url + configuration.Api.Definitions + hash).Trim();
             return GetData<DefinitionViewModel>(url);
         }
         
@@ -46,7 +45,7 @@ namespace Amnesia.Application.Peers
 
         public Task<Maybe<ContentViewModel>> GetContent(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Contents, hash);
+            var url = (peer.Url + configuration.Api.Contents + hash).Trim();
             return GetData<ContentViewModel>(url);
         }
 
@@ -60,13 +59,5 @@ namespace Amnesia.Application.Peers
                 ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
         }
-    }
-
-    public class ViewModel
-    {
-        public string Hash;
-        public string Previous;
-        public string Content;
-        public int Nonce; 
     }
 }

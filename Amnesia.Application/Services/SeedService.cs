@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amnesia.Cryptography;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
@@ -21,8 +22,9 @@ namespace Amnesia.Application.Services
         public void SeedData()
         {
             context.Database.EnsureCreated();
-
+            
             var signature = new CompositeHash(Encoding.ASCII.GetBytes("Handtekening")).Hash;
+            var keys = new KeyPair(2048);
             
             var data = new Data
             {
@@ -30,6 +32,7 @@ namespace Amnesia.Application.Services
                 Signature = signature,
                 Blob = Encoding.ASCII.GetBytes("Dit is test data.")
             };
+            
             var definition = new Definition
             {
                 DataHash = data.Hash,

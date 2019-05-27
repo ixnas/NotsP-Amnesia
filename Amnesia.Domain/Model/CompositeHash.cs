@@ -38,7 +38,7 @@ namespace Amnesia.Domain.Model
             return sha256.ComputeHash(bytes);
         }
 
-        private byte[] EncodeToBytes()
+        public byte[] EncodeToBytes()
         {
             var cbor = CBORObject.NewMap();
 

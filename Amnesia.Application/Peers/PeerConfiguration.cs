@@ -35,8 +35,8 @@ namespace Amnesia.Application.Peers
     public class ApiConfiguration
     {
         public string Blocks { get; set; } = "/blocks/";
-        public string Contents { get; set; } = "/contents/%s";
-        public string Definitions { get; set; } = "/definitions/%s";
+        public string Contents { get; set; } = "/contents/";
+        public string Definitions { get; set; } = "/definitions/";
         public string Keys { get; set; } = "/keys/%s/definitions?depth=%i";
     }
 }
