@@ -70,8 +70,6 @@ namespace Amnesia.WebApi
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
             
             app.UseMvcWithDefaultRoute();

@@ -31,7 +31,7 @@ namespace Amnesia.Application.Helper
         public Maybe<TResult> Select<TResult>(Func<T, TResult> selector)
         {
             return hasItem 
-                ? new Maybe<TResult>(selector(value!)) 
+                ? new Maybe<TResult>(selector(value)) 
                 : new Maybe<TResult>();
         }
 
@@ -39,5 +39,7 @@ namespace Amnesia.Application.Helper
         {
             return new Maybe<T>(value);
         }
+
+        public T Value => value;
     }
 }

@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amnesia.Cryptography\Amnesia.Cryptography.csproj" />
     <ProjectReference Include="..\Amnesia.Domain\Amnesia.Domain.csproj" />
   </ItemGroup>
 

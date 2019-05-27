@@ -11,17 +11,20 @@ namespace Amnesia.Domain.ViewModels
         public bool IsMutable { get; set; }
         public string PreviousDefinition { get; set; }
         public string Signature { get; set; }
-        public DataViewModel Data { get; set; }
 
-        public DefinitionViewModel(Definition definition)
+        public DefinitionViewModel(){}
+        public static DefinitionViewModel FromDefinition(Definition definition)
         {
-            Hash = Model.Hash.ByteArrayToString(definition.Hash);
-            DataHash = Model.Hash.ByteArrayToString(definition.DataHash);
-            IsMutation = definition.IsMutation;
-            IsMutable = definition.IsMutable;
-            PreviousDefinition = (definition.PreviousDefinitionHash != null) ? Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash) : null;
-            Signature = Model.Hash.ByteArrayToString(definition.Signature);
-            Data = (definition.Data != null) ? new DataViewModel(definition.Data) : null;
+            var vm = new DefinitionViewModel
+            {
+                Hash = Model.Hash.ByteArrayToString(definition.Hash),
+                DataHash = Model.Hash.ByteArrayToString(definition.DataHash),
+                PreviousDefinition = definition.PreviousDefinitionHash == null
+                                     ? null
+                                     : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
+                Signature = Model.Hash.ByteArrayToString(definition.Signature)
+            };
+            return vm;
         }
     }
 }

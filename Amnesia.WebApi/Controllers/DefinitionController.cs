@@ -22,7 +22,7 @@ namespace Amnesia.WebApi.Controllers
         }
         
         [HttpGet("{hash}")]
-        public async Task<ActionResult> Get(string hash)
+        public async Task<IActionResult> Get(string hash)
         {
             var definition = await service.GetDefinition(new Hash(hash).Bytes);
 
