@@ -2,12 +2,11 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
+using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Amnesia.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using PeterO.Cbor;
 
 namespace Amnesia.WebApi.Controllers
 {
@@ -63,15 +62,26 @@ namespace Amnesia.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
-            byte[] signBytes = Convert.FromBase64String(model.Definition.Signature);
-            byte[] dataSignBytes = Convert.FromBase64String(model.Definition.Data.Signature);
-            var signature = CBORObject.DecodeFromBytes(signBytes);
-            var datasignature = CBORObject.DecodeFromBytes(dataSignBytes);
+            var data = new Data
+            {
+                PreviousDefinitionHash  = Encoding.ASCII.GetBytes(model.Definition.PreviousDefinitionHash),
+                Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
+                Blob                    = Encoding.ASCII.GetBytes(model.Definition.Data.Blob)
+            };
 
-            Console.WriteLine(signature);
-            Console.WriteLine(datasignature);
-            //var definition = new Definition();
-            //await service.AddDefinition(definition);
+            var definition = new Definition
+            {
+                DataHash                = Encoding.ASCII.GetBytes(model.Definition.Hash),
+                PreviousDefinitionHash  = Encoding.ASCII.GetBytes((model.Definition.PreviousDefinitionHash)),
+                Signature               = Convert.FromBase64String(model.Definition.Signature),
+                Key                     = Encoding.ASCII.GetBytes(model.Key),
+                IsMutation              = model.Definition.Meta.isMutation,
+                IsMutable               = model.Definition.Meta.isMutable,
+                Data                    = data,
+                PreviousDefinition      = null
+            };
+
+            //TODO: Node laten minen naar block
 
             return Ok();
         }

@@ -34,7 +34,7 @@ namespace Amnesia.Application.Services
                 Signature = Encoding.ASCII.GetBytes("Handtekening"),
                 Key = null,
                 IsMutation = false,
-                Meta = null,
+                IsMutable = true,
                 Data = data,
                 PreviousDefinition = null
             };

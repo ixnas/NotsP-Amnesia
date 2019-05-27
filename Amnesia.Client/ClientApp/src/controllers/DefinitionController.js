@@ -8,7 +8,6 @@ var SHA256 = require('js-sha256').sha256;
 
 export class DefinitionController {
 
-
     Validate() {
         // Validate the inputValue
     }
@@ -85,21 +84,10 @@ export class DefinitionController {
         this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
         this.Definition.Signature = base64EncArr(this.Definition.Signature);
 
-        const map = new Map();
-
-        map
-        .set("Hash", this.Definition.Hash)
-        .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
-        .set("Signature", this.Definition.Signature)
-        .set("Data", this.Definition.Data)
-        .set("Meta", this.Definition.Meta);
-
         const payload = {
             Definition: this.Definition,
             Key: keyPair.publicKey.exportKey("pkcs8-public-pem")
         };
-
-        console.log(payload)
 
         fetch('https://localhost:5001/definitions', {
             method: 'POST',
