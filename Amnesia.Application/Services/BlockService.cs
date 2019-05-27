@@ -16,22 +16,14 @@ namespace Amnesia.Application.Services
             this.context = context;
         }
 
-        public Task<Block> GetBlock(byte[] hash, bool includeContent = false)
-        {
-            if (includeContent)
-            {
-                return context.Blocks
-                    .Include(b => b.Content)
-                    .SingleOrDefaultAsync(b => b.Hash == hash);
-            }
-
-            return context.Blocks.SingleOrDefaultAsync(b => b.Hash == hash);
+        public Block GetBlock(byte[] hash)
+        {   
+            return context.Blocks.SingleOrDefault(b => b.Hash == hash);
         }
 
         public async Task<List<Block>> GetBlocks(int depth)
         {
             List<Block> blocks = new List<Block>();
-
             var block = await context.Blocks.FirstOrDefaultAsync();
             blocks.Add(block);
             

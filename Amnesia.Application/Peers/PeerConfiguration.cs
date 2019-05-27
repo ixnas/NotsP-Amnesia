@@ -5,7 +5,7 @@ namespace Amnesia.Application.Peers
 {
     public class PeerConfiguration
     {
-        public string? NetworkId { get; set; }
+        public string NetworkId { get; set; }
         public IDictionary<string, string> Peers { get; set; } = new Dictionary<string, string>();
 
         public ApiConfiguration Api { get; set; } = new ApiConfiguration();
@@ -34,8 +34,9 @@ namespace Amnesia.Application.Peers
 
     public class ApiConfiguration
     {
-        public string Blocks { get; set; } = "/blocks/%s";
-        public string Contents { get; set; } = "/contents/%s";
-        public string Definitions { get; set; } = "/definitions/%s";
+        public string Blocks { get; set; } = "/blocks/";
+        public string Contents { get; set; } = "/contents/";
+        public string Definitions { get; set; } = "/definitions/";
+        public string Keys { get; set; } = "/keys/%s/definitions?depth=%i";
     }
 }

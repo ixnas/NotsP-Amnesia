@@ -6,21 +6,22 @@ namespace Amnesia.Domain.ViewModels
     {
         public string Hash { get; set; }
         public string PreviousDefinitionHash { get; set; }
-        public byte[] Signature { get; set; }
+        public string Signature { get; set; }
         public string Key { get; set; }
         public byte[] Blob { get; set; }
 
-        public DataViewModel(Data data)
+        public static DataViewModel FromData(Data data)
         {
-            Hash = Model.Hash.ByteArrayToString(data.Blob);
-            Signature = data.Signature;
-            Key = data.Key;
-            Blob = data.Blob;
-
-            if (PreviousDefinitionHash != null)
+            var vm = new DataViewModel
             {
-                PreviousDefinitionHash = Model.Hash.ByteArrayToString(data.PreviousDefinitionHash);
-            }
+                Hash = Model.Hash.ByteArrayToString(data.Hash),
+                PreviousDefinitionHash = data.PreviousDefinitionHash == null
+                                         ? null
+                                         : Model.Hash.ByteArrayToString(data.PreviousDefinitionHash),
+                Signature = Model.Hash.ByteArrayToString(data.Signature),
+                Key = data.Key
+            };
+            return vm;
         }
     }
 }

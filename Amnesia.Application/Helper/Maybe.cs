@@ -22,7 +22,7 @@ namespace Amnesia.Application.Helper
         public Maybe<TResult> Select<TResult>(Func<T, TResult> selector)
         {
             return HasValue 
-                ? new Maybe<TResult>(selector(Value!)) 
+                ? new Maybe<TResult>(selector(Value)) 
                 : new Maybe<TResult>();
         }
 

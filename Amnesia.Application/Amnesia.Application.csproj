@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amnesia.Cryptography\Amnesia.Cryptography.csproj" />
     <ProjectReference Include="..\Amnesia.Domain\Amnesia.Domain.csproj" />
     <ProjectReference Include="..\Amnesia.Cryptography\Amnesia.Cryptography.csproj" />
   </ItemGroup>

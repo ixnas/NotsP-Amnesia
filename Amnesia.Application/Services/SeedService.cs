@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amnesia.Cryptography;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.Model;
 
 namespace Amnesia.Application.Services
 {
@@ -21,17 +23,21 @@ namespace Amnesia.Application.Services
         {
             context.Database.EnsureCreated();
             
+            var signature = new CompositeHash(Encoding.ASCII.GetBytes("Handtekening")).Hash;
+            var keys = new KeyPair(2048);
+            
             var data = new Data
             {
                 PreviousDefinitionHash = null,
-                Signature = Encoding.ASCII.GetBytes("Handtekening"),
+                Signature = signature,
                 Blob = Encoding.ASCII.GetBytes("Dit is test data.")
             };
+            
             var definition = new Definition
             {
                 DataHash = data.Hash,
                 PreviousDefinitionHash = null,
-                Signature = Encoding.ASCII.GetBytes("Handtekening"),
+                Signature = signature,
                 Key = null,
                 IsMutation = false,
                 Meta = null,
@@ -56,6 +62,7 @@ namespace Amnesia.Application.Services
             };
             var state = new State
             {
+                PeerId = "peer1",
                 CurrentBlock = block,
                 CurrentBlockHash = block.Hash
             };
