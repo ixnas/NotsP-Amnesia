@@ -14,14 +14,8 @@ namespace Amnesia.Application.Services
             this.blockchainContext = blockchainContext;
         }
 
-        public Task<Definition> GetDefinition(byte[] hash, bool includeData = false)
+        public Task<Definition> GetDefinition(byte[] hash)
         {
-            if (includeData)
-            {
-                return blockchainContext.Definitions
-                    .Include(d => d.Data)
-                    .SingleOrDefaultAsync(d => d.Hash == hash);
-            }
             return blockchainContext.Definitions
                 .SingleOrDefaultAsync(d => d.Hash == hash);
         }

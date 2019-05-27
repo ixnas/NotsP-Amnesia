@@ -11,17 +11,19 @@ namespace Amnesia.Domain.ViewModels
         public string Previous { get; set; }
         public string Content { get; set; }
         public int Nonce { get; set; }
-        public BlockViewModel(Block block)
-        {    
-            Hash = Model.Hash.ByteArrayToString(block.Hash);
-            Previous = Model.Hash.ByteArrayToString(block.PreviousBlockHash);
-            Content = Model.Hash.ByteArrayToString(block.ContentHash);
-            Nonce = block.Nonce;
-        }
-
-        public BlockViewModel(List<Block> blocks)
+        public BlockViewModel() {}
+        public static BlockViewModel FromBlock(Block block)
         {
-            
+            var vm = new BlockViewModel
+            {
+                Hash = Model.Hash.ByteArrayToString(block.Hash),
+                Previous = block.PreviousBlockHash == null
+                    ? null
+                    : Model.Hash.ByteArrayToString(block.PreviousBlockHash),
+                Content = Model.Hash.ByteArrayToString(block.ContentHash),
+                Nonce = block.Nonce
+            };
+            return vm;
         }
     }
 }

@@ -8,11 +8,18 @@ namespace Amnesia.Domain.ViewModels
         public string PreviousDefinitionHash { get; set; }
         public string Signature { get; set; }
 
-        public DataViewModel(Data data)
+        public DataViewModel(){}
+        public static DataViewModel FromData(Data data)
         {
-            Hash = Model.Hash.ByteArrayToString(data.Blob);
-            PreviousDefinitionHash = Model.Hash.ByteArrayToString(data.PreviousDefinitionHash);
-            Signature = Model.Hash.ByteArrayToString(data.Signature);
+            var vm = new DataViewModel
+            {
+                Hash = Model.Hash.ByteArrayToString(data.Hash),
+                PreviousDefinitionHash = data.PreviousDefinitionHash == null
+                                         ? null
+                                         : Model.Hash.ByteArrayToString(data.PreviousDefinitionHash),
+                Signature = Model.Hash.ByteArrayToString(data.Signature)
+            };
+            return vm;
         }
     }
 }

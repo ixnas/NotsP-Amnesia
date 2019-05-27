@@ -2,6 +2,8 @@
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Amnesia.Domain.Context
@@ -33,7 +35,7 @@ namespace Amnesia.Domain.Context
             SetupHashable<Content>(modelBuilder);
             SetupHashable<Definition>(modelBuilder);
             SetupHashable<Data>(modelBuilder);
-            modelBuilder.Entity<State>().HasKey(s => s.CurrentBlockHash);
+            modelBuilder.Entity<State>().HasKey(s => s.PeerId);
 
             modelBuilder.Entity<Block>(block =>
             {

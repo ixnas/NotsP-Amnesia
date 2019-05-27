@@ -17,8 +17,6 @@ namespace Amnesia.Application.Services
         public Task<Content> GetContent(byte[] hash)
         {
             return blockchainContext.Contents
-                .Include(c => c.Definitions)
-                .Include(c => c.Mutations)
                 .SingleOrDefaultAsync(c => c.Hash == hash);
         }
 

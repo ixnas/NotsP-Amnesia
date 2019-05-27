@@ -1,13 +1,16 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Amnesia.Application.Peers;
 using Amnesia.Application.Services;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Amnesia.WebApi.Controllers
 {
-    [Route("blocks/")]
+    [Route("blocks")]
     [ApiController]
     public class BlockController : ControllerBase
     {
@@ -23,17 +26,18 @@ namespace Amnesia.WebApi.Controllers
         }
 
         [HttpGet("{hash}")]
-        public async Task<ActionResult> Get(string hash)
+        public IActionResult Get(string hash)
         {
-            var block = await service.GetBlock(new Hash(hash).Bytes);
-            return Ok(new BlockViewModel(block));
+            var block = service.GetBlock(Hash.StringToByteArray(hash));
+            return Ok(BlockViewModel.FromBlock(block));
         }
 
         [HttpGet]
         public ActionResult GetAll()
         {
             var blocks = service.GetBlocks();
-            return Ok(blocks);
+            var list = blocks.Select(b => BlockViewModel.FromBlock(b));
+            return Ok(list);
         }
         
 //         TODO: Refactor function and viewmodel
@@ -45,11 +49,11 @@ namespace Amnesia.WebApi.Controllers
 //        }
 
         [HttpPost]
-        public async Task Post([FromQuery(Name = "id")] string id, [FromBody] string value)
-        {
-            var block = await service.GetBlock(new Hash(value).Bytes);
-            var peer = manager.GetPeer(id);
-            //amnesia.ReceiveBlock(block, peer);
+        public async Task<IActionResult> Post([FromQuery(Name = "peer")] string peer, [FromBody] string value)
+        {    
+            Console.WriteLine(value);
+            await amnesia.ReceiveBlock(Hash.StringToByteArray(value), peer);
+            return Ok();
         }
     }
 }

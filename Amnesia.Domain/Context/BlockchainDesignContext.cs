@@ -15,8 +15,16 @@ namespace Amnesia.Domain.Context
                 .Build();
 
             var builder = new DbContextOptionsBuilder<BlockchainContext>();
-            var connectionString = configuration.GetConnectionString("BlockchainDatabase");
-            builder.UseSqlServer(connectionString);
+
+            if (configuration.GetValue("UseSqlite", false))
+            {
+                builder.UseSqlite(configuration.GetConnectionString("Sqlite"));
+            }
+            else
+            {
+                builder.UseSqlServer(configuration.GetConnectionString("Sql"));
+            }
+
             return new BlockchainContext(builder.Options);
         }
     }

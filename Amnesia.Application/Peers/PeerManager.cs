@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
-using Amnesia.Domain.Entity;
+using Amnesia.Domain.ViewModels;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace Amnesia.Application.Peers
@@ -20,37 +18,35 @@ namespace Amnesia.Application.Peers
             this.configuration = configuration.Value;
         }
 
-        public Peer? GetPeer(string key)
+        public Peer GetPeer(string key)
         {
             return configuration.Peers.ContainsKey(key) 
-                ? new Peer(key, configuration.Peers[key]) 
+                ? new Peer(configuration.Peers[key], key ) 
                 : null;
         }
 
-        public Task<Maybe<Block>> GetBlock(Peer peer, string hash)
+        public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Blocks, hash);
-            // TODO viewmodel
-            return GetData<Block>(url);
+            var url = (peer.Url + configuration.Api.Blocks + hash).Trim();
+            return GetData<BlockViewModel>(url);
         }
 
-        public Task<Maybe<Definition>> GetDefinition(Peer peer, string hash)
+        public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Definitions, hash);
-            // TODO viewmodel
-            return GetData<Definition>(url);
+            var url = (peer.Url + configuration.Api.Definitions + hash).Trim();
+            return GetData<DefinitionViewModel>(url);
         }
         
-        public List<Definition> GetDefinitions(string key, int limit)
+        public Task<Maybe<IEnumerable<string>>> GetDefinitions(Peer peer, string key, int limit)
         {
-            throw new NotImplementedException();
+            var url = peer.Url + string.Format(configuration.Api.Keys, key, limit);
+            return GetData<IEnumerable<string>>(url);
         }
 
-        public Task<Maybe<Content>> GetContent(Peer peer, string hash)
+        public Task<Maybe<ContentViewModel>> GetContent(Peer peer, string hash)
         {
-            var url = peer.Url + string.Format(configuration.Api.Contents, hash);
-            // TODO viewmodel
-            return GetData<Content>(url);
+            var url = (peer.Url + configuration.Api.Contents + hash).Trim();
+            return GetData<ContentViewModel>(url);
         }
 
         private static async Task<Maybe<T>> GetData<T>(string url)
@@ -58,8 +54,9 @@ namespace Amnesia.Application.Peers
             var client = new HttpClient();
             var result = await client.GetAsync(url);
 
+            Console.WriteLine(result.IsSuccessStatusCode);
             return result.IsSuccessStatusCode 
-                ? new Maybe<T>(JsonConvert.DeserializeObject<T>(result.Content.ToString()))
+                ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
         }
     }
