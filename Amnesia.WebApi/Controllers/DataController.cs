@@ -11,7 +11,7 @@ namespace Amnesia.WebApi.Controllers
     [ApiController]
     public class DataController : ControllerBase
     {
-        private DataService service;
+        private readonly DataService service;
 
         public DataController(DataService dataService)
         {
@@ -29,7 +29,11 @@ namespace Amnesia.WebApi.Controllers
         public async Task<IActionResult> GetBlob(string hash)
         {
             var data = await service.GetData(Hash.StringToByteArray(hash));
-            return Ok(Encoding.ASCII.GetString(data.Blob));
+            if (data == null)
+            {
+                return NoContent();
+            }
+            return Ok(data.Blob);
         }
     }
 }

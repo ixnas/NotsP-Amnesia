@@ -42,8 +42,10 @@ namespace Amnesia.Application
             //Get specific block from hash 
         }
 
+        //TODO: Write implementation for checking block (Consensus).
         private void CheckBlock()
         {
+            throw new NotImplementedException();
             var miner = new Miner(10);
         }
         

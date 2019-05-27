@@ -18,7 +18,7 @@ namespace Amnesia.Application.Services
 
         public Block GetBlock(byte[] hash)
         {   
-            return context.Blocks.FirstOrDefault(b => b.Hash == hash);
+            return context.Blocks.SingleOrDefault(b => b.Hash == hash);
         }
 
         public async Task<List<Block>> GetBlocks(int depth)
