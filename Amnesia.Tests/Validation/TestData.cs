@@ -145,7 +145,7 @@ YQIDAQAB
             Assert.IsNotNull(context);
             Assert.IsNotNull(startBlock);
 
-            var defViewModels = context.Definitions.Select(pair => new DefinitionViewModel(pair.Value));
+            var defViewModels = context.Definitions.Select(pair => DefinitionViewModel.FromDefinition(pair.Value));
             var json = JsonConvert.SerializeObject(defViewModels, Formatting.Indented);
 
             File.WriteAllText("TestDefinitions.json", json);
