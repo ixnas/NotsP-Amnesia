@@ -31,7 +31,7 @@ namespace Amnesia.WebApi.Controllers
             var data = await service.GetData(Hash.StringToByteArray(hash));
             if (data == null)
             {
-                return NoContent();
+                return NotFound();
             }
             return Ok(data.Blob);
         }
