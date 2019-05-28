@@ -80,7 +80,9 @@ namespace Amnesia.WebApi.Controllers
                 PreviousDefinition      = null
             };
 
-            //TODO: Node laten minen naar block
+            var amnesia = new Application.Amnesia(null, null); // Needs to be configured
+
+            amnesia.ReceiveDefinition(definition); // Node mining
 
             return Ok();
         }

@@ -49,9 +49,33 @@ namespace Amnesia.Application
             var miner = new Miner(10);
         }
         
-        public void ReceiveDefinition(Definition definition)
+        public async void ReceiveDefinition(Definition definition)
         {
-            throw new NotImplementedException();
+            var contentService = new ContentService(null); //TODO: Needs to be configured
+            var content = await contentService.GetContent(definition.Hash);
+            int difficulty = 20;
+
+            content.Definitions.Add(new byte[0]); //TODO: add definition to list with content? with a byte[]?
+
+            var previousBlock = content.Definitions.Last(); //TODO: get previous block hash 
+
+            var payload = new Block
+            {
+                Nonce = 0,
+                PreviousBlockHash = new byte[0],
+                PreviousBlock = new Block(),
+                Content = content,
+                ContentHash = content.Hash
+            };
+
+            var miner = new Miner(difficulty);
+            //TODO: subscribe to event van miner
+
+            await miner.Start(payload);
+
+            //TODO: get verified block from subscribed event
+
+            //TODO: send verified block to connected 
         }
     }
 }
