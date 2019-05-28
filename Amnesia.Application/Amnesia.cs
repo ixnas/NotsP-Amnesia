@@ -53,5 +53,11 @@ namespace Amnesia.Application
         {
             throw new NotImplementedException();
         }
+
+        private void ExecuteMutation()
+        {
+            //mutation = valid
+            
+        }
     }
 }

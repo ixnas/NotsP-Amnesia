@@ -9,19 +9,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amnesia.Domain.Migrations
 {
     [DbContext(typeof(BlockchainContext))]
-    [Migration("20190520120136_New initial migration bc sqlite sucks")]
-    partial class Newinitialmigrationbcsqlitesucks
+    [Migration("20190528150507_NewInitBcSQLite")]
+    partial class NewInitBcSQLite
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+                .HasAnnotation("ProductVersion", "3.0.0-preview5.19227.1");
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Block", b =>
                 {
-                    b.Property<byte[]>("Hash")
-                        .ValueGeneratedOnAdd();
+                    b.Property<byte[]>("Hash");
 
                     b.Property<byte[]>("ContentHash");
 
@@ -41,8 +40,7 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Content", b =>
                 {
-                    b.Property<byte[]>("Hash")
-                        .ValueGeneratedOnAdd();
+                    b.Property<byte[]>("Hash");
 
                     b.Property<string>("Definitions");
 
@@ -55,12 +53,11 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Data", b =>
                 {
-                    b.Property<byte[]>("Hash")
-                        .ValueGeneratedOnAdd();
+                    b.Property<byte[]>("Hash");
 
                     b.Property<byte[]>("Blob");
 
-                    b.Property<byte[]>("Key");
+                    b.Property<string>("Key");
 
                     b.Property<byte[]>("PreviousDefinitionHash");
 
@@ -76,16 +73,15 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Definition", b =>
                 {
-                    b.Property<byte[]>("Hash")
-                        .ValueGeneratedOnAdd();
+                    b.Property<byte[]>("Hash");
 
                     b.Property<byte[]>("DataHash");
 
+                    b.Property<bool>("IsMutable");
+
                     b.Property<bool>("IsMutation");
 
-                    b.Property<byte[]>("Key");
-
-                    b.Property<string>("Meta");
+                    b.Property<string>("Key");
 
                     b.Property<byte[]>("PreviousDefinitionHash");
 
@@ -104,8 +100,7 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.State", b =>
                 {
-                    b.Property<string>("PeerId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("PeerId");
 
                     b.Property<byte[]>("CurrentBlockHash");
 
@@ -129,7 +124,7 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Data", b =>
                 {
-                    b.HasOne("Amnesia.Domain.Entity.Definition")
+                    b.HasOne("Amnesia.Domain.Entity.Definition", null)
                         .WithOne()
                         .HasForeignKey("Amnesia.Domain.Entity.Data", "PreviousDefinitionHash");
                 });
