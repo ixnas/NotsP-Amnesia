@@ -1,10 +1,25 @@
 version: '3'
-services: 
-  Amnesia:
-    build: ./Amnesia
-    ports: 
-    - "8080:80"
-    enviroment:
-    - "VARIABELES"
 
-    
+services:
+  peer1:
+    image: amnesia
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "127.0.0.1:8080:80"
+
+  peer2:
+    image: amnesia
+    ports:
+     - "127.0.0.1:8081:80"
+
+  peer3:
+    image: amnesia
+    ports:
+     - "127.0.0.1:8082:80"
+
+  peer4:
+    image: amnesia
+    ports:
+     - "127.0.0.1:8083:80"
