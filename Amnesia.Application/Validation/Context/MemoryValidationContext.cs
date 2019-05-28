@@ -38,7 +38,17 @@ namespace Amnesia.Application.Validation.Context
 
         public Block GetBlockAndContent(byte[] hash)
         {
+            if (!Blocks.ContainsKey(hash))
+            {
+                return null;
+            }
+            
             var block = Blocks[hash];
+
+            if (!Contents.ContainsKey(block.ContentHash))
+            {
+                return null;
+            }
 
             var content = Contents[block.ContentHash];
             block.Content = content;
@@ -48,6 +58,11 @@ namespace Amnesia.Application.Validation.Context
 
         public Definition GetDefinition(byte[] hash)
         {
+            if (!Definitions.ContainsKey(hash))
+            {
+                return null;
+            }
+            
             return Definitions[hash];
         }
 

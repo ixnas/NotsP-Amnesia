@@ -127,11 +127,8 @@ YQIDAQAB
                 DataHash = data.Hash,
                 PreviousDefinitionHash = prefDef,
                 Key = keys.PublicKey.ToPEMString(),
-                Meta = new Dictionary<string, string>
-                {
-                    ["IsMutable"] = "true",
-                    ["IsMutation"] = "false"
-                }
+                IsMutable = true,
+                IsMutation = false
             };
             definition.Signature = keys.PrivateKey.SignData(definition.SignatureHash.EncodeToBytes());
             return definition;
