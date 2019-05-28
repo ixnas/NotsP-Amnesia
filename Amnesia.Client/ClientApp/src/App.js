@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './Layout';
 import { Home } from './components/Pages/Home';
-import { KeyHelper } from './keyHelper.js'
-const NodeRSA = require('node-rsa');
+import { KeyHelper } from './components/functions/keyHelper.js'
 
 export default class App extends Component {
     static displayName = App.name;
@@ -13,21 +12,17 @@ export default class App extends Component {
         publicKey: ''
     }
 
-
     componentDidMount() {
-        const key = new NodeRSA({ b: 512 });
-        const key2 = new KeyHelper(key);
+        const keyHelper = new KeyHelper();
 
         const keySavedInLocal = localStorage.getItem('keySaveState');
 
         if (!keySavedInLocal) {
-            key2.keySaver(key);
+            keyHelper.keySaver();
         } 
     }
 
-
     render() {
-       
         return (
             <Layout>
                 <Route exact path='/' component={Home} />

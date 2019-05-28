@@ -21,6 +21,7 @@ namespace Amnesia.Application.Services
             return context.Blocks.SingleOrDefault(b => b.Hash == hash);
         }
 
+        //TODO: use dbvalidationContext instead of service
         public async Task<List<Block>> GetBlocks(int depth)
         {
             List<Block> blocks = new List<Block>();
@@ -33,7 +34,6 @@ namespace Amnesia.Application.Services
                     b => b.Hash == blocks.Last().PreviousBlockHash);
                 blocks.Add(previousBlock);
             }
-
             return blocks;
         }
         

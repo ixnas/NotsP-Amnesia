@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ namespace Amnesia.Application.Services
             {
                 PreviousDefinitionHash = null,
                 Signature = signature,
-                Blob = Encoding.ASCII.GetBytes("Dit is test data.")
+                Blob = Encoding.UTF8.GetBytes("Dit is test data.")
             };
             
             var definition = new Definition
@@ -40,7 +41,7 @@ namespace Amnesia.Application.Services
                 Signature = signature,
                 Key = null,
                 IsMutation = false,
-                Meta = null,
+                IsMutable = true,
                 Data = data,
                 PreviousDefinition = null
             };

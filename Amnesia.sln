@@ -9,11 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Application", "Amne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Domain", "Amnesia.Domain\Amnesia.Domain.csproj", "{15BAFA28-6540-4577-8C8B-FDD70DF215F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "react-Client", "Amnesia.Client\react-Client.csproj", "{C477F0B7-F4A5-425A-B3AF-8312BCA3026E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Tests", "Amnesia.Tests\Amnesia.Tests.csproj", "{579B73A0-5424-4897-9D35-495D8CE1D2DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Cryptography", "Amnesia.Cryptography\Amnesia.Cryptography.csproj", "{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Cryptography", "Amnesia.Cryptography\Amnesia.Cryptography.csproj", "{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BAFA28-6540-4577-8C8B-FDD70DF215F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C477F0B7-F4A5-425A-B3AF-8312BCA3026E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C477F0B7-F4A5-425A-B3AF-8312BCA3026E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C477F0B7-F4A5-425A-B3AF-8312BCA3026E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C477F0B7-F4A5-425A-B3AF-8312BCA3026E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{579B73A0-5424-4897-9D35-495D8CE1D2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
