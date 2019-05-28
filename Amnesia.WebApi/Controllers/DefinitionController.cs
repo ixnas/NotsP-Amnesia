@@ -82,7 +82,7 @@ namespace Amnesia.WebApi.Controllers
 
             var amnesia = new Application.Amnesia(null, null); // Needs to be configured
 
-            amnesia.ReceiveDefinition(definition); // Node mining
+            await amnesia.ReceiveDefinition(definition); // Node mining
 
             return Ok();
         }
