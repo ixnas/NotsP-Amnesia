@@ -7,7 +7,7 @@ namespace Amnesia.Domain.Entity
     {
         public byte[] PreviousDefinitionHash { get; set; }
         public byte[] Signature { get; set; }
-        public byte[] Key { get; set; }
+        public string Key { get; set; }
         public byte[] Blob { get; set; }
 
         public override CompositeHash PrimaryHash => new CompositeHash(this)

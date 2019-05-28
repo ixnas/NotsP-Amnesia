@@ -64,13 +64,6 @@ namespace Amnesia.Domain.Context
             modelBuilder.Entity<Definition>(definition =>
             {
                 definition
-                    .Property(d => d.Meta)
-                    .HasConversion(
-                        m => JsonConvert.SerializeObject(m),
-                        m => JsonConvert.DeserializeObject<Dictionary<string, string>>(m)
-                    );
-
-                definition
                     .HasOne(d => d.Data)
                     .WithOne()
                     .HasForeignKey<Definition>(d => d.DataHash);

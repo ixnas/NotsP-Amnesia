@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Amnesia.Domain.Entity;
 
 namespace Amnesia.Domain.ViewModels
@@ -7,7 +6,8 @@ namespace Amnesia.Domain.ViewModels
     {
         public string Hash { get; set; }
         public string DataHash { get; set; }
-        public IDictionary<string, string> Meta { get; set; }
+        public bool IsMutation { get; set; }
+        public bool IsMutable { get; set; }
         public string PreviousDefinition { get; set; }
         public string Signature { get; set; }
 
@@ -18,7 +18,6 @@ namespace Amnesia.Domain.ViewModels
             {
                 Hash = Model.Hash.ByteArrayToString(definition.Hash),
                 DataHash = Model.Hash.ByteArrayToString(definition.DataHash),
-                Meta = definition.Meta,
                 PreviousDefinition = definition.PreviousDefinitionHash == null
                                      ? null
                                      : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
