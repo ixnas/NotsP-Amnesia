@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
 using Amnesia.Domain.Entity;
@@ -71,7 +70,7 @@ namespace Amnesia.WebApi.Controllers
 
             var definition = new Definition
             {
-                DataHash                = Hash.StringToByteArray(model.Definition.Hash),
+                DataHash                = Hash.StringToByteArray(model.Definition.DataHash),
                 PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Signature),
                 Key                     = model.Key,

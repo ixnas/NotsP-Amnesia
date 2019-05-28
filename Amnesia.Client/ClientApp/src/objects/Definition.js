@@ -2,7 +2,8 @@ import { Data } from "./Data";
 
 export class Definition {
     constructor() {
-        this.Hash = "";
+        //default values
+        this.DataHash = "";
         this.PreviousDefinitionHash = "";
         this.Signature = null;
         this.Data = new Data();

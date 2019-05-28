@@ -2,7 +2,7 @@
 {
     public class JSONDefinition
     {
-        public string Hash;
+        public string DataHash;
         public string PreviousDefinitionHash;
         public string Signature;
 

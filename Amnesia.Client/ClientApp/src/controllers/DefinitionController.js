@@ -40,6 +40,8 @@ export class DefinitionController {
         this.Definition.Data.PreviousDefinitionHash = hash;
         this.Definition.PreviousDefinitionHash = hash;
 
+        this.Definition.Data.Blob = btoa(this.Input);
+
         this.SetHashData();
 
         this.Send();
@@ -51,7 +53,8 @@ export class DefinitionController {
         message
         .set("Hash", this.Definition.Hash)
         .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
-        .set("Meta", this.Definition.Meta);
+        .set("IsMutable", this.Definition.IsMutable)
+        .set("IsMutation", this.Definition.IsMutation);
 
         const encodedMessage = CBOR.encode(message);
 
@@ -63,16 +66,15 @@ export class DefinitionController {
     SetHashData() {
         var map = new Map();
 
-        this.Definition.Data.Blob = btoa(this.Input);
         this.SignDefinition();
 
         map
-            .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
+            .set("PreviousDefinitionHash", this.Definition.Data.PreviousDefinitionHash)
             .set("Blob", this.Definition.Data.Blob)
-            .set("Signature", this.Definition.Signature)
+            .set("Signature", this.Definition.Data.Signature)
             .set("Key", this.KeyPair.publicKey.exportKey("pkcs8-public-pem"));
 
-        this.Definition.Hash = SHA256(CBOR.encode(map));
+        this.Definition.DataHash = SHA256(CBOR.encode(map));
     }
 
     Send() {

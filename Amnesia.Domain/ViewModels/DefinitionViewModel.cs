@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Amnesia.Domain.Entity;
 
 namespace Amnesia.Domain.ViewModels
@@ -18,10 +17,10 @@ namespace Amnesia.Domain.ViewModels
             var vm = new DefinitionViewModel
             {
                 Hash = Model.Hash.ByteArrayToString(definition.Hash),
-                DataHash = definition.DataHash,
+                DataHash = Model.Hash.ByteArrayToString(definition.DataHash),
                 PreviousDefinition = definition.PreviousDefinitionHash == null
                                      ? null
-                                     : definition.PreviousDefinitionHash,
+                                     : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
                 Signature = Model.Hash.ByteArrayToString(definition.Signature)
             };
             return vm;
