@@ -6,8 +6,8 @@ namespace Amnesia.Domain.Entity
 {
     public class Definition : HashableObject
     {
-        public string DataHash { get; set; }
-        public string PreviousDefinitionHash { get; set; }
+        public byte[] DataHash { get; set; }
+        public byte[] PreviousDefinitionHash { get; set; }
         public byte[] Signature { get; set; }
         public string Key { get; set; }
         public bool IsMutation { get; set; }

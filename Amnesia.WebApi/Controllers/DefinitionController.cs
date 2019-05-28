@@ -63,16 +63,16 @@ namespace Amnesia.WebApi.Controllers
         {
             var data = new Data
             {
-                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash,
+                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
-                Blob                    = model.Definition.Data.Blob,
+                Blob                    = Convert.FromBase64String(model.Definition.Data.Blob),
                 Key                     = model.Key
             };
 
             var definition = new Definition
             {
-                DataHash                = model.Definition.Hash,
-                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash,
+                DataHash                = Hash.StringToByteArray(model.Definition.Hash),
+                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Signature),
                 Key                     = model.Key,
                 IsMutation              = model.Definition.IsMutation,
