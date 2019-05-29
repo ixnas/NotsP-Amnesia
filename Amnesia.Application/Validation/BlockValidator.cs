@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using Amnesia.Application.Validation.Context;
 using Amnesia.Cryptography;
+using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 
 namespace Amnesia.Application.Validation
@@ -66,7 +67,7 @@ namespace Amnesia.Application.Validation
             
             foreach (var definition in block.Content.Definitions)
             {
-                var result = ValidateDefinition(definition);
+                var result = ValidateDefinition(definition, block.Hash);
 
                 if (!result.IsSuccess)
                 {
@@ -86,7 +87,7 @@ namespace Amnesia.Application.Validation
             return (bigInteger & ((1 << difficulty) - 1)) == 0;
         }
 
-        public ValidationResult ValidateDefinition(byte[] hash)
+        public ValidationResult ValidateDefinition(byte[] hash, byte[] blockHash)
         {
             var definition = context.GetDefinition(hash);
 
@@ -111,6 +112,12 @@ namespace Amnesia.Application.Validation
             {
                 return ValidationResult.Failure($"definition {Hash.ByteArrayToString(hash)} cannot be mutable and a mutation");
             }
+
+            if (!ValidatePreviousDefinitionHash(definition, blockHash))
+            {
+                return ValidationResult.Failure($"definition {Hash.ByteArrayToString(hash)} PreviousDefinition is invalid");
+            }
+
 
             var data = context.GetData(hash);
 
@@ -141,6 +148,32 @@ namespace Amnesia.Application.Validation
             }
 
             return ValidationResult.Success();
+        }
+
+        private bool ValidatePreviousDefinitionHash(Definition definition, byte[] blockHash)
+        {
+            var definitionsFromKey = context.GetDefinitionsByKey(definition.Key, blockHash);
+            using var enumerator = definitionsFromKey.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                // Find this definition in the sequence
+                if (!enumerator.Current.SequenceEqual(definition.Hash))
+                {
+                    continue;
+                }
+
+                // If this is definition is the last in the sequence,
+                // it must be the first definition created by this key
+                if (!enumerator.MoveNext())
+                {
+                    return definition.PreviousDefinitionHash == null;
+                }
+
+                return definition.PreviousDefinitionHash.SequenceEqual(enumerator.Current);
+            }
+
+            return false;
         }
     }
 }

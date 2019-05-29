@@ -89,5 +89,37 @@ namespace Amnesia.Application.Validation.Context
         {
             return HasBlock(blockHash);
         }
+
+        public IEnumerable<byte[]> GetDefinitionsByKey(string key, byte[] startBlock)
+        {
+            var graph = GetBlockGraph(startBlock);
+
+            foreach (var blockHash in graph)
+            {
+                var content = context.Blocks
+                    .Where(b => b.Hash == blockHash)
+                    .Select(b => b.Content)
+                    .Single();
+
+                // Loop definitions backwards
+                var definitionsInBlock = content.Mutations.Reverse().Concat(content.Definitions.Reverse()).ToList();
+
+                var definitionsFromKey = context.Definitions
+                    .Where(d => definitionsInBlock.Contains(d.Hash) && 
+                                d.Key == key)
+                    .Select(d => d.Hash)
+                    .ToList();
+
+                // definitionsFromKey may not be in order
+                var orderedDefinitions = definitionsInBlock
+                    .Select(h => definitionsFromKey.FirstOrDefault(d => d == h))
+                    .Where(h => h != null);
+
+                foreach (var definition in orderedDefinitions)
+                {
+                    yield return definition;
+                }
+            }
+        }
     }
 }

@@ -26,5 +26,7 @@ namespace Amnesia.Application.Validation.Context
         IList<Definition> MissingData { get; set; }
 
         bool ShouldAssumeValid(byte[] blockHash);
+
+        IEnumerable<byte[]> GetDefinitionsByKey(string key, byte[] startBlock);
     }
 }

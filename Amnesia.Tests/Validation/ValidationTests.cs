@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Text;
 using Amnesia.Application.Validation;
 using Amnesia.Application.Validation.Context;
+using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using NUnit.Framework;
 
@@ -102,6 +104,27 @@ namespace Amnesia.Tests.Validation
 
             var result = validator.ValidateBlock(block);
             
+            TestContext.WriteLine(result.Message);
+            Assert.False(result.IsTotalSuccess);
+        }
+
+        [Test]
+        public void ShouldInvalidateWrongPreviousDefinition()
+        {
+            var first = context.Definitions.Values.First();
+
+            var newDefinition = TestData.CreateDefinition("This definition is malicious", TestData.Keys, first.Hash);
+            context.AddDefinition(newDefinition);
+            context.AddData(newDefinition.Data);
+
+            var newBlock = TestData.CreateBlock(newDefinition, context.GetBlockAndContent(block));
+            context.AddBlock(newBlock);
+            context.AddContent(newBlock.Content);
+
+            var validator = new BlockValidator(context, 0);
+
+            var result = validator.ValidateBlock(newBlock.Hash);
+
             TestContext.WriteLine(result.Message);
             Assert.False(result.IsTotalSuccess);
         }

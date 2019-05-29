@@ -20,7 +20,7 @@ namespace Amnesia.Tests.Validation
             "Such data much info wow"
         };
 
-        private static readonly KeyPair Keys = new KeyPair(
+        public static readonly KeyPair Keys = new KeyPair(
             new PrivateKey(@"﻿-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEA1ADkjzRkMWrzUaR3qYZoCTwLA8z8OdyZkbpMVeWShKQet+28
 GgFdYce2GrzlHZLOak3seJCWPfPOtCvNOr7YSdUqB0k3tr5Pc1Li18s/b8VySyKG
@@ -93,7 +93,7 @@ YQIDAQAB
             return (context, prefBlock.Hash);
         }
 
-        private static Block CreateBlock(Definition def, Block prefBlock)
+        public static Block CreateBlock(Definition def, Block prefBlock)
         {
             var content = new Content();
 
@@ -111,7 +111,7 @@ YQIDAQAB
             return block;
         }
 
-        private static Definition CreateDefinition(string blob, KeyPair keys, byte[] prefDef)
+        public static Definition CreateDefinition(string blob, KeyPair keys, byte[] prefDef)
         {
             var data = new Data
             {
