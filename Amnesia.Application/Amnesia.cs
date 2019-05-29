@@ -17,16 +17,24 @@ namespace Amnesia.Application
     {
         private readonly PeerManager peerManager;
         private readonly StateService stateService;
+<<<<<<< HEAD
         private readonly ContentService contentService;
         private readonly BlockService blockService;
         private readonly int difficulty = 20;
+=======
+        private readonly DataService dataService;
+>>>>>>> 550f320b436548bd94b6a7c81a08aedc5c30e94f
 
-        public Amnesia(PeerManager peerManager, StateService stateService)
+        public Amnesia(PeerManager peerManager, StateService stateService, DataService dataService)
         {
             this.peerManager = peerManager;
             this.stateService = stateService;
+<<<<<<< HEAD
             this.contentService = null; // needs to be configured
             this.blockService = null; // needs to be configured
+=======
+            this.dataService = dataService;
+>>>>>>> 550f320b436548bd94b6a7c81a08aedc5c30e94f
         }
 
         public Block CurrentBlock => stateService.State.CurrentBlock;
@@ -79,6 +87,18 @@ namespace Amnesia.Application
             {
                 //TODO: send verified block to connected peers
             };            
+
+           //if(mutation == valid && newChain > currentChain)
+//           var mutation = new Definition
+//           {
+//               PreviousDefinitionHash = Hash.StringToByteArray("d9cb74f22c33625e37be48e5ef5ce9dc18d9e605338c2dc83b66c713d3d7ba41"),
+//               IsMutable = false,
+//               IsMutation = true
+//           };
+//           var peer = peerManager.GetPeer("peer1");
+//           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));
+//           
+//           dataService.RemoveDataThroughMutation(Hash.StringToByteArray(previous.Value.DataHash));
         }
     }
 }

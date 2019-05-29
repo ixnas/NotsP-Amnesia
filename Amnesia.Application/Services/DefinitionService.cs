@@ -20,7 +20,7 @@ namespace Amnesia.Application.Services
                 .Include(d => d.Data)
                 .SingleOrDefaultAsync(d => d.Hash == hash);
         }
-
+        
          /// <summary>
          /// Returns te last definition that was added to the chain with a public key.
          /// </summary>

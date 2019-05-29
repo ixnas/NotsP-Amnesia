@@ -13,7 +13,7 @@ namespace Amnesia.WebApi.Controllers
     [ApiController]
     public class DefinitionController: ControllerBase
     {
-        private DefinitionService service;
+        private readonly DefinitionService service;
 
         public DefinitionController(DefinitionService service)
         {
@@ -23,13 +23,12 @@ namespace Amnesia.WebApi.Controllers
         [HttpGet("{hash}")]
         public async Task<IActionResult> Get(string hash)
         {
-            var definition = await service.GetDefinition(new Hash(hash).Bytes);
+            var definition = await service.GetDefinition(Hash.StringToByteArray(hash));
 
             if (definition == null)
             {
                 return NotFound();
             }
-
             return Ok(DefinitionViewModel.FromDefinition(definition));
         }
 
