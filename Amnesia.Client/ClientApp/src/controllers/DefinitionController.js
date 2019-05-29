@@ -8,11 +8,12 @@ var SHA256 = require('js-sha256').sha256;
 
 export class DefinitionController {
 
-    SetDataToDefinition(value) {
+    SetDataToDefinition(value, isMutation = false) {
         this.Definition = new Definition();
         this.KeyPair = new KeyHelper().getKeys();
         this.Input = value;
-        this.SetDefinition(value);
+        this.IsMutation = isMutation;
+        this.SetDefinition();
     }
 
     SetDefinition() {
@@ -22,7 +23,7 @@ export class DefinitionController {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 PublicKey: publicKey
@@ -40,7 +41,14 @@ export class DefinitionController {
         this.Definition.Data.PreviousDefinitionHash = hash;
         this.Definition.PreviousDefinitionHash = hash;
 
-        this.Definition.Data.Blob = btoa(this.Input);
+        if (this.IsMutation) {
+            this.Definition.Data.Blob = `DELETE ${this.Input}`;
+            this.Definition.IsMutable = false;
+            this.Definition.IsMutation = this.IsMutation;
+            
+        } else {
+            this.Definition.Data.Blob = btoa(this.Input);
+        }
 
         this.SetHashData();
 
@@ -51,10 +59,10 @@ export class DefinitionController {
         var message = new Map();
 
         message
-        .set("Hash", this.Definition.Hash)
-        .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
-        .set("IsMutable", this.Definition.IsMutable)
-        .set("IsMutation", this.Definition.IsMutation);
+            .set("Hash", this.Definition.Hash)
+            .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
+            .set("IsMutable", this.Definition.IsMutable)
+            .set("IsMutation", this.Definition.IsMutation);
 
         const encodedMessage = CBOR.encode(message);
 
@@ -83,7 +91,7 @@ export class DefinitionController {
 
         fetch('https://localhost:5001/definitions', {
             method: 'POST',
-            headers:  {
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
@@ -97,7 +105,11 @@ export class DefinitionController {
 
     SignData(privateKey) {
         var message = new Map();
-        message.set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash).set("Blob", this.Definition.Data.Blob);
+
+        message
+            .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
+            .set("Blob", this.Definition.Data.Blob);
+
         const encodedMessage = CBOR.encode(message);
         this.Definition.Data.Signature = privateKey.sign(encodedMessage);
     }

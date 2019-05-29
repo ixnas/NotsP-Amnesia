@@ -22,15 +22,12 @@ export class AddComponent extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-4">
-                        <p> Gebruik de knop om data toe te voegen </p>
-                    </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <Input name="definition" id="definitionInput"></Input>
                     </div>
 
-                    <div className="col-md-4">
-                        <Button onClick={(e) => this.AddDefinition(e)}> Voeg data toe </Button>
+                    <div className="col-md-6">
+                        <Button onClick={(e) => this.AddDefinition(e)}>Voeg definitie toe</Button>
                     </div>
                 </div>
             </div>
