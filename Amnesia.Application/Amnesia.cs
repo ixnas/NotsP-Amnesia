@@ -17,11 +17,13 @@ namespace Amnesia.Application
     {
         private readonly PeerManager peerManager;
         private readonly StateService stateService;
+        private readonly DataService dataService;
 
-        public Amnesia(PeerManager peerManager, StateService stateService)
+        public Amnesia(PeerManager peerManager, StateService stateService, DataService dataService)
         {
             this.peerManager = peerManager;
             this.stateService = stateService;
+            this.dataService = dataService;
         }
 
         public Block CurrentBlock => stateService.State.CurrentBlock;
@@ -49,9 +51,19 @@ namespace Amnesia.Application
             var miner = new Miner(10);
         }
         
-        public void ReceiveDefinition(Definition definition)
+        public async Task ReceiveDefinition(Definition definition)
         {
-            throw new NotImplementedException();
+           //if(mutation == valid && newChain > currentChain)
+           var mutation = new Definition
+           {
+               PreviousDefinitionHash = Hash.StringToByteArray("d9cb74f22c33625e37be48e5ef5ce9dc18d9e605338c2dc83b66c713d3d7ba41"),
+               IsMutable = false,
+               IsMutation = true
+           };
+           var peer = peerManager.GetPeer("peer1");
+           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));
+           
+           dataService.RemoveDataThroughMutation(Hash.StringToByteArray(previous.Value.DataHash));
         }
     }
 }

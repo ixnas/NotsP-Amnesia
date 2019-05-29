@@ -54,7 +54,6 @@ namespace Amnesia.Application.Peers
             var client = new HttpClient();
             var result = await client.GetAsync(url);
 
-            Console.WriteLine(result.IsSuccessStatusCode);
             return result.IsSuccessStatusCode 
                 ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
