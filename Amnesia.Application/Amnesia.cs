@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -19,6 +20,7 @@ namespace Amnesia.Application
         private readonly StateService stateService;
         private readonly ContentService contentService;
         private readonly BlockService blockService;
+        
         private readonly int difficulty = 20;
         private readonly DataService dataService;
 
@@ -59,40 +61,45 @@ namespace Amnesia.Application
         {
             //TODO: get current peer
             var peer = peerManager.GetPeer("peer1");
-            if (definition.PreviousDefinitionHash == null)
+            var state = stateService.State;
+            var previousBlock = state.CurrentBlock;
+            var newContent = new Content
             {
-                
+                Mutations = new List<byte[]>(),
+                Definitions = new List<byte[]>()
+            };
+            
+            if (definition.IsMutation)
+            {
+                newContent.Mutations.Add(definition.Hash);
             }
             else
             {
-                var previousDefinition =
-                    await peerManager.GetDefinition(peer, Hash.ByteArrayToString(definition.PreviousDefinitionHash));
+                newContent.Definitions.Add(definition.Hash);
             }
-
-            var blocks = await peerManager.GetBlocks(peer);
-            var previousBlock = blocks.Value.Last();
+            newContent.Hash = newContent.HashObject();
+            
             var blockToMine = new Block
             {
-                PreviousBlockHash = previousBlock.Hash == null
-                    ? null
-                    : Hash.StringToByteArray(previousBlock.Hash),
+                PreviousBlockHash = previousBlock.Hash,
                 Nonce = 0,
-                ContentHash = Hash.StringToByteArray(previousBlock.Content)
+                ContentHash = newContent.Hash,
+                Content = newContent,
+                PreviousBlock = previousBlock
             };
 
             var miner = new Miner(20);
             miner.Mined += b =>
             {
-                var newBlock = new Block
-                {
-                    ContentHash = blockToMine.ContentHash,
-                    Nonce = blockToMine.Nonce,
-                    PreviousBlockHash = blockToMine.PreviousBlockHash
-                };
-                foreach (var peer in PeerConfiguration)
-                {
-                    
-                }
+                Console.WriteLine(b.Nonce);
+                Console.WriteLine(Hash.ByteArrayToString(b.Hash));
+                Console.WriteLine(Hash.ByteArrayToString(b.HashObject()));
+                
+//                foreach (var peerKey in peerManager.GetPeers())
+//                {
+//                    var peerToSend = peerManager.GetPeer(peerKey);
+//                    peerManager.PostBlock(peerToSend, Hash.ByteArrayToString(newBlock.Hash)).Start();
+//                }
             };          
             await miner.Start(blockToMine);
             

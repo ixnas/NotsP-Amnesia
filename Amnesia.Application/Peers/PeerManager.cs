@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
 using Amnesia.Domain.ViewModels;
@@ -61,6 +62,14 @@ namespace Amnesia.Application.Peers
             return GetData<ContentViewModel>(url);
         }
 
+        public Task PostBlock(Peer peer, string hash)
+        {
+            var client = new HttpClient();
+            var url = $"{peer.Url + configuration.Api.Blocks}/blocks?peer={peer.Key}".Trim();
+            var content = new StringContent(hash, Encoding.ASCII, "application/json");
+            return client.PostAsync(url, content);
+        }
+
         private static async Task<Maybe<T>> GetData<T>(string url)
         {
             var client = new HttpClient();
@@ -69,6 +78,6 @@ namespace Amnesia.Application.Peers
             return result.IsSuccessStatusCode 
                 ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
-        }
+        }       
     }
 }
