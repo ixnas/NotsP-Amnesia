@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Amnesia.Application.Mining;
 using Amnesia.Cryptography;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
@@ -18,49 +20,17 @@ namespace Amnesia.Application.Services
         {
             this.context = context;
         }
-
-        //TODO: Add correct signatures
-        public void SeedData()
+        
+        public async Task SeedData()
         {
             context.Database.EnsureCreated();
             
-            var signature = new CompositeHash(Encoding.ASCII.GetBytes("Handtekening")).Hash;
             var keys = new KeyPair(2048);
+            var data = MakeData(keys);
+            var definition = MakeDefinition(keys, data);
+            var content = MakeContent(definition);
+            var block = await MakeBlock(content);
             
-            var data = new Data
-            {
-                PreviousDefinitionHash = null,
-                Signature = signature,
-                Blob = Encoding.UTF8.GetBytes("Dit is test data.")
-            };
-            
-            var definition = new Definition
-            {
-                DataHash = data.Hash,
-                PreviousDefinitionHash = null,
-                Signature = signature,
-                Key = null,
-                IsMutation = false,
-                IsMutable = true,
-                Data = data,
-                PreviousDefinition = null
-            };
-            var definitions = new List<byte[]> {definition.Hash};
-            var mutations = new List<byte[]>();
-            var content = new Content
-            {
-                Definitions = definitions,
-                Mutations = mutations,
-                Block = null
-            };
-            var block = new Block
-            {
-                PreviousBlockHash = null,
-                Nonce = 0,
-                Content = content,
-                ContentHash = content.Hash,
-                PreviousBlock = null
-            };
             var state = new State
             {
                 PeerId = "peer1",
@@ -96,6 +66,63 @@ namespace Amnesia.Application.Services
             
             context.SaveChanges();
         }
-        
+
+        private Data MakeData(KeyPair keys)
+        {
+            var blob = Encoding.UTF8.GetBytes("Dit is test data.");
+            var signature = keys.PrivateKey.SignData(blob);
+            
+            return new Data
+            {
+                PreviousDefinitionHash = null,
+                Signature = signature,
+                Key = keys.PublicKey.ToPEMString(),
+                Blob = blob
+            };
+        }
+
+        private Definition MakeDefinition(KeyPair keys, Data data)
+        {
+            var definition = new Definition
+            {
+                DataHash = data.Hash,
+                PreviousDefinitionHash = null,
+                Key = keys.PublicKey.ToPEMString(),
+                IsMutation = false,
+                IsMutable = true,
+                Data = data,
+                PreviousDefinition = null
+            };
+            var signature = keys.PrivateKey.SignData(definition.SignatureHash.Hash);
+            definition.Signature = signature;
+            return definition;
+        }
+
+        private Content MakeContent(Definition definition)
+        {
+            var definitions = new List<byte[]> {definition.Hash};
+            var mutations = new List<byte[]>();
+            return new Content
+            {
+                Definitions = definitions,
+                Mutations = mutations
+            };
+        }
+
+        private async Task<Block> MakeBlock(Content content)
+        {
+            var block = new Block
+            {
+                PreviousBlockHash = null,
+                Nonce = 0,
+                Content = content,
+                ContentHash = content.Hash,
+                PreviousBlock = null
+            };
+            var miner = new Miner(20);
+            miner.Mined += b => { block = b; };
+            await miner.Start(block);
+            return block;
+        }
     }
 }

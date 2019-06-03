@@ -19,11 +19,11 @@ namespace Amnesia.Application.Mining
             this.difficulty = difficulty;
         }
 
-        public Task Start(Block payload)
+        public async Task Start(Block payload)
         {
             cancellationTokenSource = new CancellationTokenSource();
             
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 Mine(payload);
             });
@@ -32,7 +32,7 @@ namespace Amnesia.Application.Mining
         private void Mine(Block payload)
         {
             var hash = payload.Hash;
-
+            
             while (!CheckHash(hash))
             {
                 if (cancellationTokenSource.Token.IsCancellationRequested)

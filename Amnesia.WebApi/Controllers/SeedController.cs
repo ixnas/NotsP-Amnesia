@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Amnesia.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,7 @@ namespace Amnesia.WebApi.Controllers
     [ApiController]
     public class SeedController : ControllerBase
     {
-        private SeedService seedService;
+        private readonly SeedService seedService;
 
         public SeedController(SeedService seedService)
         {
@@ -15,9 +16,9 @@ namespace Amnesia.WebApi.Controllers
         }
         
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            seedService.SeedData();
+            await seedService.SeedData();
             return Ok("init data zit in de db");
         }
     }
