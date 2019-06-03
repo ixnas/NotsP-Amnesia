@@ -1,17 +1,11 @@
-import {Block} from "../objects/Block";
 const superagent = require('superagent');
 
 export class BlocksController {
 
-  // hoe haal ik de public key op van het blok?
-  //
+  getAllBlocks = async () => {
 
-  getAllBlocks = () => {
-    superagent
-    .get('http://localhost:5000/blocks/')
-    .end((err, res) => {
-      console.log(res.body);
-    })
+    const blocks = await superagent.get('http://localhost:5000/blocks/');
+    return blocks.body;
   }
 
   getBlockByHash = async (blockHash) => {

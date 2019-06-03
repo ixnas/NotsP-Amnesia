@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { DeleteComponent } from '../DeleteComponent';
-import { AddComponent } from '../AddComponent';
+import { DeleteComponent } from './DeleteComponent';
+import { AddComponent } from './AddComponent';
+import { BlocksComponent } from './BlocksComponent';
 
 export class Home extends Component {
     static displayName = Home.name;
@@ -12,6 +13,7 @@ export class Home extends Component {
                 <p> Met behulp van deze client kunt u inzicht krijgen in de taken die achter de schermen gebeuren in de blockchain.</p>
                 <DeleteComponent />
                 <AddComponent />
+                <BlocksComponent />
             </div>
         );
     }
