@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
 import { BlocksController } from '../controllers/BlocksController';
+var JSONPretty = require('react-json-pretty');
 
 export class BlocksComponent extends Component {
   static displayName = BlocksComponent.name;
@@ -26,7 +27,6 @@ export class BlocksComponent extends Component {
 
   navigateToBlockContent = async (blockHash) => {
     let x = await this.state.controller.getBlockContent(blockHash);
-    console.log(x);
     window.location="http://localhost:3000/blockContent/"+ blockHash
   }
 
@@ -37,7 +37,8 @@ export class BlocksComponent extends Component {
             <Button onClick={() => this.getAllBlocks()}> Haal alle blocks op uit de chain </Button>
             </div>
             <div>
-             {this.state.blocks.map(block => <p key={block.hash} onClick={() => this.navigateToBlockContent(block.hash)}> {JSON.stringify({block})} </p>)}
+            {this.state.blocks.map(block => <JSONPretty id="blocks" onClick={() => this.navigateToBlockContent(block.hash)} data={block} /> )}
+
             </div>
           </div>
 
