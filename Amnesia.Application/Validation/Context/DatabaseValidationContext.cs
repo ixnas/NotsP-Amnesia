@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using Amnesia.Application.Helper;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -68,11 +70,28 @@ namespace Amnesia.Application.Validation.Context
         {
             var hash = startHash;
 
-            do
+            var blocks = context.Blocks
+                .Select(b => new { b.Hash, b.PreviousBlockHash })
+                .ToDictionary(b => b.Hash, b => b.PreviousBlockHash, new ByteArrayEqualityComparer());
+
+            yield return hash;
+
+            while (true)
             {
+                if (!blocks.ContainsKey(hash))
+                {
+                    break;
+                }
+
+                hash = blocks.GetValueOrDefault(hash);
+
+                if (hash == null)
+                {
+                    break;
+                }
+
                 yield return hash;
-                hash = GetPreviousBlock(hash);
-            } while (hash != null);
+            }
         }
 
         public byte[] GetPreviousBlock(byte[] hash)
@@ -82,8 +101,6 @@ namespace Amnesia.Application.Validation.Context
                 .Select(b => b.PreviousBlockHash)
                 .SingleOrDefault();
         }
-
-        public IList<Definition> MissingData { get; set; } = new List<Definition>();
 
         public bool ShouldAssumeValid(byte[] blockHash)
         {

@@ -1,9 +1,8 @@
-using System;
 using System.Linq;
-using System.Text;
 using Amnesia.Application.Validation;
 using Amnesia.Application.Validation.Context;
-using Amnesia.Domain.Entity;
+using Amnesia.Application.Validation.Result;
+using Amnesia.Cryptography;
 using Amnesia.Domain.Model;
 using NUnit.Framework;
 
@@ -27,8 +26,14 @@ namespace Amnesia.Tests.Validation
             
             var result = validator.ValidateBlock(block);
             
-            TestContext.WriteLine(result.Message);
-            Assert.True(result.IsTotalSuccess);
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockSuccessResult>(result);
+        }
+
+        private static void LogMessage(IBlockValidationResult result)
+        {
+            if (result is BlockFailureResult failure)
+                TestContext.WriteLine(failure.Message);
         }
 
         [Test]
@@ -37,9 +42,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 30);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
         
         [Test]
@@ -50,9 +55,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 0);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
         
         [Test]
@@ -63,9 +68,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 0);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
         
         [Test]
@@ -76,9 +81,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 0);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
         
         [Test]
@@ -89,9 +94,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 0);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
         
         [Test]
@@ -103,9 +108,9 @@ namespace Amnesia.Tests.Validation
             var validator = new BlockValidator(context, 0);
 
             var result = validator.ValidateBlock(block);
-            
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
         }
 
         [Test]
@@ -125,8 +130,82 @@ namespace Amnesia.Tests.Validation
 
             var result = validator.ValidateBlock(newBlock.Hash);
 
-            TestContext.WriteLine(result.Message);
-            Assert.False(result.IsTotalSuccess);
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
+        }
+
+        [Test]
+        public void ShouldInvalidateMutationsThatReferToADefinitionThatIsNotMutable()
+        {
+            var last = context.Definitions.Values.Last();
+
+            var mutation = TestData.CreateMutation(last.Hash, TestData.Keys, last.Hash);
+            context.AddDefinition(mutation);
+            context.AddData(mutation.Data);
+
+            var newBlock = TestData.CreateBlock(mutation, context.GetBlockAndContent(block));
+            context.AddBlock(newBlock);
+            context.AddContent(newBlock.Content);
+
+            var validator = new BlockValidator(context, 0);
+
+            var result = validator.ValidateBlock(newBlock.Hash);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
+        }
+
+        [Test]
+        public void ShouldInvalidateMutationsThatReferToADefinitionByADifferentKey()
+        {
+            var first = context.Definitions.Values.First();
+
+            var keys = new KeyPair(2048);
+
+            var mutation = TestData.CreateMutation(first.Hash, keys, null);
+            context.AddDefinition(mutation);
+            context.AddData(mutation.Data);
+
+            var newBlock = TestData.CreateBlock(mutation, context.GetBlockAndContent(block));
+            context.AddBlock(newBlock);
+            context.AddContent(newBlock.Content);
+
+            var validator = new BlockValidator(context, 0);
+
+            var result = validator.ValidateBlock(newBlock.Hash);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockFailureResult>(result);
+        }
+
+        [Test]
+        public void ShouldReturnMissingData()
+        {
+            var first = context.Definitions.Values.First();
+            context.Data.Remove(first.DataHash);
+            first.Data = null;
+
+            var validator = new BlockValidator(context, 0);
+
+            var result = validator.ValidateBlock(block);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockAcceptableResult>(result);
+        }
+
+        [Test]
+        public void ShouldNotReturnMissingDataThatHasAnExcuse()
+        {
+            var definition = context.Definitions.Values.ToList()[2];
+            context.Data.Remove(definition.DataHash);
+            definition.Data = null;
+
+            var validator = new BlockValidator(context, 0);
+
+            var result = validator.ValidateBlock(block);
+
+            LogMessage(result);
+            Assert.IsInstanceOf<BlockSuccessResult>(result);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Amnesia.Domain.Entity;
 
@@ -57,11 +56,19 @@ namespace Amnesia.Application.Validation.Context
         {
             var hash = startHash;
 
-            do
+            foreach (var context in this)
             {
-                yield return hash;
-                hash = GetPreviousBlock(hash);
-            } while (hash != null);
+                if (!context.HasBlock(hash))
+                {
+                    continue;
+                }
+
+                foreach (var h in context.GetBlockGraph(hash))
+                {
+                    yield return h;
+                    hash = h;
+                }
+            }
         }
 
         public byte[] GetPreviousBlock(byte[] hash)
@@ -69,12 +76,6 @@ namespace Amnesia.Application.Validation.Context
             return this
                 .Select(c => c.GetPreviousBlock(hash))
                 .FirstOrDefault(h => h != null);
-        }
-
-        public IList<Definition> MissingData
-        {
-            get => this.Aggregate(Enumerable.Empty<Definition>(), (acc, c) => acc.Concat(c.MissingData)).ToList();
-            set => throw new NotSupportedException();
         }
 
         public bool ShouldAssumeValid(byte[] blockHash)

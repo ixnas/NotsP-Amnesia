@@ -5,6 +5,7 @@ using System.Text;
 using Amnesia.Application.Validation.Context;
 using Amnesia.Cryptography;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -63,12 +64,16 @@ YQIDAQAB
             var context = new MemoryValidationContext();
 
             byte[] prefDef = null;
-            var definitions = Blobs.Select(blob =>
-            {
-                var def = CreateDefinition(blob, Keys, prefDef);
-                prefDef = def.Hash;
-                return def;
-            }).ToList();
+            var definitions = Blobs
+                .Select(blob =>
+                {
+                    var def = CreateDefinition(blob, Keys, prefDef);
+                    prefDef = def.Hash;
+                    return def;
+                })
+                .ToList()
+                .Append(CreateMutation(prefDef, Keys, prefDef))
+                .ToList();
 
             Block prefBlock = null;
             var blocks = definitions.Select(def =>
@@ -117,21 +122,58 @@ YQIDAQAB
             {
                 Blob = Encoding.UTF8.GetBytes(blob),
                 PreviousDefinitionHash = prefDef,
-                Key = keys.PublicKey.ToPEMString()
             };
-            data.Signature = keys.PrivateKey.SignData(data.SignatureHash.EncodeToBytes());
 
             var definition = new Definition
             {
                 Data = data,
                 DataHash = data.Hash,
                 PreviousDefinitionHash = prefDef,
-                Key = keys.PublicKey.ToPEMString(),
                 IsMutable = true,
                 IsMutation = false
             };
-            definition.Signature = keys.PrivateKey.SignData(definition.SignatureHash.EncodeToBytes());
+
+            Sign(definition, keys);
+
             return definition;
+        }
+
+        public static Definition CreateMutation(byte[] hash, KeyPair keys, byte[] prefDef)
+        {
+            var blob = $"DELETE {Hash.ByteArrayToString(hash)}";
+
+            var data = new Data
+            {
+                Blob = Encoding.UTF8.GetBytes(blob),
+                PreviousDefinitionHash = prefDef,
+            };
+
+            var definition = new Definition
+            {
+                Data = data,
+                DataHash = data.Hash,
+                PreviousDefinitionHash = prefDef,
+                IsMutable = false,
+                IsMutation = true
+            };
+
+            Sign(definition, keys);
+
+            return definition;
+        }
+
+        private static void Sign(Definition definition, KeyPair keys)
+        {
+            var data = definition.Data;
+
+            data.Key = keys.PublicKey.ToPEMString();
+            data.Signature = keys.PrivateKey.SignData(data.SignatureHash.EncodeToBytes());
+            data.Hash = data.HashObject();
+
+            definition.DataHash = data.Hash;
+            definition.Key = keys.PublicKey.ToPEMString();
+            definition.Signature = keys.PrivateKey.SignData(definition.SignatureHash.EncodeToBytes());
+            definition.Hash = definition.HashObject();
         }
 
         [Test, Explicit]

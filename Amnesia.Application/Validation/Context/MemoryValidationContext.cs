@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Amnesia.Application.Helper;
 using Amnesia.Domain.Entity;
 
 namespace Amnesia.Application.Validation.Context
 {
     public class MemoryValidationContext : IValidationContext
     {
-        public IDictionary<byte[], Block> Blocks { get; set; } = new Dictionary<byte[], Block>();
-        public IDictionary<byte[], Content> Contents { get; set; } = new Dictionary<byte[], Content>();
-        public IDictionary<byte[], Definition> Definitions { get; set; } = new Dictionary<byte[], Definition>();
-        public IDictionary<byte[], Data> Data { get; set; } = new Dictionary<byte[], Data>();
+        public IDictionary<byte[], Block> Blocks { get; set; } = new Dictionary<byte[], Block>(new ByteArrayEqualityComparer());
+        public IDictionary<byte[], Content> Contents { get; set; } = new Dictionary<byte[], Content>(new ByteArrayEqualityComparer());
+        public IDictionary<byte[], Definition> Definitions { get; set; } = new Dictionary<byte[], Definition>(new ByteArrayEqualityComparer());
+        public IDictionary<byte[], Data> Data { get; set; } = new Dictionary<byte[], Data>(new ByteArrayEqualityComparer());
 
         public void AddBlock(Block block)
         {
@@ -95,26 +96,38 @@ namespace Amnesia.Application.Validation.Context
 
             var hash = definition.DataHash;
 
-            return Data[hash];
+            return Data.ContainsKey(hash) 
+                ? Data[hash]
+                : null;
         }
 
         public IEnumerable<byte[]> GetBlockGraph(byte[] startHash)
         {
             var hash = startHash;
+            yield return hash;
 
-            do
+            while (true)
             {
-                yield return hash;
+                if (!HasBlock(hash))
+                {
+                    break;
+                }
+
                 hash = GetPreviousBlock(hash);
-            } while (hash != null);
+
+                if (hash == null)
+                {
+                    break;
+                }
+
+                yield return hash;
+            }
         }
 
         public byte[] GetPreviousBlock(byte[] hash)
         {
             return Blocks[hash].PreviousBlockHash;
         }
-
-        public IList<Definition> MissingData { get; set; }
 
         public bool ShouldAssumeValid(byte[] blockHash)
         {
