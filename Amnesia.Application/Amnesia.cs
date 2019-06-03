@@ -39,11 +39,12 @@ namespace Amnesia.Application
         {
             Console.WriteLine("Received a block.");
             var peer = peerManager.GetPeer(sendingPeer);
-            var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
-            var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
-            Console.WriteLine(blockData.Value.Hash);
-            Console.WriteLine(contentData.Value.Hash);
-            Console.WriteLine(contentData.Value.Definitions.First());
+            Console.WriteLine(Hash.ByteArrayToString(blockHash));
+            //var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
+            //var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
+            //Console.WriteLine(blockData.Value.Hash);
+            //Console.WriteLine(contentData.Value.Hash);
+            //Console.WriteLine(contentData.Value.Definitions.First());
             
             //CheckBlock(){}
             //Get alle gegevens
@@ -59,9 +60,8 @@ namespace Amnesia.Application
         
         public async Task ReceiveDefinition(Definition definition)
         {
-            //TODO: get current peer
-            var peer = peerManager.GetPeer("peer1");
             var state = stateService.State;
+            var peer = peerManager.GetPeer(state.PeerId);
             var previousBlock = state.CurrentBlock;
             var newContent = new Content
             {
@@ -95,11 +95,14 @@ namespace Amnesia.Application
                 Console.WriteLine(Hash.ByteArrayToString(b.Hash));
                 Console.WriteLine(Hash.ByteArrayToString(b.HashObject()));
                 
-//                foreach (var peerKey in peerManager.GetPeers())
-//                {
-//                    var peerToSend = peerManager.GetPeer(peerKey);
-//                    peerManager.PostBlock(peerToSend, Hash.ByteArrayToString(newBlock.Hash)).Start();
-//                }
+                //TODO SAVE STATE AND BLOCK IN DB
+                
+                foreach (var peerKey in peerManager.GetPeers())
+                {
+                    if (peerKey.Equals(state.PeerId)) continue;
+                    var peerToSend = peerManager.GetPeer(peerKey);
+                    peerManager.PostBlock(peer, peerToSend, Hash.ByteArrayToString(b.Hash));
+                }
             };          
             await miner.Start(blockToMine);
             
