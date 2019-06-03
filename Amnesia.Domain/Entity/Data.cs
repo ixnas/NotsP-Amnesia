@@ -1,5 +1,4 @@
-﻿using System;
-using Amnesia.Domain.Model;
+﻿using Amnesia.Domain.Model;
 
 namespace Amnesia.Domain.Entity
 {

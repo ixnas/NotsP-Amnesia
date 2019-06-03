@@ -7,8 +7,9 @@ namespace Amnesia.Domain.ViewModels
         public string Hash { get; set; }
         public string PreviousDefinitionHash { get; set; }
         public string Signature { get; set; }
+        public string Key { get; set; }
+        public byte[] Blob { get; set; }
 
-        public DataViewModel(){}
         public static DataViewModel FromData(Data data)
         {
             var vm = new DataViewModel
@@ -17,7 +18,8 @@ namespace Amnesia.Domain.ViewModels
                 PreviousDefinitionHash = data.PreviousDefinitionHash == null
                                          ? null
                                          : Model.Hash.ByteArrayToString(data.PreviousDefinitionHash),
-                Signature = Model.Hash.ByteArrayToString(data.Signature)
+                Signature = Model.Hash.ByteArrayToString(data.Signature),
+                Key = data.Key
             };
             return vm;
         }

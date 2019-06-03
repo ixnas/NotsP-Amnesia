@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using NUnit.Framework;
@@ -99,7 +100,7 @@ namespace Amnesia.Tests.Domain
         {
             var data = new Data
             {
-                Blob = System.Text.Encoding.UTF8.GetBytes("abcde0"),
+                Blob = Encoding.UTF8.GetBytes("abcde0"),
                 PreviousDefinitionHash = Hash.StringToByteArray("123456"),
                 Signature = Hash.StringToByteArray("123412341234"),
                 Key = "0987654321"
