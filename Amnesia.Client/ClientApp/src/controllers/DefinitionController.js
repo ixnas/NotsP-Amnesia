@@ -18,7 +18,7 @@ export class DefinitionController {
     SetDefinition() {
         const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
 
-        fetch(`https://localhost:5001/definitions/last`, {
+        fetch(`http://127.0.0.1:8080/definitions/last`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -81,7 +81,7 @@ export class DefinitionController {
         this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
         this.Definition.Signature = base64EncArr(this.Definition.Signature);
 
-        fetch('https://localhost:5001/definitions', {
+        fetch('http://127.0.0.1:8080/definitions', {
             method: 'POST',
             headers:  {
                 'Accept': 'application/json',

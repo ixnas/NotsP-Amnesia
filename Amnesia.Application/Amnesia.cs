@@ -17,24 +17,18 @@ namespace Amnesia.Application
     {
         private readonly PeerManager peerManager;
         private readonly StateService stateService;
-<<<<<<< HEAD
         private readonly ContentService contentService;
         private readonly BlockService blockService;
         private readonly int difficulty = 20;
-=======
         private readonly DataService dataService;
->>>>>>> 550f320b436548bd94b6a7c81a08aedc5c30e94f
 
         public Amnesia(PeerManager peerManager, StateService stateService, DataService dataService)
         {
             this.peerManager = peerManager;
             this.stateService = stateService;
-<<<<<<< HEAD
-            this.contentService = null; // needs to be configured
-            this.blockService = null; // needs to be configured
-=======
+            //this.contentService = null; // needs to be configured
+            //this.blockService = null; // needs to be configured
             this.dataService = dataService;
->>>>>>> 550f320b436548bd94b6a7c81a08aedc5c30e94f
         }
 
         public Block CurrentBlock => stateService.State.CurrentBlock;
@@ -43,7 +37,6 @@ namespace Amnesia.Application
         {
             Console.WriteLine("Received a block.");
             var peer = peerManager.GetPeer(sendingPeer);
-            
             var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
             var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
             Console.WriteLine(blockData.Value.Hash);
@@ -64,30 +57,46 @@ namespace Amnesia.Application
         
         public async Task ReceiveDefinition(Definition definition)
         {
-            var content = await contentService.GetContent(definition.Hash); //QUESTION: Ik haal content op met definition hash? 
-
-            content.Definitions.Add(definition.Hash);
-            var blocks = blockService.GetBlocks();
-            var lastBlock = blocks.Last();
-
-            var payload = new Block
+            //TODO: get current peer
+            var peer = peerManager.GetPeer("peer1");
+            if (definition.PreviousDefinitionHash == null)
             {
+                
+            }
+            else
+            {
+                var previousDefinition =
+                    await peerManager.GetDefinition(peer, Hash.ByteArrayToString(definition.PreviousDefinitionHash));
+            }
+
+            var blocks = await peerManager.GetBlocks(peer);
+            var previousBlock = blocks.Value.Last();
+            var blockToMine = new Block
+            {
+                PreviousBlockHash = previousBlock.Hash == null
+                    ? null
+                    : Hash.StringToByteArray(previousBlock.Hash),
                 Nonce = 0,
-                PreviousBlockHash = lastBlock.Hash,
-                PreviousBlock = lastBlock,
-                Content = content,
-                ContentHash = content.Hash
+                ContentHash = Hash.StringToByteArray(previousBlock.Content)
             };
 
-            var miner = new Miner(difficulty);
-
-            _ = miner.Start(payload);
-
+            var miner = new Miner(20);
             miner.Mined += b =>
             {
-                //TODO: send verified block to connected peers
-            };            
-
+                var newBlock = new Block
+                {
+                    ContentHash = blockToMine.ContentHash,
+                    Nonce = blockToMine.Nonce,
+                    PreviousBlockHash = blockToMine.PreviousBlockHash
+                };
+                foreach (var peer in PeerConfiguration)
+                {
+                    
+                }
+            };          
+            await miner.Start(blockToMine);
+            
+            
            //if(mutation == valid && newChain > currentChain)
 //           var mutation = new Definition
 //           {

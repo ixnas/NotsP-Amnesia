@@ -14,10 +14,12 @@ namespace Amnesia.WebApi.Controllers
     public class DefinitionController: ControllerBase
     {
         private readonly DefinitionService service;
+        private readonly Application.Amnesia amnesia;
 
-        public DefinitionController(DefinitionService service)
+        public DefinitionController(DefinitionService service, Application.Amnesia amnesia)
         {
             this.service = service;
+            this.amnesia = amnesia;
         }
         
         [HttpGet("{hash}")]
@@ -61,7 +63,7 @@ namespace Amnesia.WebApi.Controllers
         {
             var data = new Data
             {
-                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
                 Blob                    = Convert.FromBase64String(model.Definition.Data.Blob),
                 Key                     = model.Key
@@ -70,7 +72,7 @@ namespace Amnesia.WebApi.Controllers
             var definition = new Definition
             {
                 DataHash                = Hash.StringToByteArray(model.Definition.DataHash),
-                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Signature),
                 Key                     = model.Key,
                 IsMutation              = model.Definition.IsMutation,
@@ -79,11 +81,9 @@ namespace Amnesia.WebApi.Controllers
                 PreviousDefinition      = null
             };
 
-            var amnesia = new Application.Amnesia(null, null); // Needs to be configured
+            await amnesia.ReceiveDefinition(definition);
 
-            await amnesia.ReceiveDefinition(definition); // Node mining
-
-            return Ok();
+            return Ok("Node gemined");
         }
     }
 }

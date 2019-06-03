@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
@@ -25,10 +26,21 @@ namespace Amnesia.Application.Peers
                 : null;
         }
 
+        public List<string> GetPeers()
+        {
+            return configuration.Peers.Keys.ToList();
+        }
+
         public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
             var url = (peer.Url + configuration.Api.Blocks + hash).Trim();
             return GetData<BlockViewModel>(url);
+        }
+        
+        public Task<Maybe<List<BlockViewModel>>> GetBlocks(Peer peer)
+        {
+            var url = (peer.Url + configuration.Api.Blocks).Trim();
+            return GetData<List<BlockViewModel>>(url);
         }
 
         public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
