@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Amnesia.Domain.Migrations
 {
-    public partial class Newinitialmigrationbcsqlitesucks : Migration
+    public partial class NewInitBcSQLite : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -72,9 +72,9 @@ namespace Amnesia.Domain.Migrations
                     DataHash = table.Column<byte[]>(nullable: true),
                     PreviousDefinitionHash = table.Column<byte[]>(nullable: true),
                     Signature = table.Column<byte[]>(nullable: true),
-                    Key = table.Column<byte[]>(nullable: true),
+                    Key = table.Column<string>(nullable: true),
                     IsMutation = table.Column<bool>(nullable: false),
-                    Meta = table.Column<string>(nullable: true)
+                    IsMutable = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,7 +94,7 @@ namespace Amnesia.Domain.Migrations
                     Hash = table.Column<byte[]>(nullable: false),
                     PreviousDefinitionHash = table.Column<byte[]>(nullable: true),
                     Signature = table.Column<byte[]>(nullable: true),
-                    Key = table.Column<byte[]>(nullable: true),
+                    Key = table.Column<string>(nullable: true),
                     Blob = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
