@@ -23,7 +23,7 @@ export class AddComponent extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-6">
-                        <Input name="definition" id="definitionInput"></Input>
+                        <Input name="definition" id="definitionInput" placeholder="Persoonsgegeven"></Input>
                     </div>
 
                     <div className="col-md-6">

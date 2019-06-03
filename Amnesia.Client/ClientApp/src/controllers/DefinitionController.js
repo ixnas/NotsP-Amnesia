@@ -16,6 +16,9 @@ export class DefinitionController {
         this.SetDefinition();
     }
 
+    /**
+     * Sets the definition by getting last definition with a public key
+     */
     SetDefinition() {
         const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
 
@@ -36,6 +39,11 @@ export class DefinitionController {
             .catch((err) => console.log(err));
     }
 
+    /**
+     * Sets the definition by setting the definition data and hashing the data.
+     * 
+     * @param {string} hash 
+     */
     SetDefinitionAndSend(hash) {
 
         this.Definition.Data.PreviousDefinitionHash = hash;
@@ -45,7 +53,7 @@ export class DefinitionController {
             this.Definition.Data.Blob = `DELETE ${this.Input}`;
             this.Definition.IsMutable = false;
             this.Definition.IsMutation = this.IsMutation;
-            
+
         } else {
             this.Definition.Data.Blob = btoa(this.Input);
         }
@@ -55,6 +63,48 @@ export class DefinitionController {
         this.Send();
     }
 
+    /**
+     * Sets the datahash for the definitions
+     */
+    SetHashData() {
+        var map = new Map();
+
+        this.SignDefinition();
+
+        map
+            .set("PreviousDefinitionHash", this.Definition.Data.PreviousDefinitionHash)
+            .set("Blob", this.Definition.Data.Blob)
+            .set("Signature", this.Definition.Data.Signature)
+            .set("Key", this.KeyPair.publicKey.exportKey("pkcs8-public-pem"));
+
+        this.Definition.DataHash = SHA256(CBOR.encode(map));
+    }
+
+    /**
+     * Send the definition to the Web API to add it to the blockchain.
+     */
+    Send() {
+        this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
+        this.Definition.Signature = base64EncArr(this.Definition.Signature);
+
+        console.log(this.Definition);
+        fetch('https://localhost:5001/definitions', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Definition: this.Definition,
+                Key: this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
+            })
+        })
+            .catch(err => console.error(err));
+    }
+
+    /**
+     * Signs de definition with the data from the definition
+     */
     SignDefinition() {
         var message = new Map();
 
@@ -71,39 +121,11 @@ export class DefinitionController {
         this.SignData(privateKey);
     }
 
-    SetHashData() {
-        var map = new Map();
 
-        this.SignDefinition();
-
-        map
-            .set("PreviousDefinitionHash", this.Definition.Data.PreviousDefinitionHash)
-            .set("Blob", this.Definition.Data.Blob)
-            .set("Signature", this.Definition.Data.Signature)
-            .set("Key", this.KeyPair.publicKey.exportKey("pkcs8-public-pem"));
-
-        this.Definition.DataHash = SHA256(CBOR.encode(map));
-    }
-
-    Send() {
-        this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
-        this.Definition.Signature = base64EncArr(this.Definition.Signature);
-
-        fetch('https://localhost:5001/definitions', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                Definition: this.Definition,
-                Key: this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
-            })
-        })
-            .catch(err => console.error(err));
-    }
-
-    SignData(privateKey) {
+    /**
+     * Signs the data with data in Data class
+     */
+    SignData() {
         var message = new Map();
 
         message
@@ -111,6 +133,6 @@ export class DefinitionController {
             .set("Blob", this.Definition.Data.Blob);
 
         const encodedMessage = CBOR.encode(message);
-        this.Definition.Data.Signature = privateKey.sign(encodedMessage);
+        this.Definition.Data.Signature = this.KeyPair.privateKey.sign(encodedMessage);
     }
 }

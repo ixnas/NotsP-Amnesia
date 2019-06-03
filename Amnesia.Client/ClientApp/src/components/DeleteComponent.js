@@ -23,7 +23,7 @@ export class DeleteComponent extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-6">
-                        <Input name="mutation" id="mutationInput"></Input>
+                        <Input name="mutation" id="mutationInput" placeholder="Definitie Hash"></Input>
                     </div>
 
                     <div className="col-md-6">
