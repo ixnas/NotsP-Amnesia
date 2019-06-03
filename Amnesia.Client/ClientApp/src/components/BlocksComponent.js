@@ -24,6 +24,12 @@ export class BlocksComponent extends Component {
     return blocks
   }
 
+  navigateToBlockContent = async (blockHash) => {
+    let x = await this.state.controller.getBlockContent(blockHash);
+    console.log(x);
+    window.location="http://localhost:3000/blockContent/"+ blockHash
+  }
+
   render() {
       return (
           <div>
@@ -31,7 +37,7 @@ export class BlocksComponent extends Component {
             <Button onClick={() => this.getAllBlocks()}> Haal alle blocks op uit de chain </Button>
             </div>
             <div>
-             {this.state.blocks.map(block => <p key={block.hash}> {JSON.stringify({block})} </p>)}
+             {this.state.blocks.map(block => <p key={block.hash} onClick={() => this.navigateToBlockContent(block.hash)}> {JSON.stringify({block})} </p>)}
             </div>
           </div>
 

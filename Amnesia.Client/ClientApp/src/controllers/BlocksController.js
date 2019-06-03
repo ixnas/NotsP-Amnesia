@@ -24,4 +24,11 @@ export class BlocksController {
     return atob(data.body);
   }
 
+  getBlockDefinition = async (blockHash) => {
+    const blocks = await superagent.get('http://localhost:5000/blocks/' + blockHash);
+    const content = await superagent.get('http://localhost:5000/contents/' + blocks.body.content);
+    const definitions = await superagent.get('http://localhost:5000/definitions/' + content.body.definitions[0]);
+    return definitions;
+  }
+
 }
