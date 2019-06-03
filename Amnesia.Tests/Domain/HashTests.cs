@@ -99,7 +99,7 @@ namespace Amnesia.Tests.Domain
         {
             var data = new Data
             {
-                Blob = Convert.FromBase64String("abcde0"),
+                Blob = System.Text.Encoding.UTF8.GetBytes("abcde0"),
                 PreviousDefinitionHash = Hash.StringToByteArray("123456"),
                 Signature = Hash.StringToByteArray("123412341234"),
                 Key = "0987654321"
