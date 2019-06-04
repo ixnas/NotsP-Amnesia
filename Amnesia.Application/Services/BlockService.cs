@@ -48,11 +48,6 @@ namespace Amnesia.Application.Services
             return context.Blocks.ToList();
         }
 
-        public Block GetLastBlock()
-        {
-            return context.Blocks.LastOrDefault();
-        }
-
         public async Task<Block> AddBlock(Block block)
         {
             var result = await context.Blocks.AddAsync(block);

@@ -49,19 +49,15 @@ namespace Amnesia.Application
             throw new NotImplementedException();
             var miner = new Miner(10);
         }
-        
+
         public async Task ReceiveDefinition(Definition definition)
         {
             var state = stateService.State;
             var peer = peerManager.GetPeer(state.PeerId);
-            
+
             var previousBlock = state.CurrentBlock;
-            var newContent = new Content
-            {
-                Mutations = new List<byte[]>(),
-                Definitions = new List<byte[]>()
-            };
-            
+            var newContent = new Content();
+
             if (definition.IsMutation)
             {
                 newContent.Mutations.Add(definition.Hash);
@@ -70,9 +66,9 @@ namespace Amnesia.Application
             {
                 newContent.Definitions.Add(definition.Hash);
             }
-            
+
             newContent.Hash = newContent.HashObject();
-            
+
             var blockToMine = new Block
             {
                 PreviousBlockHash = previousBlock.Hash,
@@ -87,18 +83,21 @@ namespace Amnesia.Application
             {
                 blockService.SaveBlock(newBlock);
                 stateService.ChangeState(peer.Key, newBlock);
-                
+
                 foreach (var peerKey in peerManager.GetPeers())
                 {
                     if (peerKey.Equals(state.PeerId)) continue;
                     var peerToSend = peerManager.GetPeer(peerKey);
                     peerManager.PostBlock(peer, peerToSend, Hash.ByteArrayToString(newBlock.Hash));
                 }
-            };          
+            };
             await miner.Start(blockToMine);
-            
+        }
+    }
+}
+
 //TODO: EXECUTE MUTATION            
-           //if(mutation == valid && newChain > currentChain)
+//if(mutation == valid && newChain > currentChain)
 //           var mutation = new Definition
 //           {
 //               PreviousDefinitionHash = Hash.StringToByteArray("d9cb74f22c33625e37be48e5ef5ce9dc18d9e605338c2dc83b66c713d3d7ba41"),
@@ -109,6 +108,3 @@ namespace Amnesia.Application
 //           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));
 //           
 //           dataService.RemoveDataThroughMutation(Hash.StringToByteArray(previous.Value.DataHash));
-        }
-    }
-}

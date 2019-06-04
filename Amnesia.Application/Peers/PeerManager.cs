@@ -65,7 +65,7 @@ namespace Amnesia.Application.Peers
         public Task PostBlock(Peer peer, Peer peerToSend, string hash)
         {
             var client = new HttpClient();
-            var url = $"{peerToSend.Url}/blocks?peer={peer.Key}".Trim();
+            var url = peerToSend.Url + string.Format(configuration.Api.SendBlock, peer.Key);
             var payload = JsonConvert.SerializeObject(hash);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
             Console.WriteLine(url); 

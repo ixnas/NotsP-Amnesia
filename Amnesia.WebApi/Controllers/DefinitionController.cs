@@ -57,7 +57,6 @@ namespace Amnesia.WebApi.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
@@ -83,7 +82,7 @@ namespace Amnesia.WebApi.Controllers
 
             await amnesia.ReceiveDefinition(definition);
 
-            return Ok("Node gemined");
+            return Ok("Nieuw block gemined");
         }
     }
 }
