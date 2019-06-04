@@ -37,7 +37,7 @@ namespace Amnesia.Application.Services
             return blocks;
         }
 
-        public void SaveBlock(Block newBlock, State newState)
+        public void SaveBlock(Block newBlock)
         {
             context.Blocks.Add(newBlock);
             context.SaveChanges();

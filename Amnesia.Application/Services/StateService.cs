@@ -2,6 +2,7 @@
 using System.Linq;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
+using Amnesia.Domain.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Amnesia.Application.Services
@@ -53,6 +54,14 @@ namespace Amnesia.Application.Services
                 blockchainContext.State.Add(first);
                 blockchainContext.SaveChanges();
             }
+        }
+
+        public void ChangeState(string peer, Block newBlock)
+        {
+            State.PeerId = peer;
+            State.CurrentBlock = newBlock;
+            State.CurrentBlockHash = newBlock.Hash;
+            SaveChanges();
         }
     }
 }
