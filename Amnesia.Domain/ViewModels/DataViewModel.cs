@@ -17,8 +17,8 @@ namespace Amnesia.Domain.ViewModels
                 PreviousDefinitionHash = data.PreviousDefinitionHash == null
                                          ? null
                                          : Model.Hash.ByteArrayToString(data.PreviousDefinitionHash),
-                Key = data.Key,
                 Signature = Model.Hash.ByteArrayToString(data.Signature)
+                Key = data.Key,
             };
             return vm;
         }
