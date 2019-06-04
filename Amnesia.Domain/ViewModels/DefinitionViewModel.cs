@@ -22,6 +22,7 @@ namespace Amnesia.Domain.ViewModels
                                      ? null
                                      : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
                 Signature = definition.Signature,
+
                 Key = definition.Key
             };
             return vm;
