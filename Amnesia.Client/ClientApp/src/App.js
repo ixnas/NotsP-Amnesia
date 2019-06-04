@@ -4,6 +4,7 @@ import { Layout } from './Layout';
 import { Home } from './components/Pages/Home';
 import { DeleteDefinition } from './components/Pages/DeleteDefinition'
 import { AddDefinition } from './components/Pages/AddDefinition'
+import { BlockContent } from './components/Pages/BlockContent'
 import { KeyHelper } from './components/functions/keyHelper.js'
 
 export default class App extends Component {
@@ -13,6 +14,7 @@ export default class App extends Component {
         privateKey: '',
         publicKey: ''
     }
+
 
     componentDidMount() {
         const keyHelper = new KeyHelper();
@@ -24,12 +26,14 @@ export default class App extends Component {
         }
     }
 
+
     render() {
-        return (
+      return (
             <Layout>
                 <Route exact path='/' component={Home} />
                 <Route exact path='/delete' component={DeleteDefinition} />
                 <Route exact path='/add' component={AddDefinition} />
+                <Route exact path='/blockContent/:blockHash' component={BlockContent} />
             </Layout>
         );
     }
