@@ -15,6 +15,7 @@ namespace Amnesia.Tests.Mining
     [TestFixture]
     public class MiningTest
     {
+        [Explicit]
         [Test]
         public async Task TestMiningWithDifficultyOfTen()
         {
@@ -34,8 +35,10 @@ namespace Amnesia.Tests.Mining
             await miner.Start(block);
         }
 
+        
         //Does not cancel the test, timeout not implemented in .net standard
         [Test, MaxTime(1000)]
+        [Explicit]
         public void TestStopMining()
         {
             var miner = new Miner(30);
@@ -49,6 +52,7 @@ namespace Amnesia.Tests.Mining
         //Het enige wat deze test doet is kijken hoe lang elke diffulty duurt
         //Een diff van 20 is iets langer dan een minuut, een diff van 22 is al bijna 10 minuten.
         [Test]
+        [Explicit]
         public async Task TestExecuteTimeOfMultipleDifficulties()
         {
             var timer = new Stopwatch();
