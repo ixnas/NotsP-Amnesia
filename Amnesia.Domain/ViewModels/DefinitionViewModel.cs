@@ -10,8 +10,8 @@ namespace Amnesia.Domain.ViewModels
         public bool IsMutable { get; set; }
         public string PreviousDefinition { get; set; }
         public string Signature { get; set; }
+        public string Key { get; set; }
 
-        public DefinitionViewModel(){}
         public static DefinitionViewModel FromDefinition(Definition definition)
         {
             var vm = new DefinitionViewModel
@@ -21,7 +21,8 @@ namespace Amnesia.Domain.ViewModels
                 PreviousDefinition = definition.PreviousDefinitionHash == null
                                      ? null
                                      : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
-                Signature = Model.Hash.ByteArrayToString(definition.Signature)
+                Signature = Model.Hash.ByteArrayToString(definition.Signature),
+                Key = definition.Key
             };
             return vm;
         }
