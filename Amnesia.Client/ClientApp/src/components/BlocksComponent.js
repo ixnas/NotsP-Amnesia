@@ -14,11 +14,6 @@ export class BlocksComponent extends Component {
     }
   }
 
-  getBlockContent = async (blockHash) => {
-    let encryptedData = await this.state.controller.getBlockContent(blockHash)
-    return encryptedData;
-  }
-
   getAllBlocks = async () => {
     let blocks = await this.state.controller.getAllBlocks();
     this.setState({blocks: blocks});
@@ -26,7 +21,6 @@ export class BlocksComponent extends Component {
   }
 
   navigateToBlockContent = async (blockHash) => {
-    let x = await this.state.controller.getBlockContent(blockHash);
     window.location="http://localhost:3000/blockContent/"+ blockHash
   }
 
