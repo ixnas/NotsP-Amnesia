@@ -16,28 +16,23 @@ export class BlockContents extends Component {
   }
 
   componentDidMount = () => {
-    this.getBlockContent(this.props.blockHash);
-    this.getBlockDefinition(this.props.blockHash);
     this.getBlockContents(this.props.blockHash);
   }
 
-  getBlockContent = async (blockHash) => {
-    let encryptedData = await this.state.controller.getBlockContent(blockHash)
-    this.setState({encryptedData: encryptedData});
-    return encryptedData;
-  }
 
   getBlockContents = async (blockHash) => {
     let blockContents = await this.state.controller.getBlockContents(blockHash)
-    console.log(blockContents);
     this.setState({blockContents: blockContents});
     return blockContents
   }
 
-  getBlockDefinition = async (blockHash) => {
-    let blockDefinition = await this.state.controller.getBlockDefinition(blockHash)
-    this.setState({blockDefinition: blockDefinition});
-    return blockDefinition;
+  getDefinitionFromBlock = async (e) => {
+    e.preventDefault();
+    let clickedDefinitionHash = JSON.parse(e.target.innerText)
+    let blockDefinitionClicked = await this.state.controller.getBlockContentWithDefinitionHash(clickedDefinitionHash);
+    let definitionContent = await this.state.controller.getDefinitionData(blockDefinitionClicked.dataHash);
+    this.setState({blockDefinition: blockDefinitionClicked, encryptedData: definitionContent});
+    return blockDefinitionClicked
   }
 
   render() {
@@ -50,7 +45,7 @@ export class BlockContents extends Component {
       <p> block definition </p>
       <JSONPretty id="blockDefinition" data={this.state.blockDefinition} />
       <p> block contents </p>
-      <JSONPretty id="blockContents" data={this.state.blockContents} />
+      <JSONPretty id="blockContents" onClick={(e) => this.getDefinitionFromBlock(e)} data={this.state.blockContents} />
       </div>
     )
   }
