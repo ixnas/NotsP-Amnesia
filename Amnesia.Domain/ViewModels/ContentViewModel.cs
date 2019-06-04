@@ -30,5 +30,14 @@ namespace Amnesia.Domain.ViewModels
         {
             return list.Select(Model.Hash.ByteArrayToString).ToList();
         }
+
+        public Content ToContent()
+        {
+            return new Content
+            {
+                Definitions = Definitions.Select(Model.Hash.StringToByteArray).ToList(),
+                Mutations = Mutations.Select(Model.Hash.StringToByteArray).ToList()
+            };
+        }
     }
 }

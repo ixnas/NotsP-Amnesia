@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
 using Amnesia.Domain.ViewModels;
@@ -25,10 +27,21 @@ namespace Amnesia.Application.Peers
                 : null;
         }
 
+        public List<string> GetPeers()
+        {
+            return configuration.Peers.Keys.ToList();
+        }
+
         public Task<Maybe<BlockViewModel>> GetBlock(Peer peer, string hash)
         {
             var url = (peer.Url + configuration.Api.Blocks + hash).Trim();
             return GetData<BlockViewModel>(url);
+        }
+        
+        public Task<Maybe<List<BlockViewModel>>> GetBlocks(Peer peer)
+        {
+            var url = (peer.Url + configuration.Api.Blocks).Trim();
+            return GetData<List<BlockViewModel>>(url);
         }
 
         public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
@@ -49,6 +62,16 @@ namespace Amnesia.Application.Peers
             return GetData<ContentViewModel>(url);
         }
 
+        public Task PostBlock(Peer peer, Peer peerToSend, string hash)
+        {
+            var client = new HttpClient();
+            var url = peerToSend.Url + string.Format(configuration.Api.SendBlock, peer.Key);
+            var payload = JsonConvert.SerializeObject(hash);
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            Console.WriteLine(url); 
+            return client.PostAsync(url, content);
+        }
+
         private static async Task<Maybe<T>> GetData<T>(string url)
         {
             var client = new HttpClient();
@@ -57,6 +80,6 @@ namespace Amnesia.Application.Peers
             return result.IsSuccessStatusCode 
                 ? new Maybe<T>(JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync()))
                 : new Maybe<T>();
-        }
+        }       
     }
 }

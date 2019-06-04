@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Tests", "Amnesia.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesia.Cryptography", "Amnesia.Cryptography\Amnesia.Cryptography.csproj", "{E22F0ED9-2C19-4AFD-9BA5-453DDE038AB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amnesia.Client", "Amnesia.Client\Amnesia.Client.csproj", "{8370DE8F-DE44-4220-9678-0145D09262AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

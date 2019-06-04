@@ -25,5 +25,16 @@ namespace Amnesia.Domain.ViewModels
             };
             return vm;
         }
+
+        public Block ToBlock()
+        {
+            return new Block
+            {
+                Hash = Model.Hash.StringToByteArray(Hash),
+                ContentHash = Model.Hash.StringToByteArray(Content),
+                PreviousBlockHash = Previous == null ? null : Model.Hash.StringToByteArray(Previous),
+                Nonce = Nonce
+            };
+        }
     }
 }

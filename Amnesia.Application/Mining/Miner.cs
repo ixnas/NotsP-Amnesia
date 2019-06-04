@@ -44,8 +44,9 @@ namespace Amnesia.Application.Mining
             }
 
             Console.WriteLine("Nonce: {0}", payload.Nonce);
-            Console.WriteLine("Hash: {0}", Hash.ByteArrayToString(hash));
-                
+            payload.Hash = payload.HashObject();  
+            Console.WriteLine("Hash: {0}", Hash.ByteArrayToString(payload.Hash));
+            
             Mined?.Invoke(payload);
         }
 

@@ -14,10 +14,12 @@ namespace Amnesia.WebApi.Controllers
     public class DefinitionController: ControllerBase
     {
         private readonly DefinitionService service;
+        private readonly Application.Amnesia amnesia;
 
-        public DefinitionController(DefinitionService service)
+        public DefinitionController(DefinitionService service, Application.Amnesia amnesia)
         {
             this.service = service;
+            this.amnesia = amnesia;
         }
         
         [HttpGet("{hash}")]
@@ -55,13 +57,12 @@ namespace Amnesia.WebApi.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
             var data = new Data
             {
-                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
                 Blob                    = Convert.FromBase64String(model.Definition.Data.Blob),
                 Key                     = model.Key
@@ -70,7 +71,7 @@ namespace Amnesia.WebApi.Controllers
             var definition = new Definition
             {
                 DataHash                = Hash.StringToByteArray(model.Definition.DataHash),
-                PreviousDefinitionHash  = Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
+                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
                 Signature               = Convert.FromBase64String(model.Definition.Signature),
                 Key                     = model.Key,
                 IsMutation              = model.Definition.IsMutation,
@@ -79,9 +80,9 @@ namespace Amnesia.WebApi.Controllers
                 PreviousDefinition      = null
             };
 
-            //TODO: Node laten minen naar block
+            await amnesia.ReceiveDefinition(definition);
 
-            return Ok();
+            return Ok("Nieuw block gemined");
         }
     }
 }
