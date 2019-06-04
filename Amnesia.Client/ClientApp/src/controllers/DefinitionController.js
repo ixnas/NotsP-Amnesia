@@ -87,12 +87,7 @@ export class DefinitionController {
         this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
         this.Definition.Signature = base64EncArr(this.Definition.Signature);
 
-<<<<<<< HEAD
         fetch('http://127.0.0.1:8080/definitions', {
-=======
-        console.log(this.Definition);
-        fetch('https://localhost:5001/definitions', {
->>>>>>> develop
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
