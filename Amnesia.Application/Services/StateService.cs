@@ -1,66 +1,59 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Amnesia.Application.Peers;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
-using Amnesia.Domain.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Amnesia.Application.Services
 {
     public class StateService
     {
-        private readonly BlockchainContext blockchainContext;
+        private readonly BlockchainContext dbContext;
+        private readonly PeerConfiguration peerConfiguration;
 
-        public StateService(BlockchainContext blockchainContext)
+        public StateService(BlockchainContext dbContext, IOptions<PeerConfiguration> peerConfiguration)
         {
-            this.blockchainContext = blockchainContext;
-            lazyState = new Lazy<State>(() =>
-            {
-                Ensure();
-                return FetchState(blockchainContext);
-            });
+            this.dbContext = dbContext;
+            this.peerConfiguration = peerConfiguration.Value;
         }
 
-        private readonly Lazy<State> lazyState;
-
-        public State State => lazyState.Value;
+        public State State => FetchAndEnsureState();
 
         public void SaveChanges()
         {
-            blockchainContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
-        private static State FetchState(BlockchainContext blockchainContext)
+        private State FetchState()
         {
-            return blockchainContext.State
+            return dbContext.State
                 .Include(s => s.CurrentBlock)
-                .Single();
+                .SingleOrDefault(s => s.PeerId == peerConfiguration.NetworkId);
         }
 
-        private void Ensure()
+        private State FetchAndEnsureState()
         {
-            var count = blockchainContext.State.Count();
+            var state = FetchState();
 
-            if (count == 0)
+            if (state == null)
             {
-                blockchainContext.State.Add(new State());
-                blockchainContext.SaveChanges();
+                state = new State
+                {
+                    PeerId = peerConfiguration.NetworkId,
+                    CurrentBlockHash = null
+                };
+
+                dbContext.State.Add(state);
+                dbContext.SaveChanges();
             }
 
-            else if (count > 1)
-            {
-                var first = blockchainContext.State.First();
-                blockchainContext.State.RemoveRange(blockchainContext.State);
-                blockchainContext.State.Add(first);
-                blockchainContext.SaveChanges();
-            }
+            return state;
         }
 
-        public void ChangeState(string peer, Block newBlock)
+        public void ChangeState(byte[] blockHash)
         {
-            State.PeerId = peer;
-            State.CurrentBlock = newBlock;
-            State.CurrentBlockHash = newBlock.Hash;
+            State.CurrentBlockHash = blockHash;
             SaveChanges();
         }
     }

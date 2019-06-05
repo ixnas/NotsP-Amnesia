@@ -14,10 +14,7 @@ namespace Amnesia.Application
             services.AddSingleton<PeerManager>();
 
             services.AddTransient<BlockService>();
-            services.AddTransient<ContentService>();
-            services.AddTransient<DefinitionService>();
             services.AddTransient<StateService>();
-            services.AddTransient<DataService>();
             services.AddTransient<SeedService>();
 
             services.Configure<PeerConfiguration>(peerConfiguration);
