@@ -13,7 +13,7 @@ namespace Amnesia.Application
 
             services.AddSingleton<PeerManager>();
 
-            services.AddTransient<BlockService>();
+            services.AddTransient<BlockchainService>();
             services.AddTransient<StateService>();
             services.AddTransient<SeedService>();
 

@@ -1,24 +1,23 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Mining;
 using Amnesia.Cryptography;
 using Amnesia.Domain.Context;
 using Amnesia.Domain.Entity;
-using Amnesia.Domain.Model;
 
 namespace Amnesia.Application.Services
 {
     public class SeedService
     {
         private readonly BlockchainContext context;
+        private readonly StateService stateService;
 
-        public SeedService(BlockchainContext context)
+        public SeedService(BlockchainContext context, StateService stateService)
         {
             this.context = context;
+            this.stateService = stateService;
         }
         
         public async Task SeedData()
@@ -65,6 +64,8 @@ namespace Amnesia.Application.Services
             }
             
             context.SaveChanges();
+
+            stateService.ChangeState(block.Hash);
         }
 
         private Data MakeData(KeyPair keys)

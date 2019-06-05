@@ -68,6 +68,11 @@ namespace Amnesia.Application.Validation.Context
 
         public IEnumerable<byte[]> GetBlockGraph(byte[] startHash)
         {
+            if (startHash == null)
+            {
+                yield break;
+            }
+
             var hash = startHash;
 
             var blocks = context.Blocks

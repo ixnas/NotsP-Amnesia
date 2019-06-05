@@ -24,17 +24,11 @@ GET /blocks?depth=5
 ```
 
 ```json
-{
-    "current": "fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0",
-    "blocks": [
-        {
-            "hash": "fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0",
-            "previous": "edd0679ac620f2a343742eeccb206e267b788c49dfc76c34bd43bdd47d9da9ae",
-            "content": "434728a410a78f56fc1b5899c3593436e61ab0c731e9072d95e96db290205e53",
-            "nonce": "9dfc7"
-        }
-    ]
-}
+[
+    "fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0",
+    "edd0679ac620f2a343742eeccb206e267b788c49dfc76c34bd43bdd47d9da9ae",
+    "434728a410a78f56fc1b5899c3593436e61ab0c731e9072d95e96db290205e53",
+]
 ```
 
 ### Inform of block existence

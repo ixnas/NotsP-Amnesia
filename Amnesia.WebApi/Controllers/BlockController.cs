@@ -5,7 +5,6 @@ using Amnesia.Application.Services;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Amnesia.WebApi.Controllers
 {
@@ -49,18 +48,9 @@ namespace Amnesia.WebApi.Controllers
 
             return Ok(ContentViewModel.FromContent(block.Content));
         }
-
-        [HttpGet]
-        public ActionResult GetAll()
-        {
-            var state = stateService.State.CurrentBlockHash;
-            var graph = blockchain.ValidationContext.GetBlockGraph(state).ToList();
-
-            return Ok(graph);
-        }
         
         [HttpGet]
-        public ActionResult GetWithDepth([FromQuery(Name = "depth")] int depth)
+        public ActionResult GetWithDepth([FromQuery] int? depth)
         {
             if (depth < 1)
             {
@@ -69,9 +59,14 @@ namespace Amnesia.WebApi.Controllers
             }
 
             var state = stateService.State.CurrentBlockHash;
-            var graph = blockchain.ValidationContext.GetBlockGraph(state).Take(depth).ToList();
+            var graph = blockchain.ValidationContext
+                .GetBlockGraph(state);
 
-            return Ok(graph);
+            var blocks = depth.HasValue 
+                ? graph.Take(depth.Value).ToList()
+                : graph.ToList();
+
+            return Ok(blocks.Select(Hash.ByteArrayToString));
         }
 
         [HttpPost]
