@@ -13,7 +13,7 @@ GET /blocks/{hash}
     "hash": "fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0",
     "previous": "edd0679ac620f2a343742eeccb206e267b788c49dfc76c34bd43bdd47d9da9ae",
     "content": "434728a410a78f56fc1b5899c3593436e61ab0c731e9072d95e96db290205e53",
-    "nonce": "9dfc7"
+    "nonce": 42
 }
 ```
 
@@ -34,17 +34,15 @@ GET /blocks?depth=5
 ### Inform of block existence
 
 ```http
-POST /blocks?id={nodeId}
+POST /blocks?id={peerId}
 
-[
-    "fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0"
-]
+"fba4f4530824dbc5a465cf0eddf7198d91ddec60b6dd1df9cb97accf930c7af0"
 ```
 
 ### Get content
 
 ```http
-GET /contents/{hash}
+GET /blocks/{blockHash}/content
 ```
 
 ```json
@@ -59,6 +57,8 @@ GET /contents/{hash}
     ]
 }
 ```
+
+De blockHash in de url is de hash van het block. De hash property in de response is de hash van de content.
 
 ### Get definition
 
