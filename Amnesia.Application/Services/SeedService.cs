@@ -1,11 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amnesia.Application.Mining;
-using Amnesia.Cryptography;
+using Amnesia.Application.Validation.Context;
 using Amnesia.Domain.Context;
-using Amnesia.Domain.Entity;
+using Amnesia.Domain.ViewModels;
+using Newtonsoft.Json;
 
 namespace Amnesia.Application.Services
 {
@@ -13,117 +12,68 @@ namespace Amnesia.Application.Services
     {
         private readonly BlockchainContext context;
         private readonly StateService stateService;
+        private readonly BlockchainService blockchain;
 
-        public SeedService(BlockchainContext context, StateService stateService)
+        private const string Filename = "Amnesia.Application.SeedData.json";
+
+        public SeedService(BlockchainContext context, StateService stateService, BlockchainService blockchain)
         {
             this.context = context;
             this.stateService = stateService;
+            this.blockchain = blockchain;
         }
-        
-        public async Task SeedData()
+
+        public void SeedData()
         {
             context.Database.EnsureCreated();
-            
-            var keys = new KeyPair(2048);
-            var data = MakeData(keys);
-            var definition = MakeDefinition(keys, data);
-            var content = MakeContent(definition);
-            var block = await MakeBlock(content);
-            
-            var state = new State
-            {
-                PeerId = "peer1",
-                CurrentBlock = block,
-                CurrentBlockHash = block.Hash
-            };
-            
-            var d = context.Data.FirstOrDefault();
-            if (d == null)
-            {
-                context.Data.Add(data);
-            }
-            var de = context.Definitions.FirstOrDefault();
-            if (de == null)
-            {
-                context.Definitions.Add(definition);
-            }
-            var c = context.Contents.FirstOrDefault();
-            if (c == null)
-            {
-                context.Contents.Add(content);
-            }
-            var b = context.Blocks.FirstOrDefault();
-            if (b == null)
-            {
-                context.Blocks.Add(block);
-            }
-            var s = context.State.FirstOrDefault();
-            if (s == null)
-            {
-                context.State.Add(state);
-            }
-            
-            context.SaveChanges();
 
-            stateService.ChangeState(block.Hash);
+            using var stream = typeof(SeedService).Assembly.GetManifestResourceStream(Filename);
+            using var streamReader = new StreamReader(stream);
+            var json = streamReader.ReadToEnd();
+
+            var lists = JsonConvert.DeserializeObject<BlockchainLists>(json);
+
+            var memoryContext = new MemoryValidationContext();
+
+            foreach (var block in lists.Blocks)
+            {
+                memoryContext.AddBlock(block.ToBlock());
+            }
+
+            foreach (var content in lists.Contents)
+            {
+                memoryContext.AddContent(content.ToContent());
+            }
+
+            foreach (var definition in lists.Definitions)
+            {
+                memoryContext.AddDefinition(definition.ToDefinition());
+            }
+
+            foreach (var data in lists.Data)
+            {
+                memoryContext.AddData(data.ToData());
+            }
+            
+            blockchain.SaveContext(memoryContext);
+            stateService.ChangeState(lists.Blocks.Last().ToBlock().Hash);
         }
 
-        private Data MakeData(KeyPair keys)
+        public void Dump()
         {
-            var blob = Encoding.UTF8.GetBytes("Dit is test data.");
-            var signature = keys.PrivateKey.SignData(blob);
-            
-            return new Data
-            {
-                PreviousDefinitionHash = null,
-                Signature = signature,
-                Key = keys.PublicKey.ToPEMString(),
-                Blob = blob
-            };
+            context.Data.RemoveRange(context.Data);
+            context.Definitions.RemoveRange(context.Definitions);
+            context.Contents.RemoveRange(context.Contents);
+            context.Blocks.RemoveRange(context.Blocks);
+            context.State.RemoveRange(context.State);
         }
 
-        private Definition MakeDefinition(KeyPair keys, Data data)
+        private class BlockchainLists
         {
-            var definition = new Definition
-            {
-                DataHash = data.Hash,
-                PreviousDefinitionHash = null,
-                Key = keys.PublicKey.ToPEMString(),
-                IsMutation = false,
-                IsMutable = true,
-                Data = data,
-                PreviousDefinition = null
-            };
-            var signature = keys.PrivateKey.SignData(definition.SignatureHash.Hash);
-            definition.Signature = signature;
-            return definition;
-        }
-
-        private Content MakeContent(Definition definition)
-        {
-            var definitions = new List<byte[]> {definition.Hash};
-            var mutations = new List<byte[]>();
-            return new Content
-            {
-                Definitions = definitions,
-                Mutations = mutations
-            };
-        }
-
-        private async Task<Block> MakeBlock(Content content)
-        {
-            var block = new Block
-            {
-                PreviousBlockHash = null,
-                Nonce = 0,
-                Content = content,
-                ContentHash = content.Hash,
-                PreviousBlock = null
-            };
-            var miner = new Miner(20);
-            miner.Mined += b => { block = b; };
-            await miner.Start(block);
-            return block;
+            public IList<BlockViewModel> Blocks { get; set; }
+            public IList<ContentViewModel> Contents { get; set; }
+            public IList<DefinitionViewModel> Definitions { get; set; }
+            public IList<DataViewModel> Data { get; set; }
         }
     }
 }

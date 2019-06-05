@@ -64,16 +64,12 @@ namespace Amnesia.Domain.Context
             modelBuilder.Entity<Definition>(definition =>
             {
                 definition
-                    .HasOne(d => d.Data)
-                    .WithOne()
-                    .HasForeignKey<Definition>(d => d.DataHash);
-
-                definition
                     .HasOne(d => d.PreviousDefinition)
                     .WithOne()
                     .HasForeignKey<Definition>(d => d.PreviousDefinitionHash);
 
                 definition.Ignore(d => d.SignatureHash);
+                definition.Ignore(d => d.Data);
             });
 
             modelBuilder.Entity<Data>(data =>

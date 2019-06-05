@@ -28,5 +28,19 @@ namespace Amnesia.Domain.ViewModels
             };
             return vm;
         }
+
+        public Definition ToDefinition()
+        {
+            return new Definition
+            {
+                Hash = Model.Hash.StringToByteArray(Hash),
+                DataHash = Model.Hash.StringToByteArray(DataHash),
+                IsMutable = IsMutable,
+                IsMutation = IsMutation,
+                PreviousDefinitionHash = PreviousDefinition == null ? null : Model.Hash.StringToByteArray(PreviousDefinition),
+                Signature = Signature,
+                Key = Key
+            };
+        }
     }
 }
