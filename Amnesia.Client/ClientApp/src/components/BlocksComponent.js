@@ -32,7 +32,6 @@ export class BlocksComponent extends Component {
             </div>
             <div>
             {this.state.blocks.map(block => <JSONPretty id="blocks" onClick={() => this.navigateToBlockContent(block.hash)} data={block} /> )}
-
             </div>
           </div>
 
