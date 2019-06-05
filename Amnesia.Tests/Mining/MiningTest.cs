@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Amnesia.Application.Mining;
-using Amnesia.Cryptography;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
+using Amnesia.Tests.Validation;
 using NUnit.Framework;
 
 namespace Amnesia.Tests.Mining
@@ -23,8 +21,7 @@ namespace Amnesia.Tests.Mining
             timer.Start();
             
             var miner = new Miner(10);
-            var keys = new KeyPair(2048);
-            var block = MakeBlock(MakeContent(MakeDefinition(keys, MakeData(keys))));
+            var block = MakeBlock();
             
             miner.Mined += b =>
             {
@@ -56,8 +53,7 @@ namespace Amnesia.Tests.Mining
         public async Task TestExecuteTimeOfMultipleDifficulties()
         {
             var timer = new Stopwatch();
-            var keys = new KeyPair(2048);
-            var block = MakeBlock(MakeContent(MakeDefinition(keys, MakeData(keys))));
+            var block = MakeBlock();
 
             for (var difficulty = 0; difficulty <= 20; difficulty++)
             {
@@ -94,68 +90,16 @@ namespace Amnesia.Tests.Mining
 
             var actual = Miner.CheckHash(hashBytes, difficulty);
 
-            var bitArray = new BitArray(hashBytes);
-            foreach (bool b in bitArray)
-            {
-                TestContext.Write(b ? "1":"0");
-            }
-            TestContext.WriteLine();
-
             Assert.AreEqual(expected, actual);
         }
-        
-        private Data MakeData(KeyPair keys)
-        {
-            var blob = Encoding.UTF8.GetBytes("Dit is test data.");
-            var signature = keys.PrivateKey.SignData(blob);
-            
-            return new Data
-            {
-                PreviousDefinitionHash = null,
-                Signature = signature,
-                Key = keys.PublicKey.ToPEMString(),
-                Blob = blob
-            };
-        }
 
-        private Definition MakeDefinition(KeyPair keys, Data data)
+        private static Block MakeBlock()
         {
-            var definition = new Definition
-            {
-                DataHash = data.Hash,
-                PreviousDefinitionHash = null,
-                Key = keys.PublicKey.ToPEMString(),
-                IsMutation = false,
-                IsMutable = true,
-                Data = data,
-                PreviousDefinition = null
-            };
-            var signature = keys.PrivateKey.SignData(definition.SignatureHash.Hash);
-            definition.Signature = signature;
-            return definition;
-        }
+            var keys = TestData.Keys;
+            var def = TestData.CreateDefinition("Dit is test data.", keys, null);
+            var block = TestData.CreateBlock(def, null);
 
-        private Content MakeContent(Definition definition)
-        {
-            var definitions = new List<byte[]> {definition.Hash};
-            var mutations = new List<byte[]>();
-            return new Content
-            {
-                Definitions = definitions,
-                Mutations = mutations
-            };
-        }
-
-        private Block MakeBlock(Content content)
-        {
-            return new Block
-            {
-                PreviousBlockHash = null,
-                Nonce = 0,
-                Content = content,
-                ContentHash = content.Hash,
-                PreviousBlock = null
-            };
+            return block;
         }
     }
 }
