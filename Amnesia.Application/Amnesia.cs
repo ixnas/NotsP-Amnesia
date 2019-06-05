@@ -28,13 +28,22 @@ namespace Amnesia.Application
         public async Task ReceiveBlock(byte[] blockHash, string sendingPeer)
         {
             Console.WriteLine("Received a block.");
+            
             var peer = peerManager.GetPeer(sendingPeer);
-            Console.WriteLine(Hash.ByteArrayToString(blockHash));
-            var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
-            var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
-            Console.WriteLine(blockData.Value.Hash);
-            Console.WriteLine(contentData.Value.Hash);
-            Console.WriteLine(contentData.Value.Definitions.First());
+            var memoryContext = new MemoryValidationContext();
+            
+//            var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
+//            
+//            memoryContext.AddData();
+//            memoryContext.AddContent();
+//            memoryContext.AddDefinition();
+//            memoryContext.AddBlock();
+//            
+//            
+//            var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
+//            Console.WriteLine(blockData.Value.Hash);
+//            Console.WriteLine(contentData.Value.Hash);
+//            Console.WriteLine(contentData.Value.Definitions.First());
         }
 
         //TODO: Write implementation for checking block (Consensus).
@@ -46,10 +55,8 @@ namespace Amnesia.Application
 
         public async Task ReceiveDefinition(Definition definition)
         {
-            var state = stateService.State;
-            var peer = peerManager.GetPeer(state.PeerId);
-
-            var previousBlock = state.CurrentBlock;
+            Console.WriteLine(stateService.State.PeerId);            
+            var previousBlock = stateService.State.CurrentBlock;
             var newContent = new Content();
 
             if (definition.IsMutation)
@@ -83,12 +90,12 @@ namespace Amnesia.Application
 
             blockchain.SaveContext(context);
             stateService.ChangeState(blockToMine.Hash);
-
+            
+            Console.WriteLine(stateService.State.PeerId);
             foreach (var peerKey in peerManager.GetPeers())
             {
-                if (peerKey.Equals(state.PeerId)) continue;
                 var peerToSend = peerManager.GetPeer(peerKey);
-                peerManager.PostBlock(peer, peerToSend, Hash.ByteArrayToString(blockToMine.Hash));
+                peerManager.PostBlock(stateService.State.PeerId, peerToSend, Hash.ByteArrayToString(blockToMine.Hash));
             }
         }
     }

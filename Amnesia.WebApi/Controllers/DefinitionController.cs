@@ -47,7 +47,7 @@ namespace Amnesia.WebApi.Controllers
         public ActionResult GetLastByKey([FromBody] GetByKeyModel model)
         {
             var definitionHash = blockchain.ValidationContext
-                .GetDefinitionsByKey(model.PublicKey, stateService.State.CurrentBlockHash)
+                .GetDefinitionsByKey(model.Key, stateService.State.CurrentBlockHash)
                 .FirstOrDefault();
 
             if (definitionHash == null)

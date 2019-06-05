@@ -1,10 +1,10 @@
 import { Definition } from "../objects/Definition";
 import { KeyHelper } from "../components/functions/keyHelper";
-
 import { base64EncArr } from "../components/functions/base64";
 
 var CBOR = require('cbor');
 var SHA256 = require('js-sha256').sha256;
+var superagent = require('superagent');
 
 export class DefinitionController {
 
@@ -20,23 +20,21 @@ export class DefinitionController {
      * Sets the definition by getting last definition with a public key
      */
     SetDefinition() {
-        const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
+       // const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
+        const publicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhVQrGn7UopzbDrQerAa+\nggfrnCfWhCTCOPOaazJ5zqbk1vrB9RnHgll0EzMe6zGCfekkd581qh42Eu3VzpeX\nqOAv4Ni1+ydwwB+OKrK0/TyunOh/YmjmBGC9HzOuwh6vdfmFhykpjl3VSR2RnI1o\nE0LPLaqsrL0TgysTxIAMZ6YbmW6qsa+lNhdUjRoo2N8UllWN0ODG/W3qZ0Ce3aY0\nIg4vxjp4FneKjki5TC5jY6LbMTevwKTZxd/08g1REuKtBwIJDzVz1GYwH6S+rVOC\nmyoY9PYHIa7tZpQXC34YvDAAr11pvm0Tr0gRXSDSK4KosJOF+hP5tYQ1PeNaIOog\n6wIDAQAB\n-----END PUBLIC KEY-----";
+        
+        (async () => {
+            try {
+              const res = await superagent.post('http://127.0.0.1:8080/definitions/last')
+              .send({Key: publicKey})
+              .set('accept', 'json');
 
-        fetch(`http://127.0.0.1:8080/definitions/last`, {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                PublicKey: publicKey
-            })
-        })
-            .then(response => response.json())
-            .then(definition => {
-                this.SetDefinitionAndSend(definition.hash)
-            })
-            .catch((err) => console.log(err));
+              console.log(res.body.hash);
+              this.SetDefinitionAndSend(res.body.hash);
+            } catch (err) {
+              console.error(err);
+            }
+          })();
     }
 
     /**

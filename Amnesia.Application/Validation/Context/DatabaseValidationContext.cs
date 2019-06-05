@@ -134,7 +134,7 @@ namespace Amnesia.Application.Validation.Context
 
                 // definitionsFromKey may not be in order
                 var orderedDefinitions = definitionsInBlock
-                    .Select(h => definitionsFromKey.FirstOrDefault(d => d == h))
+                    .Select(h => definitionsFromKey.FirstOrDefault(d => d.SequenceEqual(h)))
                     .Where(h => h != null);
 
                 foreach (var definition in orderedDefinitions)

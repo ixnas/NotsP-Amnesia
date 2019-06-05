@@ -62,13 +62,13 @@ namespace Amnesia.Application.Peers
             return GetData<ContentViewModel>(url);
         }
 
-        public Task PostBlock(Peer peer, Peer peerToSend, string hash)
+        public Task PostBlock(string peerId, Peer peerToSend, string hash)
         {
             var client = new HttpClient();
-            var url = peerToSend.Url + string.Format(configuration.Api.SendBlock, peer.Key);
+            var url = peerToSend.Url + string.Format(configuration.Api.SendBlock, peerId);
+            Console.WriteLine(url); 
             var payload = JsonConvert.SerializeObject(hash);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            Console.WriteLine(url); 
             return client.PostAsync(url, content);
         }
 

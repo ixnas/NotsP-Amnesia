@@ -11,7 +11,7 @@ namespace Amnesia.Application
         {
             services.AddTransient<Amnesia>();
 
-            services.AddSingleton<PeerManager>();
+            services.AddTransient<PeerManager>();
 
             services.AddTransient<BlockchainService>();
             services.AddTransient<StateService>();

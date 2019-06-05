@@ -7,6 +7,6 @@ namespace Amnesia.WebApi.Models
 {
     public class GetByKeyModel
     {
-        public string PublicKey { get; set; }
+        public string Key { get; set; }
     }
 }
