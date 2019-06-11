@@ -115,6 +115,7 @@ namespace Amnesia.WebApi.Controllers
             }
 
             Response.ContentType = "application/octet-stream";
+            Response.ContentLength = data.Blob.Length;
             await Response.Body.WriteAsync(data.Blob, 0, data.Blob.Length);
             return Ok();
         }
