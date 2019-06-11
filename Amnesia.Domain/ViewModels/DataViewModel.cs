@@ -41,7 +41,7 @@ namespace Amnesia.Domain.ViewModels
                 Blob = Blob
             };
         }
-
+        
         public bool ShouldSerializeBlob()
         {
             return Blob != null;

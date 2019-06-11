@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
@@ -67,6 +68,7 @@ namespace Amnesia.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
+            
             var data = new Data
             {
                 PreviousDefinitionHash  = model.Data.PreviousDefinition == null ? null : Hash.StringToByteArray(model.Data.PreviousDefinition),
@@ -86,7 +88,10 @@ namespace Amnesia.WebApi.Controllers
                 Data                    = data,
             };
 
-            await amnesia.ReceiveDefinition(definition);
+            data.Hash = data.HashObject();
+            definition.DataHash = data.Hash;
+            definition.Hash = definition.HashObject();   
+            await amnesia.ReceiveDefinition(definition, data);
 
             return Ok("Nieuw block gemined");
         }

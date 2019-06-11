@@ -81,7 +81,7 @@ namespace Amnesia.Application
             }
         }
         
-        public async Task ReceiveDefinition(Definition definition)
+        public async Task ReceiveDefinition(Definition definition, Data data)
         {           
             var previousBlock = stateService.State.CurrentBlock;
             var newContent = new Content();
@@ -113,7 +113,7 @@ namespace Amnesia.Application
             context.AddBlock(blockToMine);
             context.AddContent(blockToMine.Content);
             context.AddDefinition(definition);
-            context.AddData(definition.Data);
+            context.AddData(data);
 
             blockchain.SaveContext(context);
             stateService.ChangeState(blockToMine.Hash);
