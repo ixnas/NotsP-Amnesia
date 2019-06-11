@@ -1,4 +1,4 @@
-# API Design
+# 	API Design
 
 ## Node to Node
 
@@ -69,19 +69,12 @@ GET /definitions/{hash}
 ```json
 {
     "hash": "3885e3d6ea213501ab07ed2a7b82cc4a719e2190a31df6c4d1e3af407c7c03c2",
-    "header": {
-        "datahash":"5aa03f96c77536579166fba147929626cc3a97960e994057a9d80271a736d10f",
-        "meta": {
-            "deletable": true
-        },
-        "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
-        "signature": "38cdbbde15d3"
-    },
-    "data": {
-        "hash": "5aa03f96c77536579166fba147929626cc3a97960e994057a9d80271a736d10f",
-        "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
-        "signature": "123b0182cc"
-    }
+    "dataHash":"5aa03f96c77536579166fba147929626cc3a97960e994057a9d80271a736d10f",
+    "isMutation": false,
+    "isMutable": true,
+    "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
+    "signature": "T+mJbidbQkwgB5oVhtDDZNWiuSySt",
+    "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiGAB\n-----END PUBLIC KEY-----\n"
 }
 ```
 
@@ -89,6 +82,21 @@ GET /definitions/{hash}
 
 ```http
 GET /definitions/{hash}/data
+```
+
+```
+{
+    "hash": "3885e3d6ea213501ab07ed2a7b82cc4a719e2190a31df6c4d1e3af407c7c03c2",
+    "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
+    "signature": "T+mJbidbQkwgB5oVhtDDZNWiuSySt",
+    "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiGAB\n-----END PUBLIC KEY-----\n"
+}
+```
+
+### Get definition blob
+
+```http
+GET /definitions/{hash}/data/blob
 ```
 
 ```
@@ -103,34 +111,35 @@ Hallo dit is wat data
 POST /definitions
 
 {
-    "hash": "3885e3d6ea213501ab07ed2a7b82cc4a719e2190a31df6c4d1e3af407c7c03c2",
-    "header": {
+    "definition": {
         "datahash":"5aa03f96c77536579166fba147929626cc3a97960e994057a9d80271a736d10f",
-        "meta": {
-            "deletable": true
-        },
+        "isMutable": true,
+        "isMutation": false,
         "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
-        "signature": "38cdbbde15d3"
+        "signature": "T+mJbidbQkwgB5oVhtDDZNWiuSySt",
+        "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiGAB\n-----END PUBLIC KEY-----\n"
     },
     "data": {
         "hash": "5aa03f96c77536579166fba147929626cc3a97960e994057a9d80271a736d10f",
         "previousDefinition": "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853",
-        "signature": "123b0182cc",
+        "signature": "T+mJbidbQkwgB5oVhtDDZNWiuSySt",
+        "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiGAB\n-----END PUBLIC KEY-----\n",
         "blob":"SGFsbG8gZGl0IGlzIHdhdCBkYXRhLCBzdXBlciBsZXVrIGFsbGVtYWFsLCBlYXN0ZXIgZWdnCg=="
     },
 }
 ```
 
-### Get latest definitions
+### Get latest definition
 
 ```http
-GET /keys/{publicKey}/definitions?limit=5
+POST /definitions/last
+
+{
+    "publicKey":"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiGAB\n-----END PUBLIC KEY-----\n"
+}
 ```
 
 ```json
-[
-    "3885e3d6ea213501ab07ed2a7b82cc4a719e2190a31df6c4d1e3af407c7c03c2",
-    "d23d46f43123b0182ccc4fbc9238cdbbde15d304ce325f4e1ac0eb67edaab853"
-]
+"3885e3d6ea213501ab07ed2a7b82cc4a719e2190a31df6c4d1e3af407c7c03c2"
 ```
 
