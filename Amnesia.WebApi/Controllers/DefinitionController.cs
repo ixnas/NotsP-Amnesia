@@ -1,6 +1,8 @@
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
+using Amnesia.Cryptography;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
@@ -65,7 +67,7 @@ namespace Amnesia.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
+        public async Task<IActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
             var data = new Data
             {
@@ -85,6 +87,49 @@ namespace Amnesia.WebApi.Controllers
                 IsMutable               = model.Definition.IsMutable,
                 Data                    = data,
             };
+
+            await amnesia.ReceiveDefinition(definition);
+
+            return Ok("Nieuw block gemined");
+        }
+
+        [HttpPost("easy")]
+        public async Task<IActionResult> CreateDefinitionTheEasyWay([FromBody] EasyDefinitionModel model)
+        {
+            var previousDefinition = blockchain.ValidationContext
+                .GetDefinitionsByKey(model.PublicKey, stateService.State.CurrentBlockHash)
+                .FirstOrDefault();
+
+            var isMutation = !string.IsNullOrEmpty(model.DefinitionHash);
+            var data = new Data
+            {
+                Blob = model.Blob,
+                PreviousDefinitionHash = previousDefinition,
+                Key = model.PublicKey
+            };
+
+            if (isMutation)
+            {
+                data.Blob = Encoding.UTF8.GetBytes("DELETE " + model.DefinitionHash);
+            }
+
+            var privateKey = new PrivateKey(model.PrivateKey);
+
+            data.Signature = privateKey.SignData(data.SignatureHash.EncodeToBytes());
+            data.Hash = data.HashObject();
+
+            var definition = new Definition
+            {
+                DataHash = data.Hash,
+                Data = data,
+                IsMutable = !isMutation,
+                IsMutation = isMutation,
+                Key = model.PublicKey,
+                PreviousDefinitionHash = previousDefinition
+            };
+
+            definition.Signature = privateKey.SignData(data.SignatureHash.EncodeToBytes());
+            definition.Hash = definition.HashObject();
 
             await amnesia.ReceiveDefinition(definition);
 
