@@ -28,31 +28,31 @@ export class BlocksController {
     }
 
     getDefinitionData = async (definitionDataHash) => {
-        const data = await superagent.get(await this.getIPToSendRequestTo() + '/data/' + definitionDataHash + '/data');
-
-        return atob(data.body);
+        const data = await superagent.get(await this.getIPToSendRequestTo() + '/definitions/' + definitionDataHash);
+        return data.body;
     }
 
-    getBlockContentWithDefinitionHash = async (definitionHash) => {
-        const definitions = await superagent.get(await this.getIPToSendRequestTo() +  '/definitions/' + definitionHash);
+    getDefinitionContent = async (definitionHash) => {
+        try {
+            const base64Data = await superagent.get(await this.getIPToSendRequestTo() + '/definitions/' + definitionHash + '/data/blob')
+            return JSON.stringify(base64Data.text);
+        } catch(error) {
+            return ("Data is mogelijk verwijderd");
+        }
+
+    }
+
+    getBlockContentWithBlockHash = async (blockHash) => {
+        const definitions = await superagent.get(await this.getIPToSendRequestTo() + '/blocks/' + blockHash);
         return definitions.body
     }
 
     getBlockContents = async (blockHash) => {
-        console.log(blockHash, "dit is de hash");
         const ip = await this.getIPToSendRequestTo();
         const blocks = await superagent.get(ip + '/blocks/' + blockHash + "/content");
-        console.log(blocks, "dit is blockcontent")
-        const content = await superagent.get(ip + '/contents/' + blocks.body.content);
-        return content.body;
+        return blocks.body;
     }
 
-    getBlockDefinition = async (blockHash) => {
-        const ip = await this.getIPToSendRequestTo();
-        const blocks = await superagent.get(ip + '/blocks/' + blockHash);
-        const content = await superagent.get(ip + '/contents/' + blocks.body.content);
-        const definitions = await superagent.get(ip + '/definitions/' + content.body.definitions[0]);
-        return definitions.body;
-    }
+
 
 }

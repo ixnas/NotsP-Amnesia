@@ -31,7 +31,7 @@ export class BlocksComponent extends Component {
                     <Button onClick={() => this.getAllBlocks()}> Haal alle blocks op uit de chain </Button>
                 </div>
                 <div>
-                    {this.state.blocks.map(block => <JSONPretty id="blocks" onClick={() => this.navigateToBlockContent(block)} data={block} />)}
+                    {this.state.blocks.map(block => <JSONPretty id="blocks" key={block.hash} onClick={() => this.navigateToBlockContent(block)} data={block} />)}
                 </div>
             </div>
 

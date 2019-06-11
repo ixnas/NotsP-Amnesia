@@ -16,11 +16,6 @@ export class BlockContents extends Component {
         }
     }
 
-    componentDidMount = () => {
-        //this.getBlockContents(this.props.blockHash);
-    }
-
-
     getBlockContents = async (blockHash) => {
         let blockContents = await this.state.controller.getBlockContents(blockHash)
         this.setState({ blockContents: blockContents });
@@ -30,9 +25,9 @@ export class BlockContents extends Component {
     getDefinitionFromBlock = async (e) => {
         e.preventDefault();
         let clickedDefinitionHash = JSON.parse(e.target.innerText)
-        let blockDefinitionClicked = await this.state.controller.getBlockContentWithDefinitionHash(clickedDefinitionHash);
-        let definitionContent = await this.state.controller.getDefinitionData(blockDefinitionClicked.dataHash);
-        this.setState({ blockDefinition: blockDefinitionClicked, encryptedData: definitionContent });
+        let blockDefinitionClicked = await this.state.controller.getDefinitionData(clickedDefinitionHash);
+        let blockContent = await this.state.controller.getDefinitionContent(clickedDefinitionHash);
+        this.setState({ blockDefinition: blockDefinitionClicked, encryptedData: blockContent });
         return blockDefinitionClicked
     }
 
