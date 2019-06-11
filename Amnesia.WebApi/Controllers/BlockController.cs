@@ -73,6 +73,7 @@ namespace Amnesia.WebApi.Controllers
         public async Task<IActionResult> Post([FromQuery(Name = "peer")] string peer, [FromBody] string value)
         {    
             Console.WriteLine(value);
+            Console.WriteLine(peer);
             await amnesia.ReceiveBlock(Hash.StringToByteArray(value), peer);
             return Ok();
         }

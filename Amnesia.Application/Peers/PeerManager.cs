@@ -38,16 +38,24 @@ namespace Amnesia.Application.Peers
             return GetData<BlockViewModel>(url);
         }
         
-        public Task<Maybe<List<BlockViewModel>>> GetBlocks(Peer peer)
+        public Task<Maybe<IEnumerable<byte[]>>> GetBlocks(Peer peer)
         {
             var url = (peer.Url + configuration.Api.Blocks).Trim();
-            return GetData<List<BlockViewModel>>(url);
+            Console.WriteLine(url);
+            return GetData<IEnumerable<byte[]>>(url);
         }
 
         public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
         {
-            var url = (peer.Url + configuration.Api.Definitions + hash).Trim();
+            var url = peer.Url + string.Format(configuration.Api.Definitions, hash).Trim();
+            Console.WriteLine(url);
             return GetData<DefinitionViewModel>(url);
+        }
+        
+        public Task<Maybe<DataViewModel>> GetData(Peer peer, string hash)
+        {
+            var url = peer.Url + string.Format(configuration.Api.Data, hash).Trim();
+            return GetData<DataViewModel>(url);
         }
         
         public Task<Maybe<IEnumerable<string>>> GetDefinitions(Peer peer, string key, int limit)

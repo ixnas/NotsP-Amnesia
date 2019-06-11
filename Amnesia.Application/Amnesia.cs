@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amnesia.Application.Mining;
 using Amnesia.Application.Peers;
 using Amnesia.Application.Services;
+using Amnesia.Application.Validation;
 using Amnesia.Application.Validation.Context;
+using Amnesia.Application.Validation.Result;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
 
@@ -27,35 +30,59 @@ namespace Amnesia.Application
 
         public async Task ReceiveBlock(byte[] blockHash, string sendingPeer)
         {
-            Console.WriteLine("Received a block.");
-            
             var peer = peerManager.GetPeer(sendingPeer);
             var memoryContext = new MemoryValidationContext();
             
-//            var blockData = await peerManager.GetBlock(peer, Hash.ByteArrayToString(blockHash));
-//            
-//            memoryContext.AddData();
-//            memoryContext.AddContent();
-//            memoryContext.AddDefinition();
-//            memoryContext.AddBlock();
-//            
-//            
-//            var contentData = await peerManager.GetContent(peer, blockData.Value.Content);
-//            Console.WriteLine(blockData.Value.Hash);
-//            Console.WriteLine(contentData.Value.Hash);
-//            Console.WriteLine(contentData.Value.Definitions.First());
+            var peerGraph = peerManager.GetBlocks(peer).Result.Value.ToList();
+            var currentGraph = blockchain.ValidationContext.GetBlockGraph(stateService.State.CurrentBlockHash).ToList();
+            
+            if (peerGraph.Count <= currentGraph.Count)
+            {
+                return;
+            }
+            
+            FillMemoryContext(peerGraph, currentGraph, peer, memoryContext);
+
+            var combinedValidationContext = new CombinedValidationContext
+            {
+                memoryContext,
+                blockchain.ValidationContext
+            };
+            var blockValidator = new BlockValidator(combinedValidationContext, Difficulty);
+            var result = blockValidator.ValidateBlock(peerGraph.FirstOrDefault());
+            if (result is BlockSuccessResult)
+            {
+                //TODO: ExecuteMutation
+                blockchain.SaveContext(memoryContext);
+                stateService.ChangeState(peerGraph.FirstOrDefault());
+            }
         }
 
-        //TODO: Write implementation for checking block (Consensus).
-        private void CheckBlock()
+        //TODO: Fetch missing data
+        private void FillMemoryContext(IEnumerable<byte[]> peerGraph, IEnumerable<byte[]> currentGraph, Peer peer, 
+            MemoryValidationContext memoryContext)
         {
-            throw new NotImplementedException();
-            var miner = new Miner(10);
-        }
+            var missingBlocks = peerGraph.Except(currentGraph).ToList();
+             
+            foreach (var hash in missingBlocks)
+            {
+                var block = peerManager.GetBlock(peer, Hash.ByteArrayToString(hash)).Result.Value.ToBlock();
+                var content = peerManager.GetContent(peer, Hash.ByteArrayToString(block.ContentHash)).Result.Value.ToContent();
 
+                foreach (var definitionHash in content.Definitions.Concat(content.Mutations))
+                {
+                    var definition = peerManager.GetDefinition(peer, Hash.ByteArrayToString(definitionHash)).Result.Value.ToDefinition();
+                    var data = peerManager.GetData(peer, Hash.ByteArrayToString(definition.DataHash)).Result.Value.ToData();
+                    memoryContext.AddData(data);
+                    memoryContext.AddDefinition(definition);
+                }
+                memoryContext.AddContent(content);
+                memoryContext.AddBlock(block);
+            }
+        }
+        
         public async Task ReceiveDefinition(Definition definition)
-        {
-            Console.WriteLine(stateService.State.PeerId);            
+        {           
             var previousBlock = stateService.State.CurrentBlock;
             var newContent = new Content();
 
@@ -91,7 +118,6 @@ namespace Amnesia.Application
             blockchain.SaveContext(context);
             stateService.ChangeState(blockToMine.Hash);
             
-            Console.WriteLine(stateService.State.PeerId);
             foreach (var peerKey in peerManager.GetPeers())
             {
                 var peerToSend = peerManager.GetPeer(peerKey);
@@ -110,6 +136,5 @@ namespace Amnesia.Application
 //               IsMutation = true
 //           };
 //           var peer = peerManager.GetPeer("peer1");
-//           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));
-//           
+//           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));         
 //           dataService.RemoveDataThroughMutation(Hash.StringToByteArray(previous.Value.DataHash));
