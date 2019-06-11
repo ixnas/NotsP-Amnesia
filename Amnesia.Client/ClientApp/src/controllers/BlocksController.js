@@ -15,7 +15,6 @@ export class BlocksController {
     getAllBlocks = async () => {
         const connectionString = await this.getIPToSendRequestTo() + "/blocks/";
         const blocks = await superagent.get(connectionString);
-        console.log(blocks);
         return blocks.body;
     }
 
