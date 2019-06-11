@@ -14,8 +14,8 @@ export class BlocksController {
 
     getAllBlocks = async () => {
         const connectionString = await this.getIPToSendRequestTo() + "/blocks/";
-        console.log(connectionString);
         const blocks = await superagent.get(connectionString);
+        console.log(blocks);
         return blocks.body;
     }
 
@@ -28,7 +28,8 @@ export class BlocksController {
     }
 
     getDefinitionData = async (definitionDataHash) => {
-        const data = await superagent.get(await this.getIPToSendRequestTo() +'/data/' + definitionDataHash + '/data');
+        const data = await superagent.get(await this.getIPToSendRequestTo() + '/data/' + definitionDataHash + '/data');
+
         return atob(data.body);
     }
 
@@ -38,8 +39,10 @@ export class BlocksController {
     }
 
     getBlockContents = async (blockHash) => {
+        console.log(blockHash, "dit is de hash");
         const ip = await this.getIPToSendRequestTo();
-        const blocks = await superagent.get(ip + '/blocks/' + blockHash);
+        const blocks = await superagent.get(ip + '/blocks/' + blockHash + "/content");
+        console.log(blocks, "dit is blockcontent")
         const content = await superagent.get(ip + '/contents/' + blocks.body.content);
         return content.body;
     }
