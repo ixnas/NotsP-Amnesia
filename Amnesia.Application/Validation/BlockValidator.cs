@@ -68,7 +68,7 @@ namespace Amnesia.Application.Validation
                 return new BlockFailureResult($"Proof of work for {Hash.ByteArrayToString(block.Hash)} failed");
             }
             
-            foreach (var definition in block.Content.Definitions)
+            foreach (var definition in block.Content.Definitions.Concat(block.Content.Mutations))
             {
                 var result = definitionValidator.ValidateDefinition(definition, block.Hash);
 

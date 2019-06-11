@@ -1,8 +1,10 @@
-﻿namespace Amnesia.WebApi.Models
+﻿using Amnesia.Domain.ViewModels;
+
+namespace Amnesia.WebApi.Models
 {
     public class AddDefinitionModel
     {
-        public JSONDefinition Definition { get; set; }
-        public string Key { get; set; }
+        public DefinitionViewModel Definition { get; set; }
+        public AddDataViewModel Data { get; set; }
     }
 }

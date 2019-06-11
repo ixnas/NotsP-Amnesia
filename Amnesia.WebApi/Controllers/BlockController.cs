@@ -70,7 +70,7 @@ namespace Amnesia.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery(Name = "peer")] string peer, [FromBody] string value)
+        public async Task<IActionResult> Post([FromQuery] string peer, [FromBody] string value)
         {    
             Console.WriteLine(value);
             Console.WriteLine(peer);

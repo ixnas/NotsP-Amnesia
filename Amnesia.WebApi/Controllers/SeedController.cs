@@ -16,10 +16,17 @@ namespace Amnesia.WebApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            await seedService.SeedData();
+            seedService.SeedData();
             return Ok("init data zit in de db");
+        }
+
+        [HttpGet("nuke")]
+        public IActionResult Nuke()
+        {
+            seedService.Dump();
+            return Ok("enjoy");
         }
     }
 }

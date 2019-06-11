@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Amnesia.Application.Mining;
 using Amnesia.Application.Validation.Context;
 using Amnesia.Cryptography;
 using Amnesia.Domain.Entity;
@@ -59,7 +61,7 @@ uMhmhzAbI0/aKhG4Fbk22sM7ek0o6cB1gE1VmPLVeI2NuWlwXVL1bHKM7bsRMQZx
 YQIDAQAB
 -----END PUBLIC KEY-----"));
 
-        public (MemoryValidationContext, byte[]) ConstructTestData()
+        public (MemoryValidationContext, byte[]) ConstructTestData(int miningDifficulty = 0)
         {
             var context = new MemoryValidationContext();
 
@@ -78,7 +80,7 @@ YQIDAQAB
             Block prefBlock = null;
             var blocks = definitions.Select(def =>
             {
-                var block = CreateBlock(def, prefBlock);
+                var block = CreateBlock(def, prefBlock, miningDifficulty);
                 prefBlock = block;
                 return block;
             }).ToList();
@@ -98,11 +100,18 @@ YQIDAQAB
             return (context, prefBlock.Hash);
         }
 
-        public static Block CreateBlock(Definition def, Block prefBlock)
+        public static Block CreateBlock(Definition def, Block prefBlock, int miningDifficulty = 0)
         {
             var content = new Content();
 
-            content.Definitions.Add(def.Hash);
+            if (def.IsMutation)
+            {
+                content.Mutations.Add(def.Hash);
+            }
+            else
+            {
+                content.Definitions.Add(def.Hash);
+            }
 
             var block = new Block
             {
@@ -112,6 +121,13 @@ YQIDAQAB
                 PreviousBlockHash = prefBlock?.Hash,
                 PreviousBlock = prefBlock
             };
+
+            if (miningDifficulty > 0)
+            {
+                var miner = new Miner(miningDifficulty);
+
+                miner.Start(block).Wait();
+            }
 
             return block;
         }
@@ -188,6 +204,32 @@ YQIDAQAB
             var json = JsonConvert.SerializeObject(defViewModels, Formatting.Indented);
 
             File.WriteAllText("TestDefinitions.json", json);
+        }
+
+        [Test, Explicit]
+        public void DumpMinedTestData()
+        {
+            var (context, startBlock) = ConstructTestData(20);
+
+            Assert.IsNotNull(context);
+            Assert.IsNotNull(startBlock);
+
+            var blocks = context.Blocks.Values.Select(BlockViewModel.FromBlock);
+            var contents = context.Contents.Values.Select(ContentViewModel.FromContent);
+            var definitions = context.Definitions.Values.Select(DefinitionViewModel.FromDefinition);
+            var data = context.Data.Values.Select(d => DataViewModel.FromData(d, true));
+
+            var document = new
+            {
+                blocks,
+                contents,
+                definitions,
+                data,
+            };
+
+            var json = JsonConvert.SerializeObject(document, Formatting.Indented);
+
+            File.WriteAllText("TestBlockchain.json", json);
         }
     }
 }
