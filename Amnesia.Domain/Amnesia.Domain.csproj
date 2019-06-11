@@ -27,8 +27,4 @@
     <PackageReference Include="PeterO.Cbor" Version="4.0.0-alpha2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations" />
-  </ItemGroup>
-
 </Project>

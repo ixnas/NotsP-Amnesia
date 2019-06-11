@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Amnesia.Domain.Migrations
 {
-    public partial class NewInitBcSQLite : Migration
+    public partial class Anothermigrationreset : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,6 +18,29 @@ namespace Amnesia.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contents", x => x.Hash);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Definitions",
+                columns: table => new
+                {
+                    Hash = table.Column<byte[]>(nullable: false),
+                    DataHash = table.Column<byte[]>(nullable: true),
+                    PreviousDefinitionHash = table.Column<byte[]>(nullable: true),
+                    Signature = table.Column<byte[]>(nullable: true),
+                    Key = table.Column<string>(nullable: true),
+                    IsMutation = table.Column<bool>(nullable: false),
+                    IsMutable = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Definitions", x => x.Hash);
+                    table.ForeignKey(
+                        name: "FK_Definitions_Definitions_PreviousDefinitionHash",
+                        column: x => x.PreviousDefinitionHash,
+                        principalTable: "Definitions",
+                        principalColumn: "Hash",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,47 +70,6 @@ namespace Amnesia.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "State",
-                columns: table => new
-                {
-                    PeerId = table.Column<string>(nullable: false),
-                    CurrentBlockHash = table.Column<byte[]>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_State", x => x.PeerId);
-                    table.ForeignKey(
-                        name: "FK_State_Blocks_CurrentBlockHash",
-                        column: x => x.CurrentBlockHash,
-                        principalTable: "Blocks",
-                        principalColumn: "Hash",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Definitions",
-                columns: table => new
-                {
-                    Hash = table.Column<byte[]>(nullable: false),
-                    DataHash = table.Column<byte[]>(nullable: true),
-                    PreviousDefinitionHash = table.Column<byte[]>(nullable: true),
-                    Signature = table.Column<byte[]>(nullable: true),
-                    Key = table.Column<string>(nullable: true),
-                    IsMutation = table.Column<bool>(nullable: false),
-                    IsMutable = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Definitions", x => x.Hash);
-                    table.ForeignKey(
-                        name: "FK_Definitions_Definitions_PreviousDefinitionHash",
-                        column: x => x.PreviousDefinitionHash,
-                        principalTable: "Definitions",
-                        principalColumn: "Hash",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Data",
                 columns: table => new
                 {
@@ -104,6 +86,24 @@ namespace Amnesia.Domain.Migrations
                         name: "FK_Data_Definitions_PreviousDefinitionHash",
                         column: x => x.PreviousDefinitionHash,
                         principalTable: "Definitions",
+                        principalColumn: "Hash",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "State",
+                columns: table => new
+                {
+                    PeerId = table.Column<string>(nullable: false),
+                    CurrentBlockHash = table.Column<byte[]>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_State", x => x.PeerId);
+                    table.ForeignKey(
+                        name: "FK_State_Blocks_CurrentBlockHash",
+                        column: x => x.CurrentBlockHash,
+                        principalTable: "Blocks",
                         principalColumn: "Hash",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -126,12 +126,6 @@ namespace Amnesia.Domain.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Definitions_DataHash",
-                table: "Definitions",
-                column: "DataHash",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Definitions_PreviousDefinitionHash",
                 table: "Definitions",
                 column: "PreviousDefinitionHash",
@@ -141,36 +135,24 @@ namespace Amnesia.Domain.Migrations
                 name: "IX_State_CurrentBlockHash",
                 table: "State",
                 column: "CurrentBlockHash");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Definitions_Data_DataHash",
-                table: "Definitions",
-                column: "DataHash",
-                principalTable: "Data",
-                principalColumn: "Hash",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Data_Definitions_PreviousDefinitionHash",
-                table: "Data");
+            migrationBuilder.DropTable(
+                name: "Data");
 
             migrationBuilder.DropTable(
                 name: "State");
+
+            migrationBuilder.DropTable(
+                name: "Definitions");
 
             migrationBuilder.DropTable(
                 name: "Blocks");
 
             migrationBuilder.DropTable(
                 name: "Contents");
-
-            migrationBuilder.DropTable(
-                name: "Definitions");
-
-            migrationBuilder.DropTable(
-                name: "Data");
         }
     }
 }

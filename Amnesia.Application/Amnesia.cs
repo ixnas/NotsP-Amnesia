@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Amnesia.Application.Mining;
 using Amnesia.Application.Peers;
 using Amnesia.Application.Services;
+using Amnesia.Application.Validation.Context;
 using Amnesia.Domain.Entity;
 using Amnesia.Domain.Model;
-using Amnesia.Domain.ViewModels;
-using Newtonsoft.Json;
 
 namespace Amnesia.Application
 {
@@ -18,18 +14,16 @@ namespace Amnesia.Application
     {
         private readonly PeerManager peerManager;
         private readonly StateService stateService;
-        private readonly BlockService blockService;
-        
-        private readonly int difficulty = 20;
+        private readonly BlockchainService blockchain;
 
-        public Amnesia(PeerManager peerManager, StateService stateService, BlockService blockService)
+        private const int Difficulty = 20;
+
+        public Amnesia(PeerManager peerManager, StateService stateService, BlockchainService blockchain)
         {
             this.peerManager = peerManager;
             this.stateService = stateService;
-            this.blockService = blockService;
+            this.blockchain = blockchain;
         }
-
-        public Block CurrentBlock => stateService.State.CurrentBlock;
 
         public async Task ReceiveBlock(byte[] blockHash, string sendingPeer)
         {
@@ -78,20 +72,24 @@ namespace Amnesia.Application
                 PreviousBlock = previousBlock
             };
 
-            var miner = new Miner(20);
-            miner.Mined += newBlock =>
-            {
-                blockService.SaveBlock(newBlock);
-                stateService.ChangeState(peer.Key, newBlock);
-
-                foreach (var peerKey in peerManager.GetPeers())
-                {
-                    if (peerKey.Equals(state.PeerId)) continue;
-                    var peerToSend = peerManager.GetPeer(peerKey);
-                    peerManager.PostBlock(peer, peerToSend, Hash.ByteArrayToString(newBlock.Hash));
-                }
-            };
+            var miner = new Miner(Difficulty);
             await miner.Start(blockToMine);
+
+            var context = new MemoryValidationContext();
+            context.AddBlock(blockToMine);
+            context.AddContent(blockToMine.Content);
+            context.AddDefinition(definition);
+            context.AddData(definition.Data);
+
+            blockchain.SaveContext(context);
+            stateService.ChangeState(blockToMine.Hash);
+
+            foreach (var peerKey in peerManager.GetPeers())
+            {
+                if (peerKey.Equals(state.PeerId)) continue;
+                var peerToSend = peerManager.GetPeer(peerKey);
+                peerManager.PostBlock(peer, peerToSend, Hash.ByteArrayToString(blockToMine.Hash));
+            }
         }
     }
 }

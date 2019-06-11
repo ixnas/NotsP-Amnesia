@@ -35,6 +35,7 @@ namespace Amnesia.Domain.ViewModels
         {
             return new Content
             {
+                Hash = Model.Hash.StringToByteArray(Hash),
                 Definitions = Definitions.Select(Model.Hash.StringToByteArray).ToList(),
                 Mutations = Mutations.Select(Model.Hash.StringToByteArray).ToList()
             };

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Numerics;
+using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using Amnesia.Domain.Entity;
@@ -31,20 +31,19 @@ namespace Amnesia.Application.Mining
 
         private void Mine(Block payload)
         {
-            var hash = payload.Hash;
+            var hash = payload.HashObject();
             
-            while (!CheckHash(hash))
+            while (!CheckHash(hash, difficulty))
             {
-                if (cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
-                }
+                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
                 payload.Nonce++;
                 hash = payload.HashObject();
             }
 
+            payload.Hash = hash;
+
             Console.WriteLine("Nonce: {0}", payload.Nonce);
-            payload.Hash = payload.HashObject();  
             Console.WriteLine("Hash: {0}", Hash.ByteArrayToString(payload.Hash));
             
             Mined?.Invoke(payload);
@@ -55,10 +54,19 @@ namespace Amnesia.Application.Mining
             cancellationTokenSource?.Cancel();
         }
 
-        private bool CheckHash(byte[] hash)
+        public static bool CheckHash(byte[] hash, int difficulty)
         {
-            var bigInteger = new BigInteger(hash);
-            return (bigInteger & ((1 << difficulty) - 1)) == 0;
+            var bitArray = new BitArray(hash);
+
+            for (var i = 0; i < difficulty; i++)
+            {
+                if (bitArray[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Amnesia.Tests.Validation
         [Test]
         public void ShouldInvalidateWrongContentHash()
         {
-            context.GetBlockAndContent(block).Content.Definitions[0] = Hash.StringToByteArray("abcde0");
+            context.GetBlockAndContent(block).Content.Mutations[0] = Hash.StringToByteArray("abcde0");
             
             var validator = new BlockValidator(context, 0);
 

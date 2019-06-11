@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Amnesia.Application.Services;
 using Amnesia.Domain.Entity;
@@ -9,28 +9,31 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Amnesia.WebApi.Controllers
 {
-    [Route("definitions/")]
+    [Route("definitions")]
     [ApiController]
     public class DefinitionController: ControllerBase
     {
-        private readonly DefinitionService service;
         private readonly Application.Amnesia amnesia;
+        private readonly BlockchainService blockchain;
+        private readonly StateService stateService;
 
-        public DefinitionController(DefinitionService service, Application.Amnesia amnesia)
+        public DefinitionController(Application.Amnesia amnesia, BlockchainService blockchain, StateService stateService)
         {
-            this.service = service;
             this.amnesia = amnesia;
+            this.blockchain = blockchain;
+            this.stateService = stateService;
         }
         
         [HttpGet("{hash}")]
-        public async Task<IActionResult> Get(string hash)
+        public IActionResult Get(string hash)
         {
-            var definition = await service.GetDefinition(Hash.StringToByteArray(hash));
+            var definition = blockchain.ValidationContext.GetDefinition(Hash.StringToByteArray(hash));
 
             if (definition == null)
             {
                 return NotFound();
             }
+
             return Ok(DefinitionViewModel.FromDefinition(definition));
         }
 
@@ -40,14 +43,18 @@ namespace Amnesia.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("last")]
-        public async Task<ActionResult> GetLastByKey([FromBody] GetByKeyModel model)
+        public ActionResult GetLastByKey([FromBody] GetByKeyModel model)
         {
-            var definition = await service.GetLastDefinition(model.PublicKey);
+            var definitionHash = blockchain.ValidationContext
+                .GetDefinitionsByKey(model.PublicKey, stateService.State.CurrentBlockHash)
+                .FirstOrDefault();
 
-            if (definition == null)
+            if (definitionHash == null)
             {
                 return NotFound();
             }
+
+            var definition = blockchain.ValidationContext.GetDefinition(definitionHash);
 
             return Ok(DefinitionViewModel.FromDefinition(definition));
         }
@@ -55,34 +62,61 @@ namespace Amnesia.WebApi.Controllers
         /// <summary>
         /// Creates a new definition to add to the chain. Receives a definition signed by the client via a POST request.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> CreateDefinition([FromBody] AddDefinitionModel model)
         {
             var data = new Data
             {
-                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
-                Signature               = Convert.FromBase64String(model.Definition.Data.Signature),
-                Blob                    = Convert.FromBase64String(model.Definition.Data.Blob),
-                Key                     = model.Key
+                PreviousDefinitionHash  = model.Data.PreviousDefinition == null ? null : Hash.StringToByteArray(model.Data.PreviousDefinition),
+                Signature               = model.Data.Signature,
+                Blob                    = model.Data.Blob,
+                Key                     = model.Data.Key
             };
 
             var definition = new Definition
             {
                 DataHash                = Hash.StringToByteArray(model.Definition.DataHash),
-                PreviousDefinitionHash  = model.Definition.PreviousDefinitionHash == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinitionHash),
-                Signature               = Convert.FromBase64String(model.Definition.Signature),
-                Key                     = model.Key,
+                PreviousDefinitionHash  = model.Definition.PreviousDefinition == null ? null : Hash.StringToByteArray(model.Definition.PreviousDefinition),
+                Signature               = model.Definition.Signature,
+                Key                     = model.Definition.Key,
                 IsMutation              = model.Definition.IsMutation,
                 IsMutable               = model.Definition.IsMutable,
                 Data                    = data,
-                PreviousDefinition      = null
             };
 
             await amnesia.ReceiveDefinition(definition);
 
             return Ok("Nieuw block gemined");
+        }
+
+        [HttpGet("{hash}/data")]
+        public IActionResult GetData(string hash)
+        {
+            var data = blockchain.ValidationContext.GetData(Hash.StringToByteArray(hash));
+
+            if (data == null)
+            {
+                return NotFound("The data may have been deleted");
+            }
+
+            return Ok(DataViewModel.FromData(data));
+        }
+
+        [HttpGet("{hash}/data/blob")]
+        public async Task<IActionResult> GetDataBlob(string hash)
+        {
+            var data = blockchain.ValidationContext.GetData(Hash.StringToByteArray(hash));
+
+            if (data == null)
+            {
+                return NotFound("The data may have been deleted");
+            }
+
+            Response.ContentType = "application/octet-stream";
+            await Response.Body.WriteAsync(data.Blob, 0, data.Blob.Length);
+            return Ok();
         }
     }
 }

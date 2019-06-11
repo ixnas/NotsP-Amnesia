@@ -22,10 +22,25 @@ namespace Amnesia.Domain.ViewModels
                                      ? null
                                      : Model.Hash.ByteArrayToString(definition.PreviousDefinitionHash),
                 Signature = definition.Signature,
-
+                IsMutable = definition.IsMutable,
+                IsMutation = definition.IsMutation,
                 Key = definition.Key
             };
             return vm;
+        }
+
+        public Definition ToDefinition()
+        {
+            return new Definition
+            {
+                Hash = Model.Hash.StringToByteArray(Hash),
+                DataHash = Model.Hash.StringToByteArray(DataHash),
+                IsMutable = IsMutable,
+                IsMutation = IsMutation,
+                PreviousDefinitionHash = PreviousDefinition == null ? null : Model.Hash.StringToByteArray(PreviousDefinition),
+                Signature = Signature,
+                Key = Key
+            };
         }
     }
 }

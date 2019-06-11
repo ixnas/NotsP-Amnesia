@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amnesia.Domain.Migrations
 {
     [DbContext(typeof(BlockchainContext))]
-    [Migration("20190528150507_NewInitBcSQLite")]
-    partial class NewInitBcSQLite
+    [Migration("20190605150330_Another migration reset")]
+    partial class Anothermigrationreset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,9 +89,6 @@ namespace Amnesia.Domain.Migrations
 
                     b.HasKey("Hash");
 
-                    b.HasIndex("DataHash")
-                        .IsUnique();
-
                     b.HasIndex("PreviousDefinitionHash")
                         .IsUnique();
 
@@ -131,10 +128,6 @@ namespace Amnesia.Domain.Migrations
 
             modelBuilder.Entity("Amnesia.Domain.Entity.Definition", b =>
                 {
-                    b.HasOne("Amnesia.Domain.Entity.Data", "Data")
-                        .WithOne()
-                        .HasForeignKey("Amnesia.Domain.Entity.Definition", "DataHash");
-
                     b.HasOne("Amnesia.Domain.Entity.Definition", "PreviousDefinition")
                         .WithOne()
                         .HasForeignKey("Amnesia.Domain.Entity.Definition", "PreviousDefinitionHash");

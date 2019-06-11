@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Amnesia.Application.Helper;
 using Amnesia.Domain.Context;
@@ -59,15 +58,31 @@ namespace Amnesia.Application.Validation.Context
 
         public Data GetData(byte[] definitionHash)
         {
-            var definition = context.Definitions
-                .Include(d => d.Data)
-                .FirstOrDefault(d => d.Hash == definitionHash);
+            // Two statements could be converted to one join statement
 
-            return definition?.Data;
+            var dataHash = context.Definitions
+                .Where(d => d.Hash == definitionHash)
+                .Select(d => d.DataHash)
+                .SingleOrDefault();
+
+            if (dataHash == null)
+            {
+                return null;
+            }
+
+            var data = context.Data
+                .SingleOrDefault(d => d.Hash == dataHash);
+
+            return data;
         }
 
         public IEnumerable<byte[]> GetBlockGraph(byte[] startHash)
         {
+            if (startHash == null)
+            {
+                yield break;
+            }
+
             var hash = startHash;
 
             var blocks = context.Blocks
