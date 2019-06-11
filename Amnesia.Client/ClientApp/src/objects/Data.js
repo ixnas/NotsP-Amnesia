@@ -1,7 +1,8 @@
 export class Data {
     constructor() {
-        this.PreviousDefinitionHash = "";
+        this.PreviousDefinition= "";
         this.Signature = "";
+        this.Key = "";
         this.Blob = "";
     }  
 }

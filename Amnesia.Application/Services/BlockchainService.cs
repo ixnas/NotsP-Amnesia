@@ -21,7 +21,6 @@ namespace Amnesia.Application.Services
             dbContext.Data.AddRange(context.Data.Values);
             dbContext.Contents.AddRange(context.Contents.Values);
             dbContext.Blocks.AddRange(context.Blocks.Values);
-
             dbContext.SaveChanges();
         }
     }

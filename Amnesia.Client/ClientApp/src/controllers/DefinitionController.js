@@ -20,8 +20,8 @@ export class DefinitionController {
      * Sets the definition by getting last definition with a public key
      */
     SetDefinition() {
-       // const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
-        const publicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhVQrGn7UopzbDrQerAa+\nggfrnCfWhCTCOPOaazJ5zqbk1vrB9RnHgll0EzMe6zGCfekkd581qh42Eu3VzpeX\nqOAv4Ni1+ydwwB+OKrK0/TyunOh/YmjmBGC9HzOuwh6vdfmFhykpjl3VSR2RnI1o\nE0LPLaqsrL0TgysTxIAMZ6YbmW6qsa+lNhdUjRoo2N8UllWN0ODG/W3qZ0Ce3aY0\nIg4vxjp4FneKjki5TC5jY6LbMTevwKTZxd/08g1REuKtBwIJDzVz1GYwH6S+rVOC\nmyoY9PYHIa7tZpQXC34YvDAAr11pvm0Tr0gRXSDSK4KosJOF+hP5tYQ1PeNaIOog\n6wIDAQAB\n-----END PUBLIC KEY-----";
+        const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
+        // const publicKey = "\ufeff-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1ADkjzRkMWrzUaR3qYZo\nCTwLA8z8OdyZkbpMVeWShKQet+28GgFdYce2GrzlHZLOak3seJCWPfPOtCvNOr7Y\nSdUqB0k3tr5Pc1Li18s/b8VySyKGICy5T61bncUudHasxFQKI9QTCpT66HTWTVip\nVVjA2siB8ohe6+HA+pWqC8LslFAcYgp5/nHvUp79xcG29djcpJSQaqrtaJBhjSDM\nO2rSxtcdP3J9wVMacYiFmL9h1gEXHvzpFzS+kyZrhRNEXZglGiBv9sDOlDgLTidu\nuMhmhzAbI0/aKhG4Fbk22sM7ek0o6cB1gE1VmPLVeI2NuWlwXVL1bHKM7bsRMQZx\nYQIDAQAB\n-----END PUBLIC KEY-----\n";
         
         (async () => {
             try {
@@ -43,21 +43,19 @@ export class DefinitionController {
      * @param {string} hash 
      */
     SetDefinitionAndSend(hash) {
-
-        this.Definition.Data.PreviousDefinitionHash = hash;
-        this.Definition.PreviousDefinitionHash = hash;
+        this.Definition.Data.PreviousDefinition = hash;
+        this.Definition.PreviousDefinition = hash;
 
         if (this.IsMutation) {
             this.Definition.Data.Blob = `DELETE ${this.Input}`;
             this.Definition.IsMutable = false;
             this.Definition.IsMutation = this.IsMutation;
-
         } else {
             this.Definition.Data.Blob = btoa(this.Input);
         }
 
         this.SetHashData();
-
+        
         this.Send();
     }
 
@@ -70,7 +68,7 @@ export class DefinitionController {
         this.SignDefinition();
 
         map
-            .set("PreviousDefinitionHash", this.Definition.Data.PreviousDefinitionHash)
+            .set("PreviousDefinitionHash", this.Definition.Data.PreviousDefinition)
             .set("Blob", this.Definition.Data.Blob)
             .set("Signature", this.Definition.Data.Signature)
             .set("Key", this.KeyPair.publicKey.exportKey("pkcs8-public-pem"));
@@ -84,7 +82,8 @@ export class DefinitionController {
     Send() {
         this.Definition.Data.Signature = base64EncArr(this.Definition.Data.Signature);
         this.Definition.Signature = base64EncArr(this.Definition.Signature);
-
+        this.Definition.Key = this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
+        this.Definition.Data.Key = this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
         fetch('http://127.0.0.1:8080/definitions', {
             method: 'POST',
             headers: {
@@ -93,7 +92,7 @@ export class DefinitionController {
             },
             body: JSON.stringify({
                 Definition: this.Definition,
-                Key: this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
+                Data: this.Definition.Data
             })
         })
             .catch(err => console.error(err));
@@ -106,18 +105,16 @@ export class DefinitionController {
         var message = new Map();
 
         message
-            .set("Hash", this.Definition.Hash)
-            .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
+            .set("DataHash", this.Definition.DataHash)
+            .set("PreviousDefinitionHash", this.Definition.PreviousDefinition)
             .set("IsMutable", this.Definition.IsMutable)
             .set("IsMutation", this.Definition.IsMutation);
 
         const encodedMessage = CBOR.encode(message);
-
         const privateKey = this.KeyPair.privateKey;
         this.Definition.Signature = privateKey.sign(encodedMessage);
         this.SignData(privateKey);
     }
-
 
     /**
      * Signs the data with data in Data class
@@ -126,7 +123,7 @@ export class DefinitionController {
         var message = new Map();
 
         message
-            .set("PreviousDefinitionHash", this.Definition.PreviousDefinitionHash)
+            .set("PreviousDefinitionHash", this.Definition.PreviousDefinition)
             .set("Blob", this.Definition.Data.Blob);
 
         const encodedMessage = CBOR.encode(message);
