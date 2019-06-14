@@ -65,6 +65,11 @@ namespace Amnesia.Application.Validation.Context
 
                 foreach (var h in context.GetBlockGraph(hash))
                 {
+
+                    if (h.SequenceEqual(hash))
+                    {
+                        continue;
+                    }
                     yield return h;
                     hash = h;
                 }

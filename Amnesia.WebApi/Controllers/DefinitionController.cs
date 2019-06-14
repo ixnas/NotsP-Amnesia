@@ -151,7 +151,7 @@ namespace Amnesia.WebApi.Controllers
                 return NotFound("The data may have been deleted");
             }
 
-            return Ok(DataViewModel.FromData(data));
+            return Ok(data.Blob == null ? DataViewModel.FromData(data) : DataViewModel.FromData(data, true));
         }
 
         [HttpGet("{hash}/data/blob")]

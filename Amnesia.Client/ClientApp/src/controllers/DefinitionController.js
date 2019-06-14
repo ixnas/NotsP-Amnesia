@@ -34,7 +34,7 @@ export class DefinitionController {
         //  .send({Key: publicKey})
         (async () => {
             try {
-              const res  = await superagent.post('http://127.0.0.1:8081/definitions/easy')
+              const res  = await superagent.post('http://127.0.0.1:8080/definitions/easy')
                     .send(json)
                     .set('accept', 'json');
               //this.SetDefinitionAndSend(res.body.hash);

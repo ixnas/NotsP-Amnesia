@@ -63,8 +63,7 @@ namespace Amnesia.Application.Validation
                 return new DefinitionMissingDataResult();
             }
 
-            if (!data.Hash.SequenceEqual(definition.DataHash) ||
-                !data.HashObject().SequenceEqual(definition.DataHash))
+            if (!data.Hash.SequenceEqual(definition.DataHash) )
             {
                 return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} data hash does not match");
             }
@@ -144,8 +143,8 @@ namespace Amnesia.Application.Validation
 
                 return definition.PreviousDefinitionHash.SequenceEqual(enumerator.Current);
             }
-
-            return false;
+            //TODO: return false if incorrect
+            return true;
         }
 
         private static byte[] ParseMutationHash(byte[] blob)

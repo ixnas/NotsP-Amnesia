@@ -69,7 +69,13 @@ namespace Amnesia.Application
         private async Task FillMemoryContext(IEnumerable<byte[]> peerGraph, IEnumerable<byte[]> currentGraph, Peer peer, 
             MemoryValidationContext memoryContext)
         {
-            var missingBlocks = peerGraph.Except(currentGraph).ToList();
+            //var missingBlocks = peerGraph.Except(currentGraph).ToList();
+            
+            //var missingBlocks = new List<byte[]>();
+            
+            
+            var missingBlocks = peerGraph.Where(p => !currentGraph.Any(l => p.SequenceEqual(l)));
+          
              
             foreach (var hash in missingBlocks)
             {
