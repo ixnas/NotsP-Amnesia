@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amnesia.Domain.Entity;
 
 namespace Amnesia.Application.Validation.Context
@@ -99,16 +101,17 @@ namespace Amnesia.Application.Validation.Context
                 // Loop definitions backwards
                 var definitionsInBlock = content.Mutations.Reverse().Concat(content.Definitions.Reverse()).ToList();
 
+                //removed where definitionsInBlock.Contains(d.Hash) cause it doesnt work.
+                
                 var definitionsFromKey = definitionsInBlock
                     .Select(GetDefinition)
-                    .Where(d => key == d.Key &&
-                                definitionsInBlock.Contains(d.Hash))
+                    .Where(d => d.Key == key)
                     .Select(d => d.Hash)
                     .ToList();
 
                 // definitionsFromKey may not be in order
                 var orderedDefinitions = definitionsInBlock
-                    .Select(h => definitionsFromKey.FirstOrDefault(d => d == h))
+                    .Select(h => definitionsFromKey.FirstOrDefault(d => d.SequenceEqual(h)))
                     .Where(h => h != null);
 
                 foreach (var definition in orderedDefinitions)

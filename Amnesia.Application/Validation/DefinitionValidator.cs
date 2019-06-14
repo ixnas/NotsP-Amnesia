@@ -46,11 +46,10 @@ namespace Amnesia.Application.Validation
                 return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} cannot be mutable and a mutation");
             }
 
-            if (!ValidatePreviousDefinitionHash(definition, blockHash))
-            {
-                return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} PreviousDefinition is invalid");
-            }
-
+//            if (!ValidatePreviousDefinitionHash(definition, blockHash))
+//            {
+//                return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} PreviousDefinition is invalid");
+//            }
 
             var data = context.GetData(hash);
 
@@ -137,6 +136,7 @@ namespace Amnesia.Application.Validation
                 // If this is definition is the last in the sequence,
                 // it must be the first definition created by this key
                 if (!enumerator.MoveNext())
+                //if (definition.PreviousDefinitionHash == null)
                 {
                     return definition.PreviousDefinitionHash == null;
                 }
@@ -144,7 +144,7 @@ namespace Amnesia.Application.Validation
                 return definition.PreviousDefinitionHash.SequenceEqual(enumerator.Current);
             }
             //TODO: return false if incorrect
-            return true;
+            return false;
         }
 
         private static byte[] ParseMutationHash(byte[] blob)
