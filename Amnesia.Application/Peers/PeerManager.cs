@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Amnesia.Application.Helper;
+using Amnesia.Domain.Model;
 using Amnesia.Domain.ViewModels;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -38,17 +39,16 @@ namespace Amnesia.Application.Peers
             return GetData<BlockViewModel>(url);
         }
         
-        public Task<Maybe<IEnumerable<byte[]>>> GetBlocks(Peer peer)
+        public async Task<Maybe<IEnumerable<byte[]>>> GetBlocks(Peer peer)
         {
             var url = (peer.Url + configuration.Api.Blocks).Trim();
-            Console.WriteLine(url);
-            return GetData<IEnumerable<byte[]>>(url);
+            var data = await GetData<IEnumerable<string>>(url);
+            return data.Select(strs => strs.Select(Hash.StringToByteArray));
         }
 
         public Task<Maybe<DefinitionViewModel>> GetDefinition(Peer peer, string hash)
         {
             var url = peer.Url + string.Format(configuration.Api.Definitions, hash).Trim();
-            Console.WriteLine(url);
             return GetData<DefinitionViewModel>(url);
         }
         
@@ -66,7 +66,7 @@ namespace Amnesia.Application.Peers
 
         public Task<Maybe<ContentViewModel>> GetContent(Peer peer, string hash)
         {
-            var url = (peer.Url + configuration.Api.Contents + hash).Trim();
+            var url = peer.Url + string.Format(configuration.Api.Contents, hash).Trim();
             return GetData<ContentViewModel>(url);
         }
 

@@ -32,8 +32,9 @@ namespace Amnesia.Application
         {
             var peer = peerManager.GetPeer(sendingPeer);
             var memoryContext = new MemoryValidationContext();
-            
-            var peerGraph = peerManager.GetBlocks(peer).Result.Value.ToList();
+
+            var graph = await peerManager.GetBlocks(peer);
+            var peerGraph = graph.Value.ToList();
             var currentGraph = blockchain.ValidationContext.GetBlockGraph(stateService.State.CurrentBlockHash).ToList();
             
             if (peerGraph.Count <= currentGraph.Count)
@@ -41,7 +42,7 @@ namespace Amnesia.Application
                 return;
             }
             
-            FillMemoryContext(peerGraph, currentGraph, peer, memoryContext);
+            await FillMemoryContext(peerGraph, currentGraph, peer, memoryContext);
 
             var combinedValidationContext = new CombinedValidationContext
             {
@@ -53,27 +54,40 @@ namespace Amnesia.Application
             if (result is BlockSuccessResult)
             {
                 //TODO: ExecuteMutation
+                Console.WriteLine("Valid");
                 blockchain.SaveContext(memoryContext);
                 stateService.ChangeState(peerGraph.FirstOrDefault());
+            }
+            else
+            {
+                Console.WriteLine(result.Message);
+                Console.WriteLine("Not Valid");
             }
         }
 
         //TODO: Fetch missing data
-        private void FillMemoryContext(IEnumerable<byte[]> peerGraph, IEnumerable<byte[]> currentGraph, Peer peer, 
+        private async Task FillMemoryContext(IEnumerable<byte[]> peerGraph, IEnumerable<byte[]> currentGraph, Peer peer, 
             MemoryValidationContext memoryContext)
         {
             var missingBlocks = peerGraph.Except(currentGraph).ToList();
              
             foreach (var hash in missingBlocks)
             {
-                var block = peerManager.GetBlock(peer, Hash.ByteArrayToString(hash)).Result.Value.ToBlock();
-                var content = peerManager.GetContent(peer, Hash.ByteArrayToString(block.ContentHash)).Result.Value.ToContent();
-
+                var blockVm = await peerManager.GetBlock(peer, Hash.ByteArrayToString(hash));
+                var block = blockVm.Value.ToBlock();
+                var contentVm = await peerManager.GetContent(peer, Hash.ByteArrayToString(hash));
+                var content = contentVm.Value.ToContent();
+                
                 foreach (var definitionHash in content.Definitions.Concat(content.Mutations))
                 {
-                    var definition = peerManager.GetDefinition(peer, Hash.ByteArrayToString(definitionHash)).Result.Value.ToDefinition();
-                    var data = peerManager.GetData(peer, Hash.ByteArrayToString(definition.DataHash)).Result.Value.ToData();
-                    memoryContext.AddData(data);
+                    var definitionVm = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(definitionHash));
+                    var definition = definitionVm.Value.ToDefinition();
+                    var dataVm = await peerManager.GetData(peer, Hash.ByteArrayToString(definitionHash));
+                    if (dataVm.HasValue)
+                    {
+                        var data = dataVm.Value.ToData();
+                        memoryContext.AddData(data);
+                    }
                     memoryContext.AddDefinition(definition);
                 }
                 memoryContext.AddContent(content);
@@ -81,7 +95,7 @@ namespace Amnesia.Application
             }
         }
         
-        public async Task ReceiveDefinition(Definition definition, Data data)
+        public async Task ReceiveDefinition(Definition definition)
         {           
             var previousBlock = stateService.State.CurrentBlock;
             var newContent = new Content();
@@ -113,7 +127,7 @@ namespace Amnesia.Application
             context.AddBlock(blockToMine);
             context.AddContent(blockToMine.Content);
             context.AddDefinition(definition);
-            context.AddData(data);
+            context.AddData(definition.Data);
 
             blockchain.SaveContext(context);
             stateService.ChangeState(blockToMine.Hash);
@@ -128,7 +142,7 @@ namespace Amnesia.Application
 }
 
 //TODO: EXECUTE MUTATION            
-//if(mutation == valid && newChain > currentChain)
+//    if(mutation == valid && newChain > currentChain)
 //           var mutation = new Definition
 //           {
 //               PreviousDefinitionHash = Hash.StringToByteArray("d9cb74f22c33625e37be48e5ef5ce9dc18d9e605338c2dc83b66c713d3d7ba41"),

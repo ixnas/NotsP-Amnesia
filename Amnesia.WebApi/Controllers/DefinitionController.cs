@@ -93,7 +93,7 @@ namespace Amnesia.WebApi.Controllers
             data.Hash = data.HashObject();
             definition.DataHash = data.Hash;
             definition.Hash = definition.HashObject();   
-            await amnesia.ReceiveDefinition(definition, data);
+            await amnesia.ReceiveDefinition(definition);
 
             return Ok("Nieuw block gemined");
         }
@@ -117,7 +117,7 @@ namespace Amnesia.WebApi.Controllers
             {
                 data.Blob = Encoding.UTF8.GetBytes("DELETE " + model.DefinitionHash);
             }
-
+            
             var privateKey = new PrivateKey(model.PrivateKey);
 
             data.Signature = privateKey.SignData(data.SignatureHash.EncodeToBytes());

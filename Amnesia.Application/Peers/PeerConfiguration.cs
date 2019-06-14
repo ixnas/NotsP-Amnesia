@@ -36,7 +36,7 @@ namespace Amnesia.Application.Peers
     {
         public string SendBlock { get; set; } = "/blocks?peer={0}";
         public string Blocks { get; set; } = "/blocks/";
-        public string Contents { get; set; } = "/contents/";
+        public string Contents { get; set; } = "/blocks/{0}/content";
         public string Definitions { get; set; } = "/definitions/{0}";
         public string Data { get; set; } = "/definitions/{0}/data";
         public string Keys { get; set; } = "/keys/%s/definitions?depth=%i";
