@@ -133,7 +133,7 @@ namespace Amnesia.WebApi.Controllers
                 PreviousDefinitionHash = previousDefinition
             };
 
-            definition.Signature = privateKey.SignData(data.SignatureHash.EncodeToBytes());
+            definition.Signature = privateKey.SignData(definition.SignatureHash.EncodeToBytes());
             definition.Hash = definition.HashObject();
 
             await amnesia.ReceiveDefinition(definition);
