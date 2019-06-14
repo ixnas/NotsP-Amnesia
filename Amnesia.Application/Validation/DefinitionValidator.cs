@@ -69,7 +69,8 @@ namespace Amnesia.Application.Validation
                 return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} data hash does not match");
             }
 
-            if (definition.PreviousDefinitionHash != data.PreviousDefinitionHash)
+            if (definition.PreviousDefinitionHash != data.PreviousDefinitionHash &&
+                !definition.PreviousDefinitionHash.SequenceEqual(data.PreviousDefinitionHash))
             {
                 return new DefinitionFailureResult($"definition {Hash.ByteArrayToString(hash)} PreviousDefinitionHash does not match data");
             }

@@ -12,6 +12,9 @@ namespace Amnesia.Application.Validation
         private readonly int difficulty;
         private readonly DefinitionValidator definitionValidator;
 
+        public bool UseProofOfWork { get; set; } = true;
+        public bool UseAssumptions { get; set; } = true;
+
         public BlockValidator(IValidationContext context, int difficulty)
         {
             this.context = context;
@@ -21,7 +24,7 @@ namespace Amnesia.Application.Validation
 
         public IBlockValidationResult ValidateBlock(byte[] hash)
         {
-            if (context.ShouldAssumeValid(hash))
+            if (UseAssumptions && context.ShouldAssumeValid(hash))
             {
                 return new BlockSuccessResult();
             }
@@ -98,6 +101,11 @@ namespace Amnesia.Application.Validation
 
         private bool ValidateProofOfWork(byte[] hash)
         {
+            if (!UseProofOfWork)
+            {
+                return true;
+            }
+
             var bigInteger = new BigInteger(hash);
             return (bigInteger & ((1 << difficulty) - 1)) == 0;
         }
