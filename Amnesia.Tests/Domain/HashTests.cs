@@ -113,5 +113,18 @@ namespace Amnesia.Tests.Domain
             Assert.AreEqual(hash, primaryHash);
             Assert.AreNotEqual(hash, signatureHash);
         }
+
+        [Test]
+        public void ShouldHashData()
+        {
+            var data = new Data
+            {
+                Blob = Encoding.UTF8.GetBytes("hallo"),
+                PreviousDefinitionHash = Hash.StringToByteArray("abcde0"),
+            };
+
+            var cborBytes = data.SignatureHash.EncodeToBytes();
+            TestContext.WriteLine(Convert.ToBase64String(cborBytes));
+        }
     }
 }

@@ -51,18 +51,17 @@ namespace Amnesia.Application
             };
             var blockValidator = new BlockValidator(combinedValidationContext, Difficulty);
             var result = blockValidator.ValidateBlock(peerGraph.FirstOrDefault());
-            if (result is BlockSuccessResult)
-            {
-                //TODO: ExecuteMutation
-                Console.WriteLine("Valid");
-                blockchain.SaveContext(memoryContext);
-                stateService.ChangeState(peerGraph.FirstOrDefault());
-            }
-            else
+            if (!(result is BlockSuccessResult))
             {
                 Console.WriteLine(result.Message);
                 Console.WriteLine("Not Valid");
+                return;
             }
+
+            Console.WriteLine("Valid");
+            blockchain.SaveContext(memoryContext);
+            stateService.ChangeState(peerGraph.FirstOrDefault());
+            ExecuteMutations(blockchain.ValidationContext, memoryContext.Blocks.Keys);
         }
 
         //TODO: Fetch missing data
@@ -137,6 +136,7 @@ namespace Amnesia.Application
 
             blockchain.SaveContext(context);
             stateService.ChangeState(blockToMine.Hash);
+            ExecuteMutations(blockchain.ValidationContext, new[] {blockToMine.Hash});
             
             foreach (var peerKey in peerManager.GetPeers())
             {
@@ -144,17 +144,20 @@ namespace Amnesia.Application
                 peerManager.PostBlock(stateService.State.PeerId, peerToSend, Hash.ByteArrayToString(blockToMine.Hash));
             }
         }
+
+        public void ExecuteMutations(DatabaseValidationContext database, IEnumerable<byte[]> blockHashes)
+        {
+            var dataHashes = blockHashes
+                .SelectMany(database.GetMutations)
+                .Select(m => m.Data.ParseMutationHash())
+                .Select(definitionHash => database.GetDefinition(definitionHash).DataHash);
+
+            database.DeleteData(dataHashes);
+        }
+
+        private IEnumerable<Definition> FindMutations(IValidationContext context, IEnumerable<byte[]> blockHashes)
+        {
+            return blockHashes.SelectMany(context.GetMutations);
+        }
     }
 }
-
-//TODO: EXECUTE MUTATION            
-//    if(mutation == valid && newChain > currentChain)
-//           var mutation = new Definition
-//           {
-//               PreviousDefinitionHash = Hash.StringToByteArray("d9cb74f22c33625e37be48e5ef5ce9dc18d9e605338c2dc83b66c713d3d7ba41"),
-//               IsMutable = false,
-//               IsMutation = true
-//           };
-//           var peer = peerManager.GetPeer("peer1");
-//           var previous = await peerManager.GetDefinition(peer, Hash.ByteArrayToString(mutation.PreviousDefinitionHash));         
-//           dataService.RemoveDataThroughMutation(Hash.StringToByteArray(previous.Value.DataHash));

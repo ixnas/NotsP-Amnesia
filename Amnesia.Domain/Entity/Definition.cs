@@ -28,5 +28,6 @@ namespace Amnesia.Domain.Entity
             .Add(nameof(IsMutable))
             .Add(nameof(Signature))
             .Add(nameof(Key));
+
     }
 }

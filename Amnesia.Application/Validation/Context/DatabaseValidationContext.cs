@@ -153,5 +153,13 @@ namespace Amnesia.Application.Validation.Context
                 }
             }
         }
+
+        public void DeleteData(IEnumerable<byte[]> dataHashes)
+        {
+            var data = context.Data.Where(d => dataHashes.Contains(d.Hash));
+
+            context.Data.RemoveRange(data);
+            context.SaveChanges();
+        }
     }
 }

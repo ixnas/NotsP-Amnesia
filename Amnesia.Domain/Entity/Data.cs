@@ -1,4 +1,7 @@
-﻿using Amnesia.Domain.Model;
+﻿using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using Amnesia.Domain.Model;
 
 namespace Amnesia.Domain.Entity
 {
@@ -18,5 +21,29 @@ namespace Amnesia.Domain.Entity
         public CompositeHash SignatureHash => new CompositeHash(this)
             .Add(nameof(PreviousDefinitionHash))
             .Add(nameof(Blob));
+
+        public byte[] ParseMutationHash()
+        {
+            try
+            {
+                var str = Encoding.UTF8.GetString(Blob);
+
+                var regex = new Regex("DELETE ([0-9a-fA-F]+)");
+                var match = regex.Match(str);
+
+                if (!match.Success)
+                {
+                    return null;
+                }
+
+                var hash = match.Groups[1].Value;
+
+                return Model.Hash.StringToByteArray(hash);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

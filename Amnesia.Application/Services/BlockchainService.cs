@@ -13,7 +13,7 @@ namespace Amnesia.Application.Services
             ValidationContext = new DatabaseValidationContext(this.dbContext);
         }
 
-        public IValidationContext ValidationContext { get; }
+        public DatabaseValidationContext ValidationContext { get; }
 
         public void SaveContext(MemoryValidationContext context)
         {
