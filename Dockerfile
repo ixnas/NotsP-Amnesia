@@ -7,7 +7,7 @@ RUN dotnet restore
 
 COPY . ./
 WORKDIR /app/Amnesia.WebApi
-RUN dotnet publish -c Release -o out
+RUN dotnet publish -o out
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app

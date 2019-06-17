@@ -6,20 +6,33 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80 
+      - Peers:NetworkId=peer1
+      - Peers:Peers:peer2=http://127.0.0.1:8081
+      - Peers:Peers:peer3=http://127.0.0.1:8082
     ports:
-     - "127.0.0.1:8080:80"
+      - "8080:80"
 
   peer2:
     image: amnesia
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:81  
+      - Peers:NetworkId=peer2
+      - Peers:Peers:peer1=http://127.0.0.1:8080
+      - Peers:Peers:peer3=http://127.0.0.1:8082
     ports:
-     - "127.0.0.1:8081:80"
+      - "8081:81"
 
   peer3:
     image: amnesia
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:82 
+      - Peers:NetworkId=peer3
+      - Peers:Peers:peer2=http://127.0.0.1:8081
+      - Peers:Peers:peer1=http://127.0.0.1:8080
     ports:
-     - "127.0.0.1:8082:80"
-
-  peer4:
-    image: amnesia
-    ports:
-     - "127.0.0.1:8083:80"
+      - "8082:82"
