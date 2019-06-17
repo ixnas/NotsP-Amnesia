@@ -21,20 +21,33 @@ export class DefinitionController {
      */
     SetDefinition() {
         const publicKey = this.KeyPair.publicKey.exportKey("pkcs8-public-pem");
-        // const publicKey = "\ufeff-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1ADkjzRkMWrzUaR3qYZo\nCTwLA8z8OdyZkbpMVeWShKQet+28GgFdYce2GrzlHZLOak3seJCWPfPOtCvNOr7Y\nSdUqB0k3tr5Pc1Li18s/b8VySyKGICy5T61bncUudHasxFQKI9QTCpT66HTWTVip\nVVjA2siB8ohe6+HA+pWqC8LslFAcYgp5/nHvUp79xcG29djcpJSQaqrtaJBhjSDM\nO2rSxtcdP3J9wVMacYiFmL9h1gEXHvzpFzS+kyZrhRNEXZglGiBv9sDOlDgLTidu\nuMhmhzAbI0/aKhG4Fbk22sM7ek0o6cB1gE1VmPLVeI2NuWlwXVL1bHKM7bsRMQZx\nYQIDAQAB\n-----END PUBLIC KEY-----\n";
-        console.log(this.Input);
-        console.log(btoa(this.Input));
-        var json = {
-            Blob : btoa(this.Input),
-            PrivateKey : this.KeyPair.privateKey.exportKey("pkcs1-private-pem"),
-            PublicKey : this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
-        };
+        
+        if (this.Input.includes("DELETE")){
+            console.log(true)
+            var def = this.Input.substring(7);
+            console.log(def);
+            var json = {
+                Blob : btoa(this.Input),
+                PrivateKey : this.KeyPair.privateKey.exportKey("pkcs1-private-pem"),
+                PublicKey : this.KeyPair.publicKey.exportKey("pkcs8-public-pem"),
+                DefinitionHash : def
+            };
+        } else {
+            console.log(false)
+            var json = {
+                Blob : btoa(this.Input),
+                PrivateKey : this.KeyPair.privateKey.exportKey("pkcs1-private-pem"),
+                PublicKey : this.KeyPair.publicKey.exportKey("pkcs8-public-pem")
+            };
+        }
 
+        console.log(json);
+        console.log(btoa(this.Input));
         //const res = await superagent.post('http://127.0.0.1:8080/definitions/last')        
         //  .send({Key: publicKey})
         (async () => {
             try {
-              const res  = await superagent.post('http://127.0.0.1:8080/definitions/easy')
+              const res  = await superagent.post('http://127.0.0.1:8081/definitions/easy')
                     .send(json)
                     .set('accept', 'json');
               //this.SetDefinitionAndSend(res.body.hash);

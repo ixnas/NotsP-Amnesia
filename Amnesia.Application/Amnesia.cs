@@ -68,13 +68,7 @@ namespace Amnesia.Application
         private async Task FillMemoryContext(IEnumerable<byte[]> peerGraph, IEnumerable<byte[]> currentGraph, Peer peer, 
             MemoryValidationContext memoryContext)
         {
-            //var missingBlocks = peerGraph.Except(currentGraph).ToList();
-            
-            //var missingBlocks = new List<byte[]>();
-            
-            
             var missingBlocks = peerGraph.Where(p => !currentGraph.Any(l => p.SequenceEqual(l)));
-          
              
             foreach (var hash in missingBlocks)
             {
@@ -147,10 +141,14 @@ namespace Amnesia.Application
 
         public void ExecuteMutations(DatabaseValidationContext database, IEnumerable<byte[]> blockHashes)
         {
-            var dataHashes = blockHashes
+            var definitions = blockHashes
                 .SelectMany(database.GetMutations)
-                .Select(m => m.Data.ParseMutationHash())
-                .Select(definitionHash => database.GetDefinition(definitionHash).DataHash);
+                .ToList();
+            
+            var dataHashes = definitions
+                .Select(m => database.GetData(m.Hash)).ToList()
+                .Select(d => d.ParseMutationHash()).ToList()
+                .Select(definitionHash => database.GetDefinition(definitionHash).DataHash).ToList();
 
             database.DeleteData(dataHashes);
         }
